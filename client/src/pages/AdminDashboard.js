@@ -1,13 +1,20 @@
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
 function AdminDashboard() {
   const [contents, setContents] = useState([]);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchContent();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
   const fetchContent = async () => {
     try {
@@ -38,6 +45,10 @@ function AdminDashboard() {
   return (
     <div style={{ padding: "40px" }}>
       <h1>Admin CMS</h1>
+
+      <button onClick={handleLogout} style={{ marginBottom: "20px" }}>
+        Logout
+      </button>
 
       {contents.map((item) => (
         <div

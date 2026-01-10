@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import API from "../services/api";
 
 function AdminDashboard() {
@@ -7,16 +7,7 @@ function AdminDashboard() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchContent();
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
-  const fetchContent = async () => {
+  const fetchContent = useCallback(async () => {
     try {
       const res = await API.get("/api/content", {
         headers: {
@@ -27,6 +18,15 @@ function AdminDashboard() {
     } catch (err) {
       console.error(err);
     }
+  }, [token]);
+
+  useEffect(() => {
+    fetchContent();
+  }, [fetchContent]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   const deleteContent = async (id) => {

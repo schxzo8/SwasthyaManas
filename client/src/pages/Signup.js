@@ -1,27 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import "../styles/auth.css";
 
-function Login() {
+function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await API.post("/api/auth/login", {
+      await API.post("/api/auth/register", {
         email,
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.removeItem("justLoggedIn"); // optional cleanup
-      navigate("/");
+      alert("Account created successfully!");
+      navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Signup failed");
     }
   };
 
@@ -30,11 +30,11 @@ function Login() {
       <div className="auth-card">
         <div className="auth-brand">SwasthyaManas</div>
 
-        <h2 className="auth-title">Welcome Back!</h2>
+        <h2 className="auth-title">Welcome to SwasthyaManas</h2>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSignup}>
           <input
             type="email"
             className="auth-input"
@@ -59,12 +59,12 @@ function Login() {
         </form>
 
         <div className="auth-link">
-          Don’t have an account?{" "}
-          <span onClick={() => navigate("/signup")}>Sign up</span>
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")}>Log in</span>
         </div>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default Signup;

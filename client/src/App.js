@@ -1,19 +1,30 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import MainLayout from "./layouts/MainLayout";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import PublicContent from "./pages/PublicContent";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
 
-        {/* PUBLIC CONTENT PAGE */}
-        <Route path="/content" element={<PublicContent />} />
+        {/* PUBLIC LAYOUT */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/content" element={<PublicContent />} />
+        </Route>
 
+        {/* AUTH PAGES (NO NAVBAR) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* PROTECTED */}
         <Route
           path="/dashboard"
           element={
@@ -31,6 +42,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </BrowserRouter>
   );

@@ -1,71 +1,34 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
-import API from "../services/api";
+import { useState } from "react";
+import AdminContentList from "./AdminContentList";
+import AdminContentForm from "./AdminContentForm";
 
 function AdminDashboard() {
-  const [contents, setContents] = useState([]);
-  const token = localStorage.getItem("token");
-  const navigate = useNavigate();
-
-  const fetchContent = useCallback(async () => {
-    try {
-      const res = await API.get("/api/content", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setContents(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    fetchContent();
-  }, [fetchContent]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
-  const deleteContent = async (id) => {
-    try {
-      await API.delete(`/api/content/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      fetchContent();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const [view, setView] = useState("list");
+  const [editData, setEditData] = useState(null);
 
   return (
     <div style={{ padding: "40px" }}>
       <h1>Admin CMS</h1>
 
-      <button onClick={handleLogout} style={{ marginBottom: "20px" }}>
-        Logout
-      </button>
+      <div style={{ marginBottom: "20px" }}>
+        <button onClick={() => { setView("list"); setEditData(null); }}>
+          View Content
+        </button>{" "}
+        <button onClick={() => setView("add")}>
+          Add Content
+        </button>
+      </div>
 
-      {contents.map((item) => (
-        <div
-          key={item._id}
-          style={{
-            border: "1px solid #ccc",
-            padding: "10px",
-            marginBottom: "10px",
-          }}
-        >
-          <h3>{item.title}</h3>
-          <p>{item.body}</p>
-          <small>Category: {item.category}</small>
-          <br /><br />
-          <button onClick={() => deleteContent(item._id)}>Delete</button>
-        </div>
-      ))}
+      {view === "list" && (
+        <AdminContentList onEdit={(data) => {
+          setEditData(data);
+          setView("edit");
+        }} />
+      )}
+
+      {(view === "add" || view === "edit") && (
+        <AdminContentForm editData={editData} />
+      )}
     </div>
   );
 }

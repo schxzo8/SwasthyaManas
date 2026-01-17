@@ -1,19 +1,45 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import API from "../services/api";
 
 function Dashboard() {
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await API.get("/api/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setUser(res.data);
+      } catch (err) {
+        setError("Failed to load user data");
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  if (error) return <p>{error}</p>;
+  if (!user) return <p>Loading dashboard...</p>;
 
   return (
     <div style={{ padding: "40px" }}>
-      <h1>Dashboard</h1>
-      <p>You are logged in</p>
+      <h1>User Dashboard</h1>
 
-      <button onClick={handleLogout}>Logout</button>
+      <p><strong>Name:</strong> {user.name}</p>
+      <p><strong>Email:</strong> {user.email}</p>
+      <p><strong>Role:</strong> {user.role}</p>
+
+      <hr />
+
+      <p>Welcome to SwasthyaManas 🎉</p>
+      <p>Your mental health journey starts here.</p>
     </div>
   );
 }

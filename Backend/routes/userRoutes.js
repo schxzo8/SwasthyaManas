@@ -3,7 +3,12 @@ const { protect, authorizeRoles } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-// Logged-in users only
+// ✅ STANDARD USER PROFILE (used by frontend)
+router.get("/me", protect, (req, res) => {
+  res.json(req.user);
+});
+
+// Optional: verbose profile route
 router.get("/profile", protect, (req, res) => {
   res.json({
     message: "Protected profile route",
@@ -13,9 +18,7 @@ router.get("/profile", protect, (req, res) => {
 
 // Admin-only route
 router.get("/admin", protect, authorizeRoles("admin"), (req, res) => {
-  res.json({
-    message: "Welcome Admin",
-  });
+  res.json({ message: "Welcome Admin" });
 });
 
 module.exports = router;

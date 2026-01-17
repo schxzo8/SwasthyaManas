@@ -15,7 +15,7 @@ const contentSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["about", "services", "faq", "meditation"],
+      enum: ["about", "services", "faq", "meditation" , "blog", "resource"],
       required: true,
     },
 

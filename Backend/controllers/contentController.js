@@ -3,16 +3,16 @@ const Content = require("../models/Content");
 // CREATE content (ADMIN)
 exports.createContent = async (req, res) => {
   try {
-    const { title, body, category } = req.body;
+    console.log("REQ BODY:", req.body);
+    console.log("REQ USER:", req.user);
 
-    if (!title || !body || !category) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
+    const { title, body, category } = req.body;
 
     const content = await Content.create({
       title,
       body,
       category,
+      published: true,
     });
 
     res.status(201).json({
@@ -20,9 +20,16 @@ exports.createContent = async (req, res) => {
       content,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("CREATE CONTENT ERROR");
+    console.error(error);
+
+    res.status(500).json({
+      message: error.message,
+      stack: error.stack,
+    });
   }
 };
+
 
 // GET all content (PUBLIC)
 exports.getAllContent = async (req, res) => {
@@ -30,7 +37,8 @@ exports.getAllContent = async (req, res) => {
     const content = await Content.find({ published: true });
     res.json(content);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+      console.error("CONTENT ERROR:", error);
+      res.status(500).json({ message: error.message })
   }
 };
 

@@ -2,39 +2,54 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       required: true,
-      trim: true,
     },
-
+    lastName: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
+      lowercase: true
     },
-
     password: {
       type: String,
-      required: true,
+      required: true
     },
 
     role: {
       type: String,
-      enum: ["user", "admin", "expert"],
-      default: "user",
+      enum: ["user", "expert", "admin"],
+      default: "user"
     },
+
+    // Optional but HIGHLY recommended for experts
+    expertise: {
+      type: String,
+      required: function() {
+        return this.role === "expert";
+      },
+    },
+
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+
+    emailVerificationToken: String,
 
     failedLoginAttempts: {
       type: Number,
-      default: 0,
+      default: 0
     },
-
     lockUntil: {
       type: Date,
-      default: null,
-    },
+      default: null
+    }
   },
   { timestamps: true }
 );

@@ -3,7 +3,7 @@ const { protect, authorizeRoles } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-// ✅ STANDARD USER PROFILE (used by frontend)
+// STANDARD USER PROFILE (used by frontend)
 router.get("/me", protect, (req, res) => {
   res.json(req.user);
 });

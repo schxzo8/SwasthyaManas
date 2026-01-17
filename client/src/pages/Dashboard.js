@@ -32,13 +32,17 @@ function Dashboard() {
     <div style={{ padding: "40px" }}>
       <h1>User Dashboard</h1>
 
-      <p><strong>Name:</strong> {user.name}</p>
+      <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
       <p><strong>Email:</strong> {user.email}</p>
+      
       <p><strong>Role:</strong> {user.role}</p>
 
+      {user.role === "expert" && (
+        <p><strong>Expertise:</strong> {user.expertise}</p>
+      )}
       <hr />
 
-      <p>Welcome to SwasthyaManas 🎉</p>
+      <p>Welcome to SwasthyaManas </p>
       <p>Your mental health journey starts here.</p>
     </div>
   );

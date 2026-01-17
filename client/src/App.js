@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import PublicContent from "./pages/PublicContent";
 import ProtectedRoute from "./components/ProtectedRoute";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         {/* AUTH PAGES (NO NAVBAR) */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
         {/* PROTECTED */}
         <Route

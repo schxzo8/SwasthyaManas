@@ -1,0 +1,146 @@
+/* assessment.css */
+.assess-wrapper {
+  min-height: 100vh;
+  background: #f6efe9;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.assess-card {
+  width: 100%;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px;
+}
+
+.assess-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #0b3d2e;
+}
+
+.assess-subtitle {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.assess-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 18px 0 10px;
+}
+
+.assess-btn {
+  background: #003f35;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.assess-btn:hover {
+  opacity: 0.92;
+}
+
+.assess-btn.secondary {
+  background: #fff;
+  color: #003f35;
+  border: 1px solid #003f35;
+}
+
+.assess-alert {
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 14px 0;
+  font-size: 14px;
+}
+
+.assess-alert.error {
+  background: #ffe7e7;
+  color: #a40000;
+  border: 1px solid #ffb9b9;
+}
+
+.assess-alert.info {
+  background: #e9fff4;
+  color: #0b6b3b;
+  border: 1px solid #b8f0d3;
+}
+
+.q-block {
+  border-top: 1px solid #eee;
+  padding: 18px 0;
+}
+
+.q-text {
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.options {
+  display: grid;
+  gap: 8px;
+}
+
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.opt:hover {
+  border-color: #003f35;
+}
+
+.opt input {
+  accent-color: #003f35;
+}
+
+.result-pill {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: 8px;
+  border: 1px solid #ddd;
+}
+
+.result-score {
+  font-size: 42px;
+  font-weight: 700;
+  margin: 12px 0 6px;
+  color: #0b3d2e;
+}
+
+.history-item {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.history-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.small {
+  color: #777;
+  font-size: 13px;
+}
+

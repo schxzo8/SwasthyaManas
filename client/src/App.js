@@ -9,6 +9,12 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PublicContent from "./pages/PublicContent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import VerifyEmail from "./pages/VerifyEmail";
+import AdminRoute from "./components/AdminRoute";
+import AssessmentHome from "./pages/AssessmentHome";
+import PHQ9Form from "./pages/PHQ9Form";
+import GAD7Form from "./pages/GAD7Form";
+import AssessmentResult from "./pages/AssessmentResult";
+import AssessmentHistory from "./pages/AssessmentHistory";
 
 function App() {
   return (
@@ -39,8 +45,53 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <AdminRoute>
               <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/assessments"
+          element={
+            <ProtectedRoute>
+              <AssessmentHome />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/assessments/phq9"
+          element={
+            <ProtectedRoute>
+              <PHQ9Form />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/assessments/gad7"
+          element={
+            <ProtectedRoute>
+              <GAD7Form />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/assessments/result"
+          element={
+            <ProtectedRoute>
+              <AssessmentResult />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/assessments/history"
+          element={
+            <ProtectedRoute>
+              <AssessmentHistory />
             </ProtectedRoute>
           }
         />

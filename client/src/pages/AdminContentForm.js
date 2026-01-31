@@ -65,7 +65,7 @@ function AdminContentForm({ editData }) {
         />
         <br /><br />
 
-        {/* CATEGORY — FIXED */}
+        {/* CATEGORY */}
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}

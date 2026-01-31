@@ -44,6 +44,22 @@ function Dashboard() {
 
       <p>Welcome to SwasthyaManas </p>
       <p>Your mental health journey starts here.</p>
+
+      {/* Take the PHQ-9 assessment quiz */}
+      <button
+      style={{
+        marginTop: "15px",
+        padding: "12px 18px",
+        borderRadius: "999px",
+        border: "none",
+        background: "#003f35",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+      onClick={() => window.location.href = "/assessments"}
+    >
+      Start Assessment
+    </button>
     </div>
   );
 }

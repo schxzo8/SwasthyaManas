@@ -7,6 +7,8 @@ require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const contentRoutes = require("./routes/contentRoutes");
+const assessmentRoutes = require("./routes/assessmentRoutes");
+const assessmentTemplateRoutes = require("./routes/assessmentTemplateRoutes");
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/assessments", assessmentRoutes);
+app.use("/api/assessment-templates", assessmentTemplateRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

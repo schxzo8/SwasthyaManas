@@ -15,6 +15,12 @@ import PHQ9Form from "./pages/PHQ9Form";
 import GAD7Form from "./pages/GAD7Form";
 import AssessmentResult from "./pages/AssessmentResult";
 import AssessmentHistory from "./pages/AssessmentHistory";
+import Experts from "./pages/Experts";
+import MyConsultations from "./pages/MyConsultations";
+import ExpertInbox from "./pages/ExpertInbox";
+import UserRoute from "./components/UserRoute";
+import ExpertRoute from "./components/ExpertRoute";
+
 
 function App() {
   return (
@@ -96,6 +102,38 @@ function App() {
           }
         />
 
+        <Route
+          path="/experts"
+          element={
+            <ProtectedRoute>
+              <UserRoute>
+                <Experts />
+              </UserRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/consultations"
+          element={
+            <ProtectedRoute>
+              <UserRoute>
+                <MyConsultations />
+              </UserRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/expert/inbox"
+          element={
+            <ProtectedRoute>
+              <ExpertRoute>
+                <ExpertInbox />
+              </ExpertRoute>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

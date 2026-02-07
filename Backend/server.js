@@ -9,6 +9,8 @@ const authRoutes = require("./routes/authRoutes");
 const contentRoutes = require("./routes/contentRoutes");
 const assessmentRoutes = require("./routes/assessmentRoutes");
 const assessmentTemplateRoutes = require("./routes/assessmentTemplateRoutes");
+const expertRoutes = require("./routes/expertRoutes");
+const consultationRoutes = require("./routes/consultationRoutes");
 
 const app = express();
 
@@ -22,6 +24,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/assessments", assessmentRoutes);
 app.use("/api/assessment-templates", assessmentTemplateRoutes);
+app.use("/api/experts", expertRoutes);
+app.use("/api/consultations", consultationRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

@@ -9,6 +9,7 @@ const {
 const { protect, authorizeRoles } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
+const Content = require("../models/Content");
 
 // PUBLIC – users can read content
 router.get("/", getAllContent);

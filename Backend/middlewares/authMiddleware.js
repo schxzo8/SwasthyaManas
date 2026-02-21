@@ -22,7 +22,7 @@ exports.protect = async (req, res, next) => {
 
   try {
     // Verify token
-    const explain = jwt.verify(token, process.env.JWT_SECRET);
+    const explain = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
     // Attach user to request
     req.user = await User.findById(explain.id).select("-password");

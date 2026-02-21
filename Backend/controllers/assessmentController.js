@@ -12,7 +12,6 @@ const getPHQ9Severity = (score) => {
 exports.submitPHQ9 = async (req, res) => {
   try {
     const { answers } = req.body;
-
     const totalScore = answers.reduce(
       (sum, a) => sum + a.value,
       0

@@ -42,6 +42,16 @@ const userSchema = new mongoose.Schema(
 
     emailVerificationToken: String,
 
+    refreshTokenHash: {
+      type: String,
+      default: "",
+    },
+
+    refreshTokenIssuetAt: {
+      type: Date,
+      default: null,
+    },
+    
     failedLoginAttempts: {
       type: Number,
       default: 0

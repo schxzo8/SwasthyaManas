@@ -32,6 +32,17 @@ exports.createRequest = async (req, res) => {
     });
 
     res.status(201).json({ message: "Request sent successfully", request });
+    const io = req.app.get("io");
+    const room = `user_${String(expertId)}`;
+    console.log("📤 emitting consultation:new to", room, "size:", io.sockets.adapter.rooms.get(room)?.size || 0);
+    if (io) {
+      io.to(`user_${String(expertId)}`).emit("consultation:new", {
+        requestId: request._id,
+        userId: String(req.user._id),
+        reason,
+        createdAt: request.createdAt,
+      });
+    }
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
@@ -72,7 +83,7 @@ exports.updateRequestStatus = async (req, res) => {
     const request = await ConsultationRequest.findById(id);
     if (!request) return res.status(404).json({ message: "Request not found" });
 
-    // Only the assigned expert can update
+    // Only assigned expert can update
     if (String(request.expert) !== String(req.user._id)) {
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -82,11 +93,35 @@ exports.updateRequestStatus = async (req, res) => {
     }
 
     request.status = status;
-    if (expertReply) request.expertReply = expertReply;
+
+    // allow empty string too, but only if field is present in body
+    if (expertReply !== undefined) {
+      request.expertReply = expertReply;
+    }
 
     await request.save();
-    res.json({ message: "Request updated", request });
+
+    const io = req.app.get("io");
+    if (io) {
+      const payload = {
+        requestId: request._id,
+        status: request.status,
+        expertReply: request.expertReply || "",
+        updatedAt: request.updatedAt,
+      };
+
+      // notify user
+      io.to(`user_${String(request.user)}`).emit("consultation:update", payload);
+
+      // notify expert
+      io.to(`user_${String(request.expert)}`).emit("consultation:update", payload);
+    }
+
+
+    return res.json({ message: "Request updated", request });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
   }
 };
+

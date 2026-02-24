@@ -14,7 +14,7 @@ export default function MyConsultations() {
   const [err, setErr] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // ✅ load consultations (no manual token/header needed if you already use axios interceptor)
+  // load consultations (no manual token/header needed if you already use axios interceptor)
   const load = useCallback(async () => {
     setErr("");
     setIsLoading(true);
@@ -28,12 +28,12 @@ export default function MyConsultations() {
     }
   }, []);
 
-  // ✅ load on mount
+  // load on mount
   useEffect(() => {
     load();
   }, [load]);
 
-  // ✅ socket updates (connects if not already connected)
+  // socket updates (connects if not already connected)
   useEffect(() => {
     const s = connectSocket();
     if (!s) return;

@@ -185,7 +185,7 @@ export default function Inbox() {
     setItems((prev) => prev.map((x) => (x._id === id ? { ...x, ...patch } : x)));
   };
 
-  // ✅ Accept/Reject/Close should ONLY change status (no reply here)
+  // Accept/Reject/Close should ONLY change status (no reply here)
   const updateStatusOnly = async (
     id: string,
     status: "accepted" | "rejected" | "closed"
@@ -203,7 +203,7 @@ export default function Inbox() {
     }
   };
 
-  // ✅ Send reply should keep status accepted and update expertReply
+  // Send reply should keep status accepted and update expertReply
   const sendReply = async (id: string, text: string) => {
     setErr("");
     const reply = text.trim();

@@ -2,6 +2,7 @@
 import { Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
+import { Footer } from "../components/Footer"; 
 import API from "../services/api";
 import { connectSocket } from "../services/socket";
 
@@ -10,7 +11,7 @@ export default function AppLayout() {
   const didBoot = useRef(false);
 
   useEffect(() => {
-    if (didBoot.current) return; // ✅ stops double-run in StrictMode
+    if (didBoot.current) return; // prevents double-run in StrictMode
     didBoot.current = true;
 
     (async () => {
@@ -20,11 +21,12 @@ export default function AppLayout() {
         if (!token) {
           const res = await API.get("/api/auth/refresh");
           const newToken: string = res.data.token;
+
           localStorage.setItem("token", newToken);
           localStorage.setItem("user", JSON.stringify(res.data.user));
         }
 
-        connectSocket(); // reads latest localStorage token
+        connectSocket(); // uses latest token
       } catch {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -34,14 +36,23 @@ export default function AppLayout() {
     })();
   }, []);
 
-  if (booting) return <div className="p-6">Loading...</div>;
+  if (booting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF7F2]">
+        <p className="text-[#5A6062]">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+
+      {/* page content */}
       <main className="flex-1">
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 }

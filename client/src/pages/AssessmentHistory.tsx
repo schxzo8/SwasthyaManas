@@ -22,7 +22,7 @@ export default function AssessmentHistory() {
 
   const [selected, setSelected] = useState<AssessmentRecord | null>(null);
 
-  // ✅ Questions
+  // Questions
   const PHQ9_QUESTIONS = useMemo(
     () => [
       "Little interest or pleasure in doing things",
@@ -110,7 +110,7 @@ export default function AssessmentHistory() {
     return undefined;
   };
 
-  // ✅ normalize answers from DB to a safe, sorted array
+  // normalize answers from DB to a safe, sorted array
   const normalizedAnswers = useMemo(() => {
     if (!selected) return [];
 
@@ -334,7 +334,7 @@ export default function AssessmentHistory() {
                 Higher values indicate more frequent symptoms.
               </p>
 
-              {/* ✅ Answers with questions */}
+              {/* Answers with questions */}
               {normalizedAnswers.length > 0 ? (
                 <div className="pt-2">
                   <h3 className="font-semibold text-[#2D3436] mb-3">Answers</h3>

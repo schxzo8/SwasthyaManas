@@ -2,6 +2,18 @@ import { Leaf, Heart, Instagram, Twitter, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function Footer() {
+  // read user safely from localStorage
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
+    }
+  })();
+
+  const isAuthed = !!localStorage.getItem("token");
+  const isAdmin = user?.role === "admin";
+
   return (
     <footer className="bg-[#2D3436] text-[#FAF7F2] pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,25 +44,46 @@ export function Footer() {
             </h3>
             <ul className="space-y-3 text-sm text-[#C4B5A0]">
               <li>
-                <Link to="/assessments" className="hover:text-[#7C9A82] transition-colors">
+                <Link
+                  to="/assessments"
+                  className="hover:text-[#7C9A82] transition-colors"
+                >
                   Assessments
                 </Link>
               </li>
+
               <li>
-                <Link to="/experts" className="hover:text-[#7C9A82] transition-colors">
+                <Link
+                  to="/experts"
+                  className="hover:text-[#7C9A82] transition-colors"
+                >
                   Find Experts
                 </Link>
               </li>
-              <li>
-                <Link to="/dashboard" className="hover:text-[#7C9A82] transition-colors">
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link to="/admin" className="hover:text-[#7C9A82] transition-colors">
-                  Admin
-                </Link>
-              </li>
+
+              {/* show Dashboard only for logged-in users (recommended) */}
+              {isAuthed && (
+                <li>
+                  <Link
+                    to="/dashboard"
+                    className="hover:text-[#7C9A82] transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+              )}
+
+              {/* show Admin only for admin */}
+              {isAdmin && (
+                <li>
+                  <Link
+                    to="/admin"
+                    className="hover:text-[#7C9A82] transition-colors"
+                  >
+                    Admin
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 

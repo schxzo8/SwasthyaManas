@@ -45,7 +45,7 @@ export default function PublicContent() {
     try {
       const res = await API.get("/api/content");
       const list: ContentItem[] = Array.isArray(res.data) ? res.data : [];
-      // ✅ extra safety: only published content
+      // extra safety: only published content
       setContent(list.filter((x) => x.published !== false));
     } catch (err) {
       console.error(err);

@@ -11,7 +11,7 @@ export default function RootLayout() {
   const didBoot = useRef(false);
 
   useEffect(() => {
-    if (didBoot.current) return; // ✅ StrictMode safe
+    if (didBoot.current) return; // StrictMode safe
     didBoot.current = true;
 
     (async () => {

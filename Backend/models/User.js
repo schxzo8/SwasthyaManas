@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
       default: "user"
     },
 
-    // Optional but HIGHLY recommended for experts
+    // For experts, e.g. "Psychologist", "Psychiatrist", "Counselor"
     expertise: {
       type: String,
       required: function() {

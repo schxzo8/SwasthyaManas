@@ -12,7 +12,7 @@ const {
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/refresh", refresh); // should be GET (since you use API.get)
+router.get("/refresh", refresh); 
 router.post("/logout", logout);
 router.post("/resend-verification", resendVerification);
 router.get("/verify-email/:token", verifyEmail);

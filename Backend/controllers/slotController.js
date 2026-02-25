@@ -24,7 +24,7 @@ function nepalDayKeyToUtcRange(dayKey) {
   return { startUtc, endUtc };
 }
 
-// ✅ expert: list my slots (all)
+// expert: list my slots (all)
 exports.listMySlots = async (req, res) => {
   try {
     const expertId = req.user._id;
@@ -35,7 +35,7 @@ exports.listMySlots = async (req, res) => {
   }
 };
 
-// ✅ user: list an expert's OPEN slots + MY HELD (unexpired)
+// user: list an expert's OPEN slots + MY HELD (unexpired)
 exports.listExpertSlots = async (req, res) => {
   try {
     const { expertId } = req.params;
@@ -73,7 +73,7 @@ exports.listExpertSlots = async (req, res) => {
       startAt: timeFilter,
       $or: [
         { status: "open" },
-        { status: "held", heldBy: userId, holdExpiresAt: { $gt: now } }, // ✅ keep MY held visible
+        { status: "held", heldBy: userId, holdExpiresAt: { $gt: now } }, // keep MY held visible
       ],
     }).sort({ startAt: 1 });
 
@@ -83,7 +83,7 @@ exports.listExpertSlots = async (req, res) => {
   }
 };
 
-// ✅ expert: create slots
+// expert: create slots
 exports.createSlots = async (req, res) => {
   try {
     const expertId = req.user._id;
@@ -116,7 +116,7 @@ exports.createSlots = async (req, res) => {
   }
 };
 
-// ✅ user: hold an OPEN slot atomically
+// user: hold an OPEN slot atomically
 exports.holdSlot = async (req, res) => {
   try {
     const userId = req.user._id;

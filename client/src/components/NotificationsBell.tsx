@@ -1,12 +1,27 @@
-// src/components/NotificationsBell.tsx
 import { useMemo, useState } from "react";
 import { Bell } from "lucide-react";
 import { useNotifications } from "../context/NotificationsContext";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import type { AppNotification } from "../context/NotificationsContext";
+
+const TZ = "Asia/Kathmandu";
+
+function formatNepalDateTime(iso: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(iso));
+}
 
 export default function NotificationsBell() {
   const { notifications, unreadCount, markAllRead, markRead } = useNotifications();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const recent = useMemo(() => notifications.slice(0, 6), [notifications]);
 
@@ -14,17 +29,18 @@ export default function NotificationsBell() {
     try {
       await markAllRead();
     } catch {
-      // ignore (or show toast later)
+      // ignore for now (later toast)
     }
   };
 
-  const handleOpenLink = async (id: string, isRead: boolean) => {
+  const handleView = async (n: AppNotification) => {
     try {
-      if (!isRead) await markRead(id);
+      if (!n.isRead) await markRead(n._id);
     } catch {
       // ignore
     } finally {
       setOpen(false);
+      if (n.link) navigate(n.link);
     }
   };
 
@@ -70,29 +86,24 @@ export default function NotificationsBell() {
                     n.isRead ? "bg-white" : "bg-[#F0F7F4]"
                   }`}
                 >
-                  <div className="text-sm font-medium text-[#2D3436]">
-                    {n.title}
-                  </div>
+                  <div className="text-sm font-medium text-[#2D3436]">{n.title}</div>
 
                   {n.message && (
                     <div className="text-xs text-[#5A6062] mt-1">{n.message}</div>
                   )}
 
                   <div className="text-[11px] text-[#9CA3AF] mt-1">
-                    {new Date(n.createdAt).toLocaleString()}
+                    {formatNepalDateTime(n.createdAt)}
                   </div>
 
                   {n.link && (
-                    <Link
-                      to={n.link}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleOpenLink(n._id, n.isRead);
-                      }}
+                    <button
+                      type="button"
+                      onClick={() => handleView(n)}
                       className="text-xs text-[#7C9A82] hover:underline mt-2 inline-block"
                     >
                       View
-                    </Link>
+                    </button>
                   )}
                 </div>
               ))

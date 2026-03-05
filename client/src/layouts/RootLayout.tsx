@@ -1,5 +1,5 @@
 // src/layouts/RootLayout.tsx
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
@@ -13,6 +13,9 @@ function notifyAuthChanged() {
 export default function RootLayout() {
   const [booting, setBooting] = useState(true);
   const didBoot = useRef(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (didBoot.current) return; // StrictMode safe
@@ -29,9 +32,17 @@ export default function RootLayout() {
 
           localStorage.setItem("token", newToken);
           localStorage.setItem("user", JSON.stringify(res.data.user));
-          window.dispatchEvent(new Event("auth:changed"));
           notifyAuthChanged();
+
           token = newToken;
+
+          // Redirect only if user is on auth pages (avoid forcing dashboard always)
+          const onAuthPage =
+            location.pathname === "/login" ||
+            location.pathname === "/signup" ||
+            location.pathname === "/verify-email";
+
+          if (onAuthPage) navigate("/dashboard", { replace: true });
         }
 
         // Connect socket if we have token now
@@ -47,7 +58,7 @@ export default function RootLayout() {
         setBooting(false);
       }
     })();
-  }, []);
+  }, [navigate, location.pathname]);
 
   if (booting) {
     return (

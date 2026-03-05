@@ -18,4 +18,16 @@ const consultationRequestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+/**
+ * Prevent duplicates:
+ * only ONE "pending" request per (user, expert)
+ */
+consultationRequestSchema.index(
+  { user: 1, expert: 1, status: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: "pending" },
+  }
+);
+
 module.exports = mongoose.model("ConsultationRequest", consultationRequestSchema);

@@ -53,23 +53,52 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
   };
 
-  // initial load + socket live updates
-  useEffect(() => {
+    // initial load + socket live updates
+    useEffect(() => {
     refresh().catch(() => {});
 
-    const s = getSocket() ?? connectSocket();
+    // Ensure socket is connected with token
+    const token = localStorage.getItem("token");
+    const s = token ? connectSocket(token) : getSocket();
     if (!s) return;
 
-    const onNew = (payload: AppNotification) => {
-      setNotifications((prev) => [payload, ...prev].slice(0, 30));
-      setUnreadCount((c) => c + 1);
+    // DB notifications (from notifyUser -> "notification:new")
+    const onNotifNew = (payload: AppNotification) => {
+        setNotifications((prev) => [payload, ...prev].slice(0, 30));
+        setUnreadCount((c) => c + 1);
     };
 
-    s.on("notification:new", onNew);
-    return () => {
-      s.off("notification:new", onNew);
+    // realtime consultation (from controller -> "consultation:new")
+    const onConsultationNew = (data: any) => {
+        setUnreadCount((c) => c + 1);
+
+        setNotifications((prev) =>
+        [
+            {
+            _id: `rt_${data.requestId}`,
+            type: "consultation_new",
+            title: "New consultation request",
+            message: "You received a new consultation request. Open Inbox to respond.",
+            link: "/inbox",
+            meta: { requestId: data.requestId },
+            isRead: false,
+            createdAt: data.createdAt || new Date().toISOString(),
+            } as AppNotification,
+            ...prev,
+        ].slice(0, 30)
+        );
     };
-  }, []);
+
+    // Attach listeners
+    s.on("notification:new", onNotifNew);
+    s.on("consultation:new", onConsultationNew);
+
+    // Cleanup
+    return () => {
+        s.off("notification:new", onNotifNew);
+        s.off("consultation:new", onConsultationNew);
+    };
+    }, []);
 
   const value = useMemo(
     () => ({ notifications, unreadCount, refresh, markRead, markAllRead }),

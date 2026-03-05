@@ -31,6 +31,7 @@ export function Login() {
       const token: string = res.data.token;
 
       localStorage.setItem("token", token);
+      
 
       try {
         const meRes = await API.get("/api/users/me", {
@@ -41,8 +42,10 @@ export function Login() {
         console.warn("Could not fetch user profile, continuing anyway.", e);
       }
 
+      window.dispatchEvent(new Event("auth:changed"));
+
       // connect socket immediately after login
-      const s = connectSocket();
+      const s = connectSocket(token);
       if (s && !s.connected) {
         await new Promise<void>((resolve) => {
         s.once("connect", () => resolve());

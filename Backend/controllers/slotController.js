@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const AvailabilitySlot = require("../models/AvailabilitySlot");
 const { nepalDayToUtcRange } = require("../utils/timeNepal");
 const Appointment = require("../models/Appointment");
+const { notifyUser } = require("../utils/notify");
 
 const TZ = "Asia/Kathmandu";
 
@@ -289,6 +290,22 @@ exports.confirmSlot = async (req, res) => {
         $unset: { heldBy: "", holdExpiresAt: "" },
       }
     );
+
+    // Notify the user about booking confirmation
+    await notifyUser(req, user, {
+      title: "Booking confirmed",
+      message: `Your appointment for ${slot.startAt.toLocaleString("en-US", { timeZone: TZ })} is confirmed.`,
+      type: "appointment",
+      link: "/appointments",
+    });
+
+    // Notify the expert about new booking
+    await notifyUser(req, appointment.expert, {
+      title: "New appointment booked",
+      message: "A user booked an appointment with you.",
+      type: "appointment",
+      link: "/appointments",
+    });
 
     const io = req.app.get("io");
     if (io) {

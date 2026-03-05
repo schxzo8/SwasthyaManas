@@ -1,5 +1,7 @@
 const ConsultationRequest = require("../models/ConsultationRequest");
 const User = require("../models/User");
+const { notify } = require("../routes/appointmentRoutes");
+const { notifyUser } = require("../utils/notify");
 
 // USER -> CREATE REQUEST
 exports.createRequest = async (req, res) => {
@@ -29,6 +31,15 @@ exports.createRequest = async (req, res) => {
       user: req.user._id,
       expert: expertId,
       reason,
+    });
+
+    // notify user
+    await notifyUser(req, String(expertId), {
+      type: "consultation_new",
+      title: "New consultation request",
+      message: "You received a new consultation request. Open Inbox to respond.",
+      link: "/inbox",
+      meta: { requestId: String(request._id) },
     });
 
     res.status(201).json({ message: "Request sent successfully", request });
@@ -100,6 +111,23 @@ exports.updateRequestStatus = async (req, res) => {
     }
 
     await request.save();
+
+    // notify user about status change
+    await notifyUser(req, String(request.user), {
+      type: "consultation_update",
+      title: "Consultation updated",
+      message: `Your consultation request has been ${status}.`,
+      link: "/inbox",
+      meta: { requestId: String(request._id) },
+    });
+
+    await notifyUser(req, String(request.expert), {
+      type: "consultation_update",
+      title: "Consultation updated",
+      message: `You have ${status} a consultation request.`,
+      link: "/inbox",
+      meta: { requestId: String(request._id) },
+    });
 
     const io = req.app.get("io");
     if (io) {

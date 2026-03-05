@@ -2,56 +2,77 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Leaf, User } from "lucide-react";
 import { Button } from "./Button";
+import API from "../services/api";
+import NotificationsBell from "./NotificationsBell";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isAuthenticated = !!localStorage.getItem("token");
+  const [authed, setAuthed] = useState<boolean>(() => !!localStorage.getItem("token"));
+  const [user, setUser] = useState<any>(() => {
+    try {
+      const raw = localStorage.getItem("user");
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
 
   useEffect(() => {
-    // close mobile menu when route changes
     setIsOpen(false);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
+  useEffect(() => {
+    const sync = () => {
+      setAuthed(!!localStorage.getItem("token"));
+      try {
+        const raw = localStorage.getItem("user");
+        setUser(raw ? JSON.parse(raw) : null);
+      } catch {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("auth:changed", sync);
+    return () => window.removeEventListener("auth:changed", sync);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      // clear refresh cookie on backend (make this route)
+      await API.post("/api/auth/logout");
+    } catch {
+      // ignore
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.dispatchEvent(new Event("auth:changed"));
+      navigate("/");
+    }
   };
 
-  const rawUser = localStorage.getItem("user");
-  let user: any = null;
-  try {
-    user = rawUser ? JSON.parse(rawUser) : null;
-  } catch {
-    user = null;
-  }
   const role = user?.role;
 
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Contents", path: "/content" },
 
-    ...(isAuthenticated && role === "admin"
-      ? [{ name: "Admin PV", path: "/admin" }]
-      : []),
+    ...(authed && role === "admin" ? [{ name: "Admin PV", path: "/admin" }] : []),
 
     { name: "Assessments", path: "/assessments" },
     { name: "Experts", path: "/experts" },
-    ...(isAuthenticated ? [{ name: "Dashboard", path: "/dashboard" }] : []),
+    { name: "Appointments", path: "/appointments" },
+    ...(authed ? [{ name: "Dashboard", path: "/dashboard" }] : []),
   ];
 
-
-  const linkBase =
-    "no-underline text-sm font-medium transition-colors duration-200";
+  const linkBase = "no-underline text-sm font-medium transition-colors duration-200";
 
   return (
     <nav className="bg-[#FAF7F2] border-b border-[#E8F0E9] sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          {/* Brand */}
           <Link to="/" className="no-underline flex items-center gap-2">
             <div className="bg-[#7C9A82] p-2 rounded-full">
               <Leaf className="h-6 w-6 text-white" />
@@ -61,7 +82,6 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => {
               const active = location.pathname === link.path;
@@ -70,9 +90,7 @@ export function Navbar() {
                   key={link.name}
                   to={link.path}
                   className={`${linkBase} ${
-                    active
-                      ? "text-[#7C9A82]"
-                      : "text-[#2D3436] hover:text-[#7C9A82]"
+                    active ? "text-[#7C9A82]" : "text-[#2D3436] hover:text-[#7C9A82]"
                   }`}
                 >
                   {link.name}
@@ -81,12 +99,12 @@ export function Navbar() {
             })}
 
             <div className="flex items-center gap-4">
-              {isAuthenticated ? (
+              {authed ? (
                 <>
-                  <Link
-                    to="/inbox"
-                    className={`${linkBase} text-[#2D3436] hover:text-[#7C9A82]`}
-                  >
+                  {/* Notifications */}
+                  <NotificationsBell />
+
+                  <Link to="/inbox" className={`${linkBase} text-[#2D3436] hover:text-[#7C9A82]`}>
                     Inbox
                   </Link>
 
@@ -115,7 +133,6 @@ export function Navbar() {
             </div>
           </div>
 
-          {/* Mobile toggle */}
           <button
             type="button"
             onClick={() => setIsOpen((v) => !v)}
@@ -127,7 +144,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden bg-[#FAF7F2] border-t border-[#E8F0E9]">
           <div className="px-4 py-3 space-y-2">
@@ -142,18 +158,17 @@ export function Navbar() {
             ))}
 
             <div className="pt-3 mt-3 border-t border-[#E8F0E9] space-y-2">
-              {isAuthenticated ? (
+              {authed ? (
                 <>
-                  <Link
-                    to="/inbox"
-                    className="no-underline block px-3 py-2 text-[#2D3436]"
-                  >
+                <div className="flex items-center justify-between px-3 py-2">
+                  <span className="text-sm font-medium text-[#2D3436]">Notifications</span>
+                  <NotificationsBell />
+                </div>
+                  <Link to="/inbox" className="no-underline block px-3 py-2 text-[#2D3436]">
                     Inbox
                   </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-3 py-2 text-[#2D3436]"
-                  >
+
+                  <button onClick={handleLogout} className="block w-full text-left px-3 py-2 text-[#2D3436]">
                     Log Out
                   </button>
                 </>

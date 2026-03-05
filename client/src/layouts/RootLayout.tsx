@@ -6,6 +6,10 @@ import { Footer } from "../components/Footer";
 import API from "../services/api";
 import { connectSocket } from "../services/socket";
 
+function notifyAuthChanged() {
+  window.dispatchEvent(new Event("auth:changed"));
+}
+
 export default function RootLayout() {
   const [booting, setBooting] = useState(true);
   const didBoot = useRef(false);
@@ -16,23 +20,29 @@ export default function RootLayout() {
 
     (async () => {
       try {
-        const token = localStorage.getItem("token");
+        let token = localStorage.getItem("token");
 
         // If no access token, try refresh (cookie-based)
         if (!token) {
           const res = await API.get("/api/auth/refresh");
-          localStorage.setItem("token", res.data.token);
+          const newToken: string = res.data.token;
+
+          localStorage.setItem("token", newToken);
           localStorage.setItem("user", JSON.stringify(res.data.user));
+          window.dispatchEvent(new Event("auth:changed"));
+          notifyAuthChanged();
+          token = newToken;
         }
 
         // Connect socket if we have token now
-        if (localStorage.getItem("token")) {
-          connectSocket();
+        if (token) {
+          connectSocket(token);
         }
       } catch {
         // Guest mode (no token)
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        notifyAuthChanged();
       } finally {
         setBooting(false);
       }

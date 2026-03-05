@@ -2,9 +2,10 @@
 import { Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
-import { Footer } from "../components/Footer"; 
+import { Footer } from "../components/Footer";
 import API from "../services/api";
 import { connectSocket } from "../services/socket";
+import { NotificationsProvider } from "../context/NotificationsContext";
 
 export default function AppLayout() {
   const [booting, setBooting] = useState(true);
@@ -18,6 +19,7 @@ export default function AppLayout() {
       try {
         let token = localStorage.getItem("token");
 
+        // try refresh token if access token missing
         if (!token) {
           const res = await API.get("/api/auth/refresh");
           const newToken: string = res.data.token;
@@ -26,7 +28,8 @@ export default function AppLayout() {
           localStorage.setItem("user", JSON.stringify(res.data.user));
         }
 
-        connectSocket(); // uses latest token
+        // 🔌 connect socket after token ready
+        connectSocket();
       } catch {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -45,14 +48,17 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
+    <NotificationsProvider> {/* global notification system */}
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
 
-      {/* page content */}
-      <main className="flex-1">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
+        {/* page content */}
+        <main className="flex-1">
+          <Outlet />
+        </main>
+
+        <Footer />
+      </div>
+    </NotificationsProvider>
   );
 }

@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 function initSocket(server) {
     const io = new Server(server, {
         cors: {
-            origin: ["http://localhost:3000"],
+            origin: ["http://localhost:3000", "http"],
             credentials: true
         },
     });
@@ -13,13 +13,13 @@ function initSocket(server) {
     io.use((socket,next) => {
         try {
             const token = socket.handshake.auth?.token;
-            if (!token) return next(new Error("No token:"));
+            if (!token) return next(new Error("No token"));
 
             const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
             socket.user = decoded;
             next();
         } catch (err) {
-            next(new Error("Invalid token:"));
+            next(new Error("Invalid token"));
         }
     });
 

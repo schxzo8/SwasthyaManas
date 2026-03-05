@@ -74,6 +74,14 @@ exports.confirmBooking = async (req, res) => {
       );
     });
 
+    await notifyUser(req, payload.expertId, {
+      type: "appointment_new",
+      title: "New appointment",
+      message: "A new appointment has been booked. Open Appointments to view details.",
+      link: "/appointments",
+      meta: { appointmentId: String(appointment._id) },
+    });
+
     const io = req.app.get("io");
     if (io && appointment) {
       const payload = {
@@ -102,14 +110,29 @@ exports.confirmBooking = async (req, res) => {
   }
 };
 
+function buildViewFilter(view, now) {
+  if (view === "upcoming") return { endAt: { $gte: now } };
+  if (view === "past") return { endAt: { $lt: now } };
+  return {};
+}
+
 // USER: my appointments
 exports.getMyAppointments = async (req, res) => {
   try {
     const userId = req.user._id;
-    const list = await Appointment.find({ user: userId })
+    const view = String(req.query.view || "upcoming");
+    const now = new Date();
+
+    const filter = { user: userId, ...buildViewFilter(view, now) };
+
+    // upcoming sorted asc, past sorted desc, all desc
+    const sort =
+    view === "upcoming" ? { startAt: 1 } : { startAt: -1 };
+
+    const list = await Appointment.find(filter)
       .populate("expert", "firstName lastName email expertise")
       .populate("slot", "startAt endAt durationMins fee currency")
-      .sort({ startAt: 1 });
+      .sort(sort);
 
     return res.json({ appointments: list });
   } catch (err) {
@@ -121,13 +144,21 @@ exports.getMyAppointments = async (req, res) => {
 exports.getExpertAppointments = async (req, res) => {
   try {
     const expertId = req.user._id;
-    const list = await Appointment.find({ expert: expertId })
+    const view = String(req.query.view || "upcoming");
+    const now = new Date();
+
+    const filter = { expert: expertId, ...buildViewFilter(view, now) };
+
+    const sort =
+    view === "upcoming" ? { startAt: 1 } : { startAt: -1 };
+    const list = await Appointment.find(filter)
       .populate("user", "firstName lastName email")
       .populate("slot", "startAt endAt durationMins fee currency")
-      .sort({ startAt: 1 });
+      .sort(sort);
 
     return res.json({ appointments: list });
   } catch (err) {
     return res.status(500).json({ message: "Server error" });
   }
 };
+

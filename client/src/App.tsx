@@ -24,9 +24,13 @@ import Experts from "./pages/Experts";
 import MyConsultations from "./pages/MyConsultations";
 import Inbox from "./pages/Inbox";
 import BookingPage from "./pages/BookingPage";
+import AppointmentPage from "./pages/AppointmentPage";
+
+import { NotificationsProvider } from "./context/NotificationsContext";
 
 function App() {
   return (
+    <NotificationsProvider> {/* global notification system */}
     <BrowserRouter>
     <ScrollToTop />
       <Routes>
@@ -61,6 +65,7 @@ function App() {
             <Route path="/book/:expertId" element={<BookingPage />} />
             <Route path="/consultations" element={<MyConsultations />} />
             <Route path="/inbox" element={<Inbox />} />
+            <Route path="/appointments" element={<AppointmentPage />} />
           </Route>
 
           {/* ADMIN */}
@@ -75,6 +80,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </NotificationsProvider>
   );
 }
 

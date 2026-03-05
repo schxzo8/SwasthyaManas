@@ -18,6 +18,7 @@ const consultationRoutes = require("./routes/consultationRoutes");
 const availabilityRoutes = require("./routes/availabilityRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const slotRoutes = require("./routes/slotRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use("/api/consultations", consultationRoutes);
 app.use("/api/availability", availabilityRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/slots", slotRoutes)
+app.use("/api/notifications", notificationRoutes);
 
 app.get("/", (req, res) => res.send("SwasthyaManas API running..."));
 

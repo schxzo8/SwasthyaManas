@@ -9,7 +9,11 @@ const {
 const router = express.Router();
 
 router.post("/confirm", protect, authorizeRoles("user"), confirmBooking);
+
+// User
 router.get("/my", protect, authorizeRoles("user"), getMyAppointments);
+
+// Expert
 router.get("/expert", protect, authorizeRoles("expert"), getExpertAppointments);
 
 module.exports = router;

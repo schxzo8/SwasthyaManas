@@ -25,6 +25,9 @@ import MyConsultations from "./pages/MyConsultations";
 import Inbox from "./pages/Inbox";
 import BookingPage from "./pages/BookingPage";
 import AppointmentPage from "./pages/AppointmentPage";
+import UserSettings from "./pages/UserSettings";
+import MySlots from "./pages/MySlots";
+import PaymentVerify from "./pages/PaymentVerify";
 
 import { NotificationsProvider } from "./context/NotificationsContext";
 
@@ -65,6 +68,10 @@ function App() {
               <Route path="/consultations" element={<MyConsultations />} />
               <Route path="/inbox" element={<Inbox />} />
               <Route path="/appointments" element={<AppointmentPage />} />
+              <Route path="/settings" element={<UserSettings />} />
+              <Route path="/my-slots" element={<MySlots />} />
+              <Route path="/appointments/payment-verify" element={<PaymentVerify />} /> 
+              
             </Route>
 
             {/* ADMIN */}

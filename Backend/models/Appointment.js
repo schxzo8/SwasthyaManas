@@ -28,12 +28,14 @@ const appointmentSchema = new mongoose.Schema(
       amount: { type: Number, default: 0 },
       currency: { type: String, default: "NPR" },
       reference: { type: String, default: "" },
+      khaltiPidx: { type: String, default: "" },
     },
 
     userNotes: { type: String, default: "" },
     expertNotes: { type: String, default: "" },
   },
   { timestamps: true }
+
 );
 
 module.exports = mongoose.model("Appointment", appointmentSchema);

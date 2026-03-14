@@ -169,6 +169,24 @@ exports.holdSlot = async (req, res) => {
   }
 };
 
+exports.deleteSlot = async (req, res) => {
+  try {
+    const { slotId } = req.params;
+    const slot = await AvailabilitySlot.findOne({
+      _id: slotId,
+      expert: req.user._id,
+    });
+    if (!slot) return res.status(404).json({ message: "Slot not found" });
+    if (slot.status === "booked")
+      return res.status(400).json({ message: "Cannot delete a booked slot" });
+
+    await AvailabilitySlot.findByIdAndDelete(slotId);
+    res.json({ message: "Slot deleted" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // === Transcation Model FOR LATER!!! ===
 // exports.confirmSlot = async (req, res) => {
 //   const session = await mongoose.startSession();
@@ -292,10 +310,10 @@ exports.confirmSlot = async (req, res) => {
     );
 
     // Notify the user about booking confirmation
-    await notifyUser(req, user, {
+    await notifyUser(req, userId, {
       title: "Booking confirmed",
       message: `Your appointment for ${slot.startAt.toLocaleString("en-US", { timeZone: TZ })} is confirmed.`,
-      type: "appointment",
+      type: "appointment_new",
       link: "/appointments",
     });
 
@@ -303,9 +321,9 @@ exports.confirmSlot = async (req, res) => {
     await notifyUser(req, appointment.expert, {
       title: "New appointment booked",
       message: "A user booked an appointment with you.",
-      type: "appointment",
+      type: "appointment_new",
       link: "/appointments",
-    });
+    }); 
 
     const io = req.app.get("io");
     if (io) {

@@ -305,25 +305,37 @@ export default function BookingPage() {
     setErr("");
 
     try {
-      await API.post(`/api/slots/${selectedSlotId}/confirm`);
-
-      const slot = daySlots.find((s) => s._id === selectedSlotId) || null;
-      const d = slot ? new Date(slot.startAt) : null;
-
-      setConfirmed(true);
-      setConfirmedInfo({
-        dayLabel: d ? formatNepalDate(d) : "—",
-        timeLabel: d ? formatNepalTime(d) : "—",
-        feeLabel: slot ? `${slot.currency || "NPR"} ${slot.fee ?? 0}` : "—",
+      // Step 1: initiate payment
+      const res = await API.post("/api/appointments/khalti/initiate", {
+        slotId: selectedSlotId,
       });
 
-      setHoldExpiresAt(null);
-      setSelectedSlotId(null);
+      if (res.data.free) {
+        // free slot — confirm directly
+        await API.post("/api/appointments/confirm", { slotId: selectedSlotId });
 
-      await loadExpertAndDays();
-      await loadSlotsForDay(selectedDayKey);
+        const slot = daySlots.find((s) => s._id === selectedSlotId) || null;
+        const d = slot ? new Date(slot.startAt) : null;
+
+        setConfirmed(true);
+        setConfirmedInfo({
+          dayLabel: d ? formatNepalDate(d) : "—",
+          timeLabel: d ? formatNepalTime(d) : "—",
+          feeLabel: slot ? `${slot.currency || "NPR"} ${slot.fee ?? 0}` : "—",
+        });
+
+        setHoldExpiresAt(null);
+        setSelectedSlotId(null);
+        await loadExpertAndDays();
+        await loadSlotsForDay(selectedDayKey);
+
+      } else {
+        // paid slot — redirect to Khalti
+        window.location.href = res.data.payment_url;
+      }
+
     } catch (e: any) {
-      setErr(e?.response?.data?.message || "Failed to confirm booking");
+      setErr(e?.response?.data?.message || "Failed to initiate booking");
       await loadSlotsForDay(selectedDayKey);
     }
   };

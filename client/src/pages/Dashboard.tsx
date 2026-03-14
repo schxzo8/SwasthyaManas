@@ -23,6 +23,14 @@ type AssessmentResult = {
   createdAt: string;
 };
 
+// type Appointment = {
+//   _id: string,
+//   slot: { startAt: string; endAt: string };
+//   startAt: string;
+//   endAt: string;
+//   status: "upcoming" | "completed" | "cancelled";
+// }
+
 type ConsultationUser = {
   _id: string;
   firstName: string;
@@ -431,6 +439,9 @@ export default function Dashboard() {
                 </p>
                 <Link to="/inbox" className="no-underline">
                   <Button className="w-full">Open Inbox</Button>
+                </Link>
+                <Link to="/my-slots" className="no-underline mt-3 block">
+                  <Button variant="outline" className="w-full">Manage My Slots</Button>
                 </Link>
               </Card>
             )}

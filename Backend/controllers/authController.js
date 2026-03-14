@@ -298,3 +298,134 @@ exports.logout = async (req, res) => {
     return res.json({ message: "Logged out" });
   }
 };
+
+// PUT /api/user/profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, email } = req.body;
+    if (!firstName || !lastName || !email)
+      return res.status(400).json({ message: "All fields are required" });
+
+    const existing = await User.findOne({
+      email: email.toLowerCase(),
+      _id: { $ne: req.user.id },
+    });
+    if (existing)
+      return res.status(400).json({ message: "Email already in use by another account" });
+
+    const updated = await User.findByIdAndUpdate(
+      req.user.id,
+      { firstName, lastName, email: email.toLowerCase() },
+      { new: true, runValidators: true }
+    ).select("-password -refreshTokenHash -emailVerificationToken");
+
+    res.json(updated);
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// PUT /api/user/password
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword)
+      return res.status(400).json({ message: "Both fields are required" });
+    if (newPassword.length < 8)
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+
+    const user = await User.findById(req.user.id);
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match)
+      return res.status(401).json({ message: "Current password is incorrect" });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// DELETE /api/user
+exports.deleteAccount = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user.id);
+    res.json({ message: "Account deleted" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ADMIN: Get all users
+exports.adminGetUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: { $in: ["user", "admin"] } })
+      .select("-password -refreshTokenHash -emailVerificationToken")
+      .sort({ createdAt: -1 });
+    console.log("adminGetUsers hit, found:", users.length); 
+    res.json(users);
+  } catch (err) {
+    console.error("ADMIN GET USERS ERROR:", err.message); 
+    res.status(500).json({ message: err.message }); // return actual error
+  }
+};
+
+// ADMIN: Get all experts 
+exports.adminGetExperts = async (req, res) => {
+  try {
+    const experts = await User.find({ role: "expert" })
+      .select("-password -refreshTokenHash -emailVerificationToken")
+      .sort({ createdAt: -1 });
+    console.log("adminGetExperts hit, found:", experts.length);
+    res.json(experts);
+  } catch (err) {
+    console.error("ADMIN GET EXPERTS ERROR:", err.message);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// ADMIN: Update user (role, isActive)
+exports.adminUpdateUser = async (req, res) => {
+  try {
+    const { role, isActive } = req.body;
+    const updated = await User.findByIdAndUpdate(
+      req.params.id,
+      { ...(role !== undefined && { role }), ...(isActive !== undefined && { isActive }) },
+      { new: true }
+    ).select("-password -refreshTokenHash -emailVerificationToken");
+    if (!updated) return res.status(404).json({ message: "User not found" });
+    res.json(updated);
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ADMIN: Delete user
+exports.adminDeleteUser = async (req, res) => {
+  try {
+    if (req.params.id === req.user.id)
+      return res.status(400).json({ message: "Cannot delete your own account" });
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "User deleted" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ADMIN: Update expert details 
+exports.adminUpdateExpert = async (req, res) => {
+  try {
+    const { firstName, lastName, email, expertise, isActive } = req.body;
+    const updated = await User.findByIdAndUpdate(
+      req.params.id,
+      { firstName, lastName, email, expertise, isActive },
+      { new: true, runValidators: true }
+    ).select("-password -refreshTokenHash -emailVerificationToken");
+    if (!updated) return res.status(404).json({ message: "Expert not found" });
+    res.json(updated);
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};

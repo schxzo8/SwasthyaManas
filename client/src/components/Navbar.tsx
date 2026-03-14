@@ -26,7 +26,9 @@ export function Navbar() {
 
   useEffect(() => {
     const sync = () => {
-      setAuthed(!!localStorage.getItem("token"));
+      const token = localStorage.getItem("token");
+      setAuthed(!!token && token !== "undefined" && token !== "null");
+
       try {
         const raw = localStorage.getItem("user");
         setUser(raw ? JSON.parse(raw) : null);
@@ -35,8 +37,14 @@ export function Navbar() {
       }
     };
 
+    sync(); // sync immediately on mount
     window.addEventListener("auth:changed", sync);
-    return () => window.removeEventListener("auth:changed", sync);
+    window.addEventListener("storage", sync); // also sync across tabs
+
+    return () => {
+      window.removeEventListener("auth:changed", sync);
+      window.removeEventListener("storage", sync);
+    }
   }, []);
 
   const handleLogout = async () => {
@@ -112,9 +120,11 @@ export function Navbar() {
                     Log Out
                   </Button>
 
-                  <div className="h-8 w-8 rounded-full bg-[#C4B5A0] flex items-center justify-center text-white">
-                    <User size={16} />
-                  </div>
+                  <Link to="/settings">
+                    <div className="h-8 w-8 rounded-full bg-[#C4B5A0] flex items-center justify-center text-white hover:opacity-80 transition-opacity cursor-pointer">
+                      <User size={16} />
+                    </div>
+                  </Link>
                 </>
               ) : (
                 <>

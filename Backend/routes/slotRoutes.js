@@ -12,4 +12,9 @@ router.post("/:slotId/hold", protect, authorizeRoles("user"), slot.holdSlot);
 
 // confirm
 router.post("/:slotId/confirm", protect, authorizeRoles("user"), slot.confirmSlot);
+
+// add this line
+router.delete("/:slotId", protect, authorizeRoles("expert"), slot.deleteSlot);
+
+
 module.exports = router;

@@ -4,7 +4,7 @@ const AvailabilitySlot = require("../models/AvailabilitySlot");
 const Appointment = require("../models/Appointment");
 const { notifyUser } = require("../utils/notify");
 
-// ── Khalti: initiate payment ──────────────────────────────
+// Khalti: initiate payment
 // POST /api/appointments/khalti/initiate { slotId }
 exports.initiateKhaltiPayment = async (req, res) => {
   try {
@@ -113,7 +113,7 @@ exports.verifyKhaltiPayment = async (req, res) => {
   }
 };
 
-// ── Confirm booking (free slots) ──────────────────────────
+// Confirm booking (free slots) 
 // POST /api/appointments/confirm { slotId, userNotes? }
 exports.confirmBooking = async (req, res) => {
   try {
@@ -134,7 +134,7 @@ exports.confirmBooking = async (req, res) => {
   }
 };
 
-// ── Shared appointment creation logic ─────────────────────
+// Shared appointment creation logic 
 async function _createAppointment(req, userId, slotId, paymentData, userNotes = "") {
   const session = await mongoose.startSession();
   let appointment = null;

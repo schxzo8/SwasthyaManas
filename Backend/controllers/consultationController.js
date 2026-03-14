@@ -150,7 +150,7 @@ exports.updateRequestStatus = async (req, res) => {
           link: "/inbox",
         };
         expertNotif = {
-          type: "consultation_accepted",
+          type: "consultation_update",
           title: "Consultation accepted",
           message: `You have accepted ${userName}'s consultation request. Open Inbox to view details.`,
           link: "/inbox",
@@ -163,7 +163,7 @@ exports.updateRequestStatus = async (req, res) => {
           link: "/inbox",
         };
         expertNotif = {
-          type: "consultation_rejected",
+          type: "consultation_update",
           title: "Consultation rejected",
           message: `You have rejected ${userName}'s consultation request. Open Inbox to view details.`,
           link: "/inbox",
@@ -177,7 +177,7 @@ exports.updateRequestStatus = async (req, res) => {
           link: "/inbox",
         };
         expertNotif = {
-          type: "consultation_closed",
+          type: "consultation_update",
           title: "Consultation closed",
           message: `You have closed ${userName}'s consultation request. Open Inbox to view details.`,
           link: "/inbox",

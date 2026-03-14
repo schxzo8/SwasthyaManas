@@ -17,7 +17,7 @@ async function notifyUser(req, userId, data) {
     meta: data.meta || {},
   };
 
-  // ✅ DEDUPE when requestId exists
+  // DEDUPE when requestId exists
   const requestId = payload.meta?.requestId ? String(payload.meta.requestId) : null;
 
   let createdOrExisting;
@@ -43,7 +43,7 @@ async function notifyUser(req, userId, data) {
     wasInserted = true;
   }
 
-  // ✅ Emit only when newly created (prevents duplicate popups)
+  // Emit only when newly created (prevents duplicate popups)
   if (io && wasInserted) {
     io.to(`user_${String(userId)}`).emit("notification:new", {
       _id: String(createdOrExisting._id),

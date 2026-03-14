@@ -381,7 +381,7 @@ export default function Dashboard() {
 
                 {booking.state === "confirmed" && (
                   <>
-                    <p className="text-sm text-[#5A6062] mb-2">✅ Appointment confirmed by expert.</p>
+                    <p className="text-sm text-[#5A6062] mb-2">Appointment confirmed by expert.</p>
                     <p className="text-xs text-[#9CA3AF] mb-4">
                       Payment: <span className="font-medium">Not collected yet (Coming soon)</span>
                     </p>

@@ -429,3 +429,36 @@ exports.adminUpdateExpert = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// ADMIN: Create user or expert 
+exports.adminCreateUser = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, role, expertise } = req.body;
+    if (!firstName || !lastName || !email || !password)
+      return res.status(400).json({ message: "All fields are required" });
+
+    const existing = await User.findOne({ email: email.toLowerCase() });
+    if (existing)
+      return res.status(409).json({ message: "Email already registered" });
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      password: hashed,
+      role: role || "user",
+      isVerified: true,       // admin-created users skip email verification
+      isActive: true,
+      ...(expertise && { expertise }),
+    });
+
+    const safe = await User.findById(user._id)
+      .select("-password -refreshTokenHash -emailVerificationToken");
+
+    res.status(201).json(safe);
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};

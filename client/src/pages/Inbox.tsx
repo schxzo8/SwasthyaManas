@@ -115,15 +115,15 @@ export default function Inbox() {
   }, [fetchMeAndInbox]);
 
   // role-based UI labels
-  const pageTitle = isExpert ? "Expert Inbox" : "Inbox";
+  const pageTitle = isExpert ? "Expert Inbox" : "My Inbox";
   const pageSubtitle = isExpert
-    ? "Manage consultation requests and replies."
-    : "Track your consultation requests and expert replies.";
-  const messageTitle = isExpert ? "User message" : "Your message";
-  const replyLabel = isExpert ? "Expert reply" : "Reply from expert";
+    ? "Manage incoming requests and send replies"
+    : "Track your consultation requests and expert responses";
+  const messageTitle = isExpert ? "User Message" : "Your Request";
+  const replyLabel = isExpert ? "Your Reply" : "Expert Response";
   const searchPlaceholder = isExpert
-    ? "Search users, email, status..."
-    : "Search experts, status...";
+    ? "Search by name, email, or status..."
+    : "Search by expert name, status...";
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
@@ -235,255 +235,356 @@ export default function Inbox() {
 
   const userStatusHint = useMemo(() => {
     if (!selected || isExpert) return "";
-    if (isPending) return "Pending: waiting for expert to accept.";
-    if (isRejected) return "Rejected: expert rejected your request.";
-    if (isClosed) return "Closed: this consultation has been closed.";
-    if (isAccepted && !selected.expertReply) return "Accepted: waiting for expert reply.";
+    if (isPending) return "⏳ Waiting for expert to review your request";
+    if (isRejected) return "❌ This request was declined. You can send a new request to another expert";
+    if (isClosed) return "✓ This consultation has been closed";
+    if (isAccepted && !selected.expertReply) return "✓ Request accepted! Waiting for expert's response";
+    if (isAccepted && selected.expertReply) return "✓ Expert has responded to your request";
     return "";
   }, [selected, isExpert, isPending, isRejected, isClosed, isAccepted]);
 
+  const statusConfig = {
+    pending: {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      badge: "bg-amber-100 text-amber-900",
+      badgeBorder: "border-amber-200",
+    },
+    accepted: {
+      bg: "bg-emerald-50",
+      border: "border-emerald-200",
+      badge: "bg-emerald-100 text-emerald-900",
+      badgeBorder: "border-emerald-200",
+    },
+    rejected: {
+      bg: "bg-red-50",
+      border: "border-red-200",
+      badge: "bg-red-100 text-red-900",
+      badgeBorder: "border-red-200",
+    },
+    closed: {
+      bg: "bg-slate-50",
+      border: "border-slate-200",
+      badge: "bg-slate-100 text-slate-900",
+      badgeBorder: "border-slate-200",
+    },
+  };
+
+  const currentStatusConfig = selected ? statusConfig[selected.status as keyof typeof statusConfig] : statusConfig.pending;
+
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 className="font-serif text-3xl font-bold text-[#2D3436]">
-              {pageTitle}
-            </h1>
-            <p className="text-[#5A6062] mt-1">{pageSubtitle}</p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] via-[#FCFAF7] to-[#F9F6F0] py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h1 className="font-serif text-5xl font-bold text-[#1a1a1a] mb-2">
+                {pageTitle}
+              </h1>
+              <p className="text-[#6B7280] text-lg">{pageSubtitle}</p>
+            </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/dashboard")}
-              className="gap-2"
-            >
-              <ArrowLeft size={16} />
-              Back
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/dashboard")}
+                className="gap-2 hover:shadow-md transition-all"
+              >
+                <ArrowLeft size={18} />
+                Back
+              </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchMeAndInbox}
-              className="gap-2"
-              isLoading={loading}
-            >
-              <RefreshCcw size={16} />
-              Refresh
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchMeAndInbox}
+                className="gap-2 hover:shadow-md transition-all"
+                isLoading={loading}
+              >
+                <RefreshCcw size={18} />
+                Refresh
+              </Button>
+            </div>
           </div>
         </div>
 
+        {/* Error Alert */}
         {err && (
-          <div className="mb-6 text-sm rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3">
-            {err}
+          <div className="mb-6 rounded-2xl border border-red-300 bg-gradient-to-r from-red-50 to-red-100 text-red-900 px-6 py-4 shadow-md">
+            <p className="font-medium">Error</p>
+            <p className="text-sm mt-1">{err}</p>
           </div>
         )}
 
+        {/* Status Hint */}
         {!isExpert && selected && userStatusHint && (
-          <div className="mb-6 text-sm rounded-xl border border-[#E8F0E9] bg-white text-[#5A6062] px-4 py-3">
-            {userStatusHint}
+          <div className="mb-6 rounded-2xl border border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-900 px-6 py-4 shadow-md">
+            <p className="text-base font-medium">{userStatusHint}</p>
           </div>
         )}
 
-        <Card className="h-[75vh] flex overflow-hidden p-0">
-          {/* Left list */}
-          <div className="w-full md:w-1/3 border-r border-[#E8F0E9] flex flex-col">
-            <div className="p-4 border-b border-[#E8F0E9] bg-white">
+        {/* Main Card */}
+        <Card className="h-[calc(100vh-300px)] min-h-[500px] flex overflow-hidden p-0 shadow-2xl rounded-3xl border-0">
+          {/* Left Sidebar - List */}
+          <div className="w-full md:w-[35%] border-r border-[#E8E6E1] flex flex-col bg-white overflow-hidden">
+            {/* Search Bar */}
+            <div className="p-5 border-b border-[#E8E6E1] bg-gradient-to-b from-[#FCFAF7] to-white flex-shrink-0 sticky top-0">
               <div className="relative">
+                <Search className="absolute left-4 top-3.5 h-5 w-5 text-[#B0ABA0]" />
                 <input
                   type="text"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder={searchPlaceholder}
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-[#C4B5A0] bg-[#FAF7F2] focus:ring-2 focus:ring-[#7C9A82] outline-none"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-[#D4CCBF] bg-white text-[#1a1a1a] shadow-sm focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all placeholder-[#9CA3AF] font-medium"
                 />
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#9CA3AF]" />
               </div>
             </div>
 
+            {/* List Container */}
             <div className="flex-1 overflow-y-auto">
               {filtered.length === 0 ? (
-                <div className="p-6 text-sm text-[#5A6062]">
-                  {isExpert ? "No incoming requests yet." : "No consultation requests yet."}
+                <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+                  <div className="h-24 w-24 bg-gradient-to-br from-[#E8F0E9] to-[#D4DFD8] rounded-full flex items-center justify-center mb-6 shadow-lg">
+                    <Mail size={48} className="text-[#7C9A82]" />
+                  </div>
+                  <p className="text-[#1a1a1a] font-semibold text-lg mb-2">
+                    {isExpert ? "No Incoming Requests" : "No Consultations Yet"}
+                  </p>
+                  <p className="text-[#6B7280] text-sm">
+                    {isExpert ? "Requests will appear here when users need your expertise" : "Start by requesting a consultation with an expert"}
+                  </p>
                 </div>
               ) : (
-                filtered.map((r) => {
-                  const other = isExpert ? r.user : r.expert;
-                  const name = `${other?.firstName ?? "Unknown"} ${other?.lastName ?? ""}`.trim();
-                  const active = r._id === selectedId;
+                <div className="divide-y divide-[#E8E6E1]">
+                  {filtered.map((r) => {
+                    const other = isExpert ? r.user : r.expert;
+                    const name = `${other?.firstName ?? "Unknown"} ${other?.lastName ?? ""}`.trim();
+                    const active = r._id === selectedId;
 
-                  return (
-                    <button
-                      key={r._id}
-                      type="button"
-                      onClick={() => setSelectedId(r._id)}
-                      className={`w-full text-left p-4 border-b border-[#E8F0E9] hover:bg-[#FAF7F2] transition-colors ${
-                        active ? "bg-[#F0F7F4]" : "bg-white"
-                      }`}
-                    >
-                      <div className="flex justify-between items-start gap-2">
-                        <div className="flex items-center gap-3 min-w-0">
+                    const statusIndicator = {
+                      pending: { color: "from-amber-400 to-amber-500", text: "Pending" },
+                      accepted: { color: "from-emerald-400 to-emerald-500", text: "Accepted" },
+                      rejected: { color: "from-red-400 to-red-500", text: "Rejected" },
+                      closed: { color: "from-slate-400 to-slate-500", text: "Closed" },
+                    }[r.status];
+
+                    return (
+                      <button
+                        key={r._id}
+                        type="button"
+                        onClick={() => setSelectedId(r._id)}
+                        className={`w-full text-left px-5 py-4 transition-all duration-200 hover:bg-[#F9F6F0] active:bg-[#F0F7F4] ${
+                          active ? "bg-gradient-to-r from-[#F0F7F4] to-[#E8F0E9] shadow-md relative" : "bg-white"
+                        }`}
+                      >
+                        {/* Active indicator */}
+                        {active && (
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#7C9A82] to-[#5A7A60]"></div>
+                        )}
+
+                        <div className="flex gap-4">
+                          {/* Avatar */}
                           <div
-                            className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                            className={`h-12 w-12 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all shadow-md ${
                               active
-                                ? "bg-[#7C9A82] text-white"
-                                : "bg-[#E8F0E9] text-[#5A6062]"
+                                ? "bg-gradient-to-br from-[#7C9A82] to-[#5A7A60] text-white scale-110"
+                                : "bg-gradient-to-br from-[#F0F7F4] to-[#E8F0E9] text-[#7C9A82]"
                             }`}
                           >
-                            {(other?.firstName?.[0] || "U") + (other?.lastName?.[0] || "")}
+                            {(other?.firstName?.[0] || "U").toUpperCase()}
                           </div>
 
-                          <div className="min-w-0">
-                            <div className="font-medium text-[#2D3436] truncate">{name}</div>
-                            <div className="text-xs text-[#5A6062] truncate">{other?.email}</div>
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                              <h3 className="font-semibold text-[#1a1a1a] truncate text-sm">{name}</h3>
+                              <span className="text-xs text-[#9CA3AF] whitespace-nowrap flex-shrink-0">
+                                {new Date(r.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#6B7280] truncate mb-2">{other?.email}</p>
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="text-xs text-[#6B7280] line-clamp-1">{r.reason}</p>
+                              <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 bg-gradient-to-r ${statusIndicator?.color || "from-slate-400 to-slate-500"} text-white shadow-sm`}>
+                                {statusIndicator?.text}
+                              </span>
+                            </div>
                           </div>
                         </div>
-
-                        <span className="text-xs text-[#9CA3AF] whitespace-nowrap">
-                          {new Date(r.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-
-                      <div className="mt-2 flex items-center justify-between gap-2">
-                        <p className="text-sm text-[#5A6062] truncate">{r.reason}</p>
-                        <span className="shrink-0 inline-block px-2.5 py-1 rounded-full bg-[#FAF7F2] text-[11px] font-medium text-[#5A7A60] border border-[#E8F0E9]">
-                          {r.status}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })
+                      </button>
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>
 
-          {/* Right detail */}
-          <div className="hidden md:flex flex-1 bg-white flex-col">
+          {/* Right Panel - Detail View */}
+          <div className="hidden md:flex flex-1 bg-white flex-col overflow-hidden">
             {!selected ? (
-              <div className="flex-1 flex items-center justify-center flex-col text-[#9CA3AF]">
-                <div className="h-16 w-16 bg-[#E8F0E9] rounded-full flex items-center justify-center mb-4">
-                  <Mail size={32} className="text-[#7C9A82]" />
+              <div className="flex-1 flex items-center justify-center flex-col">
+                <div className="h-32 w-32 bg-gradient-to-br from-[#E8F0E9] to-[#D4DFD8] rounded-full flex items-center justify-center mb-8 shadow-xl">
+                  <Mail size={64} className="text-[#7C9A82]" />
                 </div>
-                <p>Select a request to read</p>
+                <p className="text-[#1a1a1a] text-2xl font-semibold mb-2">No Message Selected</p>
+                <p className="text-[#6B7280] text-base">Choose a consultation from the list to view details</p>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col">
-                <div className="p-6 border-b border-[#E8F0E9]">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h2 className="font-serif text-2xl font-bold text-[#2D3436]">{otherName}</h2>
-                      <p className="text-sm text-[#5A6062]">{otherEmail}</p>
-                      <p className="text-xs text-[#9CA3AF] mt-1">
-                        Created: {new Date(selected.createdAt).toLocaleString()}
-                      </p>
+              <>
+                {/* Detail Header */}
+                <div className={`px-8 py-6 border-b-2 bg-gradient-to-b to-white flex-shrink-0 ${currentStatusConfig.border} ${currentStatusConfig.bg}`}>
+                  <div className="flex items-start justify-between gap-6 mb-4">
+                    <div className="flex items-start gap-5 flex-1">
+                      <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#7C9A82] to-[#5A7A60] flex items-center justify-center text-white font-bold text-xl shadow-lg flex-shrink-0">
+                        {(otherPerson?.firstName?.[0] || "U").toUpperCase()}
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="font-serif text-3xl font-bold text-[#1a1a1a]">{otherName}</h2>
+                        <p className="text-[#6B7280] mt-1">{otherEmail}</p>
+                        <p className="text-xs text-[#6B7280] mt-3">
+                          📅 {new Date(selected.createdAt).toLocaleString()}
+                        </p>
+                      </div>
                     </div>
-
-                    <span className="inline-block px-3 py-1 rounded-full bg-[#FAF7F2] text-xs font-medium text-[#5A7A60] border border-[#E8F0E9]">
-                      {selected.status}
+                    <span className={`inline-block px-4 py-2 rounded-full text-xs font-bold border-2 transition-all ${currentStatusConfig.badge} ${currentStatusConfig.badgeBorder} shadow-md`}>
+                      {selected.status.charAt(0).toUpperCase() + selected.status.slice(1)}
                     </span>
                   </div>
                 </div>
 
-                <div className="p-6 space-y-5 overflow-y-auto">
-                  <Card className="p-5">
-                    <h3 className="font-medium text-[#2D3436] mb-2">{messageTitle}</h3>
-                    <p className="text-sm text-[#5A6062] leading-relaxed">{selected.reason}</p>
-                  </Card>
-
-                  {/* Reply */}
+                {/* Messages Container */}
+                <div className="flex-1 overflow-y-auto px-8 py-8 space-y-6">
+                  {/* User Message Card */}
                   <div>
-                    <label className="block text-sm font-medium text-[#2D3436] mb-2">
-                      {replyLabel}
+                    <label className="block text-xs font-bold text-[#6B7280] uppercase tracking-widest mb-4">
+                      {messageTitle}
                     </label>
-
-                    <textarea
-                      rows={5}
-                      placeholder={
-                        isExpert
-                          ? isAccepted
-                            ? "Write your reply..."
-                            : "Accept first to enable reply..."
-                          : isRejected
-                          ? "This request was rejected."
-                          : isClosed
-                          ? "This consultation is closed."
-                          : "Waiting for expert reply..."
-                      }
-                      value={currentReplyText}
-                      readOnly={!replyEnabled}
-                      onChange={(e) => {
-                        if (!replyEnabled) return;
-                        setReplyDraft((prev) => ({ ...prev, [selected._id]: e.target.value }));
-                      }}
-                      className={`w-full px-4 py-3 rounded-xl border border-[#C4B5A0] outline-none transition-all ${
-                        replyEnabled
-                          ? "focus:ring-2 focus:ring-[#7C9A82] bg-[#FAF7F2]"
-                          : "bg-[#F5F2EC] text-[#5A6062]"
-                      }`}
-                    />
+                    <div className="bg-gradient-to-br from-[#F9F6F0] to-[#F5F2EC] border-2 border-[#E8E6E1] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+                      <p className="text-[#2D3436] text-base leading-relaxed whitespace-pre-wrap">{selected.reason}</p>
+                    </div>
                   </div>
 
-                  {/* Actions */}
+                  {/* Reply Card */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#6B7280] uppercase tracking-widest mb-4">
+                      {replyLabel}
+                    </label>
+                    <div className="relative">
+                      <textarea
+                        rows={7}
+                        placeholder={
+                          isExpert
+                            ? isAccepted
+                              ? "Type your response here... Be helpful and clear."
+                              : "Accept the request first to write a reply"
+                            : isRejected
+                            ? "This request was declined. Request from another expert."
+                            : isClosed
+                            ? "This consultation has been closed."
+                            : "Waiting for expert's response..."
+                        }
+                        value={currentReplyText}
+                        readOnly={!replyEnabled}
+                        onChange={(e) => {
+                          if (!replyEnabled) return;
+                          setReplyDraft((prev) => ({ ...prev, [selected._id]: e.target.value }));
+                        }}
+                        className={`w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all text-base leading-relaxed resize-none font-medium ${
+                          replyEnabled
+                            ? "border-[#D4CCBF] focus:border-[#7C9A82] focus:ring-4 focus:ring-[#7C9A82] focus:ring-opacity-5 bg-white shadow-sm"
+                            : "border-[#E8E6E1] bg-[#F5F2EC] text-[#6B7280] cursor-not-allowed"
+                        }`}
+                      />
+                      {replyEnabled && (
+                        <div className="absolute bottom-4 right-4 text-xs text-[#9CA3AF]">
+                          {(currentReplyText || "").length} characters
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Info Messages */}
+                  {isExpert && isPending && (
+                    <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded text-blue-800 text-sm">
+                      <p className="font-semibold mb-1">📝 Action Required</p>
+                      <p>Accept or reject this request to proceed with communication.</p>
+                    </div>
+                  )}
+
+                  {!isExpert && isRejected && (
+                    <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded text-red-800 text-sm">
+                      <p className="font-semibold mb-1">Request Declined</p>
+                      <p>This expert has declined your request. Browse other experts to find help.</p>
+                    </div>
+                  )}
+
+                  {!isExpert && isClosed && (
+                    <div className="bg-slate-50 border-l-4 border-slate-400 p-4 rounded text-slate-800 text-sm">
+                      <p className="font-semibold mb-1">Consultation Closed</p>
+                      <p>This consultation has been completed and closed.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="px-8 py-6 border-t-2 border-[#E8E6E1] bg-gradient-to-b from-white to-[#FCFAF7] flex-shrink-0">
                   {isExpert ? (
-                    <div className="flex flex-wrap gap-3">
+                    <div className="grid grid-cols-4 gap-3">
                       <Button
                         disabled={!isPending}
                         onClick={() => updateStatusOnly(selected._id, "accepted")}
+                        className="shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                       >
-                        Accept
+                        ✓ Accept
                       </Button>
 
                       <Button
                         disabled={!isPending}
                         variant="outline"
                         onClick={() => updateStatusOnly(selected._id, "rejected")}
+                        className="text-base font-semibold"
                       >
-                        Reject
+                        ✕ Decline
                       </Button>
 
                       <Button
                         variant="ghost"
                         onClick={() => updateStatusOnly(selected._id, "closed")}
+                        className="text-base font-semibold"
                       >
                         Close
                       </Button>
 
                       <Button
-                        variant="secondary"
                         disabled={!isAccepted || !(currentReplyText || "").trim()}
                         onClick={() => sendReply(selected._id, currentReplyText)}
+                        className="bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] shadow-lg hover:shadow-xl transition-all text-white font-semibold"
                       >
-                        Send Reply
+                        Send →
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex gap-3">
-                      <Button variant="outline" onClick={() => navigate("/consultations")}>
-                        View All
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => navigate("/consultations")}
+                        className="text-base font-semibold"
+                      >
+                        My Requests
                       </Button>
-                      <Button variant="outline" onClick={() => navigate("/experts")}>
-                        Find Experts
+                      <Button
+                        onClick={() => navigate("/experts")}
+                        className="bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] shadow-lg hover:shadow-xl transition-all text-white font-semibold"
+                      >
+                        Find More Experts →
                       </Button>
                     </div>
                   )}
-
-                  {isExpert && isPending && (
-                    <p className="text-xs text-[#9CA3AF]">
-                      Accept first, then type and press <b>Send Reply</b>.
-                    </p>
-                  )}
-
-                  {!isExpert && isRejected && (
-                    <p className="text-xs text-red-600">
-                      This request was rejected by the expert. You can’t reply here.
-                    </p>
-                  )}
                 </div>
-              </div>
+              </>
             )}
           </div>
         </Card>

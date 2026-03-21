@@ -1,6 +1,7 @@
 // src/layouts/RootLayout.tsx
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import API from "../services/api";
@@ -18,14 +19,13 @@ export default function RootLayout() {
   const location = useLocation();
 
   useEffect(() => {
-    if (didBoot.current) return; // StrictMode safe
+    if (didBoot.current) return;
     didBoot.current = true;
 
     (async () => {
       try {
         let token = localStorage.getItem("token");
 
-        // If no access token, try refresh (cookie-based)
         if (!token) {
           const res = await API.get("/api/auth/refresh");
           const newToken: string = res.data.token;
@@ -36,7 +36,6 @@ export default function RootLayout() {
 
           token = newToken;
 
-          // Redirect only if user is on auth pages (avoid forcing dashboard always)
           const onAuthPage =
             location.pathname === "/login" ||
             location.pathname === "/signup" ||
@@ -45,12 +44,8 @@ export default function RootLayout() {
           if (onAuthPage) navigate("/dashboard", { replace: true });
         }
 
-        // Connect socket if we have token now
-        if (token) {
-          connectSocket(token);
-        }
+        if (token) connectSocket(token);
       } catch {
-        // Guest mode (no token)
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         notifyAuthChanged();
@@ -69,10 +64,21 @@ export default function RootLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col transition-colors duration-300"
+      style={{ backgroundColor: "var(--bg-primary)" }}>
       <Navbar />
       <main className="flex-1">
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
       <Footer />
     </div>

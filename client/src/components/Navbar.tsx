@@ -4,11 +4,14 @@ import { Menu, X, Leaf, User } from "lucide-react";
 import { Button } from "./Button";
 import API from "../services/api";
 import NotificationsBell from "./NotificationsBell";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const [authed, setAuthed] = useState<boolean>(() => !!localStorage.getItem("token"));
   const [user, setUser] = useState<any>(() => {
@@ -105,6 +108,17 @@ export function Navbar() {
                 </Link>
               );
             })}
+
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-[#E8F0E9] dark:hover:bg-[#2D3436] transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {theme === "dark"
+                ? <Sun size={18} className="text-[#FAF7F2]" />
+                : <Moon size={18} className="text-[#2D3436]" />
+              }
+            </button>
 
             <div className="flex items-center gap-4">
               {authed ? (

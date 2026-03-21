@@ -29,12 +29,14 @@ import UserSettings from "./pages/UserSettings";
 import MySlots from "./pages/MySlots";
 import PaymentVerify from "./pages/PaymentVerify";
 import PaymentFailure from "./pages/PaymentFailure";
+import { ThemeProvider } from "./context/ThemeContext";
 
 import { NotificationsProvider } from "./context/NotificationsContext";
 
 function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <NotificationsProvider>
         <ScrollToTop />
         <Routes>
@@ -91,6 +93,7 @@ function App() {
           </Route>
         </Routes>
       </NotificationsProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

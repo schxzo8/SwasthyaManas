@@ -9,6 +9,7 @@ const {
   verifyKhaltiPayment,
   mockVerifyPayment,
   paymentStatus,
+  markAppointmentCompleted
 } = require("../controllers/appointmentController");
 
 const router = express.Router();
@@ -20,10 +21,14 @@ router.post("/khalti/verify",   protect, authorizeRoles("user"), verifyKhaltiPay
 // Free slot confirm
 router.post("/confirm", protect, authorizeRoles("user"), confirmBooking);
 
+// Appointment status update
+router.put("/:id/complete", protect, authorizeRoles("expert"), markAppointmentCompleted);
+
 // Fetch
 router.get("/my",     protect, authorizeRoles("user"),   getMyAppointments);
 router.get("/expert", protect, authorizeRoles("expert"), getExpertAppointments);
 
+// Esewa
 router.post("/esewa/initiate",  protect, authorizeRoles("user"), initiateEsewaPayment);
 router.post("/payment-status",  protect, authorizeRoles("user"), paymentStatus);
 

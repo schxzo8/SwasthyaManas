@@ -4,6 +4,7 @@ import { connectSocket, getSocket } from "../services/socket";
 
 export type AppNotification = {
   _id: string;
+  user?: string;
   type: string;
   title: string;
   message: string;
@@ -53,29 +54,39 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
   };
 
-    // initial load + socket live updates
-    useEffect(() => {
+  useEffect(() => {
     refresh().catch(() => {});
 
-    // Ensure socket is connected with token
     const token = localStorage.getItem("token");
     const s = token ? connectSocket(token) : getSocket();
     if (!s) return;
 
-    // DB notifications (from notifyUser -> "notification:new")
     const onNotifNew = (payload: AppNotification) => {
-        setNotifications((prev) => [payload, ...prev].slice(0, 30));
-        setUnreadCount((c) => c + 1);
+      const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+      const currentUserId = currentUser?._id;
+
+      if (!payload) return;
+      if (payload.user && String(payload.user) !== String(currentUserId)) return;
+
+      setNotifications((prev) => {
+        const exists = prev.some((n) => n._id === payload._id);
+        if (exists) return prev;
+        return [payload, ...prev].slice(0, 30);
+      });
+
+      setUnreadCount((c) => c + 1);
     };
 
-    // realtime consultation (from controller -> "consultation:new")
     const onConsultationNew = (data: any) => {
-        setUnreadCount((c) => c + 1);
+      const id = `rt_${data.requestId}`;
 
-        setNotifications((prev) =>
-        [
-            {
-            _id: `rt_${data.requestId}`,
+      setNotifications((prev) => {
+        const exists = prev.some((n) => n._id === id);
+        if (exists) return prev;
+
+        return [
+          {
+            _id: id,
             type: "consultation_new",
             title: "New consultation request",
             message: "You received a new consultation request. Open Inbox to respond.",
@@ -83,22 +94,29 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
             meta: { requestId: data.requestId },
             isRead: false,
             createdAt: data.createdAt || new Date().toISOString(),
-            } as AppNotification,
-            ...prev,
-        ].slice(0, 30)
-        );
+          } as AppNotification,
+          ...prev,
+        ].slice(0, 30);
+      });
+
+      setUnreadCount((c) => c + 1);
     };
 
-    // Attach listeners
+    const onReconnectSync = () => {
+      console.log("🔄 socket connected/reconnected — syncing notifications");
+      refresh().catch(() => {});
+    };
+
     s.on("notification:new", onNotifNew);
     s.on("consultation:new", onConsultationNew);
+    s.on("connect", onReconnectSync);
 
-    // Cleanup
     return () => {
-        s.off("notification:new", onNotifNew);
-        s.off("consultation:new", onConsultationNew);
+      s.off("notification:new", onNotifNew);
+      s.off("consultation:new", onConsultationNew);
+      s.off("connect", onReconnectSync);
     };
-    }, []);
+  }, []);
 
   const value = useMemo(
     () => ({ notifications, unreadCount, refresh, markRead, markAllRead }),

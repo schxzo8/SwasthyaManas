@@ -51,4 +51,9 @@ notificationSchema.index(
   { unique: true, sparse: true }
 );
 
+notificationSchema.index(
+  { user: 1, type: 1, "meta.appointmentId": 1 },
+  { unique: true, sparse: true }
+);
+
 module.exports = mongoose.model("Notification", notificationSchema);

@@ -28,6 +28,7 @@ import AppointmentPage from "./pages/AppointmentPage";
 import UserSettings from "./pages/UserSettings";
 import MySlots from "./pages/MySlots";
 import PaymentVerify from "./pages/PaymentVerify";
+import PaymentFailure from "./pages/PaymentFailure";
 
 import { NotificationsProvider } from "./context/NotificationsContext";
 
@@ -41,6 +42,9 @@ function App() {
             {/* PUBLIC */}
             <Route path="/" element={<Home />} />
             <Route path="/content" element={<PublicContent />} />
+            <Route path="/appointments/payment-verify"  element={<PaymentVerify />} />
+            <Route path="/appointments/payment-success" element={<PaymentVerify />} />
+            <Route path="/appointments/payment-failure" element={<PaymentFailure />} />
 
             {/* AUTH */}
             <Route path="/login" element={<Login />} />
@@ -71,6 +75,7 @@ function App() {
               <Route path="/settings" element={<UserSettings />} />
               <Route path="/my-slots" element={<MySlots />} />
               <Route path="/appointments/payment-verify" element={<PaymentVerify />} /> 
+
               
             </Route>
 

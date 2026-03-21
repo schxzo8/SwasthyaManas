@@ -4,6 +4,7 @@ import API from "../services/api";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
+import { Eye, EyeOff } from "lucide-react";
 import { BlobDecoration } from "../components/BlobDecoration";
 import { connectSocket } from "../services/socket";
 
@@ -15,6 +16,7 @@ export function Login() {
   const [info, setInfo] = useState("");
   const [showResend, setShowResend] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -165,16 +167,25 @@ export function Login() {
             >
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all bg-[#FAF7F2]"
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all bg-[#FAF7F2] pr-12"
+                placeholder="••••••••"
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#C4B5A0] hover:text-[#7C9A82] transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center justify-between text-sm">

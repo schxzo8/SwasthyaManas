@@ -101,6 +101,9 @@ export default function BookingPage() {
   const [holdTick, setHoldTick] = useState(0);
   const holdTimerRef = useRef<number | null>(null);
 
+  // esewa / khalti gateway
+  const [paymentGateway, setPaymentGateway] = useState<"esewa" | "khalti">("esewa");
+
   // confirmation state
   const [confirmed, setConfirmed] = useState(false);
   const [confirmedInfo, setConfirmedInfo] = useState<{
@@ -305,47 +308,64 @@ export default function BookingPage() {
     setErr("");
 
     try {
-      // Step 1: initiate payment
-      const res = await API.post("/api/appointments/khalti/initiate", {
-        slotId: selectedSlotId,
-      });
+      if (paymentGateway === "esewa") {
+        const res = await API.post("/api/appointments/esewa/initiate", { slotId: selectedSlotId });
 
-      if (res.data.free) {
-        // free slot — confirm directly
-        await API.post("/api/appointments/confirm", { slotId: selectedSlotId });
+        if (res.data.free) {
+          await API.post("/api/appointments/confirm", { slotId: selectedSlotId });
+          const slot = daySlots.find(s => s._id === selectedSlotId) || null;
+          const d = slot ? new Date(slot.startAt) : null;
+          setConfirmed(true);
+          setConfirmedInfo({
+            dayLabel:  d ? formatNepalDate(d) : "—",
+            timeLabel: d ? formatNepalTime(d) : "—",
+            feeLabel:  slot ? `${slot.currency || "NPR"} ${slot.fee ?? 0}` : "—",
+          });
+          setHoldExpiresAt(null);
+          setSelectedSlotId(null);
+          await loadExpertAndDays();
+          await loadSlotsForDay(selectedDayKey);
+          return;
+        }
 
-        const slot = daySlots.find((s) => s._id === selectedSlotId) || null;
-        const d = slot ? new Date(slot.startAt) : null;
-
-        setConfirmed(true);
-        setConfirmedInfo({
-          dayLabel: d ? formatNepalDate(d) : "—",
-          timeLabel: d ? formatNepalTime(d) : "—",
-          feeLabel: slot ? `${slot.currency || "NPR"} ${slot.fee ?? 0}` : "—",
+        // eSewa form POST redirect
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = res.data.url;
+        Object.entries(res.data.data).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type  = "hidden";
+          input.name  = key;
+          input.value = String(value);
+          form.appendChild(input);
         });
-
-        setHoldExpiresAt(null);
-        setSelectedSlotId(null);
-        await loadExpertAndDays();
-        await loadSlotsForDay(selectedDayKey);
+        document.body.appendChild(form);
+        form.submit();
 
       } else {
-        // paid slot — redirect to Khalti
+        // Khalti
+        const res = await API.post("/api/appointments/khalti/initiate", { slotId: selectedSlotId });
+
+        if (res.data.free) {
+          await API.post("/api/appointments/confirm", { slotId: selectedSlotId });
+          navigate("/appointments");
+          return;
+        }
+
         window.location.href = res.data.payment_url;
       }
-
     } catch (e: any) {
       setErr(e?.response?.data?.message || "Failed to initiate booking");
       await loadSlotsForDay(selectedDayKey);
     }
   };
 
-  const clearSelection = () => {
+  const clearSelection = async () => {
     setSelectedSlotId(null);
     setHoldExpiresAt(null);
     setConfirmed(false);
     setConfirmedInfo(null);
-  };
+  }
 
   const expertName = expert ? `${expert.firstName} ${expert.lastName}` : "Expert";
 
@@ -558,6 +578,35 @@ export default function BookingPage() {
                   </div>
                 </div>
 
+                {/* Payment method*/}
+                {selectedSlot && (selectedSlot.fee ?? 0) > 0 && (
+                  <div className="mt-4">
+                    <p className="text-xs font-medium text-[#5A6062] mb-2">Pay with</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setPaymentGateway("esewa")}
+                        className={`flex-1 py-2 px-3 rounded-xl border text-sm font-medium transition-all ${
+                          paymentGateway === "esewa"
+                            ? "border-[#60BB46] bg-[#f0faea] text-[#60BB46]"
+                            : "border-gray-200 text-gray-400 hover:border-gray-300"
+                        }`}
+                      >
+                        <span className="font-bold">e</span>Sewa
+                      </button>
+                      <button
+                        onClick={() => setPaymentGateway("khalti")}
+                        className={`flex-1 py-2 px-3 rounded-xl border text-sm font-medium transition-all ${
+                          paymentGateway === "khalti"
+                            ? "border-[#5C2D91] bg-purple-50 text-[#5C2D91]"
+                            : "border-gray-200 text-gray-400 hover:border-gray-300"
+                        }`}
+                      >
+                        Khalti
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
                 {effectiveHoldExpiresAt && (
                   <div className="mt-4 text-xs rounded-xl border border-amber-200 bg-amber-50 text-amber-800 px-3 py-2">
                     Slot held for you • expires in <b>{msToCountdown(holdRemainingMs)}</b>

@@ -10,6 +10,7 @@ const {
   adminUpdateUser,
   adminDeleteUser,
   adminUpdateExpert,
+  adminGetAppointments
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -32,5 +33,6 @@ router.delete("/admin/users/:id",     protect, authorizeRoles("admin"), adminDel
 router.put("/admin/experts/:id",      protect, authorizeRoles("admin"), adminUpdateExpert);
 router.delete("/admin/experts/:id",   protect, authorizeRoles("admin"), adminDeleteUser);
 router.post("/admin/create", protect, authorizeRoles("admin"), adminCreateUser);
+router.get("/admin/appointments", protect, authorizeRoles("admin"), adminGetAppointments);
 
 module.exports = router;

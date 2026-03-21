@@ -462,3 +462,18 @@ exports.adminCreateUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// ADMIN: Get all appointments 
+exports.adminGetAppointments = async (req, res) => {
+  try {
+    const Appointment = require("../models/Appointment");
+    const list = await Appointment.find()
+      .populate("user",   "firstName lastName email")
+      .populate("expert", "firstName lastName email expertise")
+      .populate("slot",   "startAt endAt fee currency")
+      .sort({ createdAt: -1 });
+    res.json(list);
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+};

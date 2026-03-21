@@ -395,3 +395,42 @@ exports.mockVerifyPayment = async (req, res) => {
     return res.status(code).json({ message: err.message || "Server error" });
   }
 };
+
+// EXPERT: mark appointment as completed
+exports.markAppointmentCompleted = async (req, res) => {
+  try {
+    const expertId = req.user._id;
+    const { id }   = req.params;
+
+    const appointment = await Appointment.findOne({ _id: id, expert: expertId });
+    if (!appointment)
+      return res.status(404).json({ message: "Appointment not found" });
+
+    if (appointment.status !== "confirmed")
+      return res.status(400).json({ message: `Cannot complete an appointment with status: ${appointment.status}` });
+
+    appointment.status = "completed";
+    await appointment.save();
+
+    // notify user
+    await notifyUser(req, appointment.user, {
+      type:    "appointment_update",
+      title:   "Appointment completed",
+      message: "Your appointment has been marked as completed.",
+      link:    "/appointments",
+      meta:    { appointmentId: String(appointment._id) },
+    });
+
+    const io = req.app.get("io");
+    if (io) {
+      io.to(`user_${String(appointment.user)}`).emit("appointment:update", {
+        appointmentId: String(appointment._id),
+        status: "completed",
+      });
+    }
+
+    res.json({ message: "Appointment marked as completed", appointment });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Server error" });
+  }
+};

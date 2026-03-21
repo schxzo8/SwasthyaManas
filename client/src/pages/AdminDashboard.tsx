@@ -6,34 +6,34 @@ import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import AdminUsersPanel from "../components/admin/AdminUsersPanel";
 import AdminExpertsPanel from "../components/admin/AdminExpertsPanel";
+import AdminAppointmentsPanel from "../components/admin/AdminAppointmentsPanel";
 
-type MainTab = "cms" | "users" | "experts";
+type MainTab = "cms" | "users" | "experts" | "appointments";
 type CmsView = "list" | "add" | "edit";
 
 export default function AdminDashboard() {
   const [mainTab, setMainTab] = useState<MainTab>("cms");
-
-  // CMS sub-state
   const [cmsView, setCmsView] = useState<CmsView>("list");
   const [editData, setEditData] = useState<ContentItem | null>(null);
 
-  const cmsTitle = useMemo(() => {
-    if (cmsView === "add") return "Add Content";
-    if (cmsView === "edit") return "Edit Content";
-    return "Admin CMS";
-  }, [cmsView]);
-
-  const cmsSubtitle = useMemo(() => {
-    if (cmsView === "list") return "Manage pages, mental health topics, blogs, and resources.";
-    if (cmsView === "add") return "Create new content for the platform.";
-    return "Update the selected content item.";
-  }, [cmsView]);
-
   const mainTabs: { id: MainTab; label: string }[] = [
-    { id: "cms",     label: "Content (CMS)" },
-    { id: "users",   label: "Users"         },
-    { id: "experts", label: "Experts"       },
+    { id: "cms",          label: "Content (CMS)" },
+    { id: "users",        label: "Users"         },
+    { id: "experts",      label: "Experts"       },
+    { id: "appointments", label: "Appointments"  },
   ];
+
+  const cmsTitle = useMemo(() => {
+  if (cmsView === "add") return "Add Content";
+  if (cmsView === "edit") return "Edit Content";
+  return "Admin CMS";
+}, [cmsView]);
+
+const cmsSubtitle = useMemo(() => {
+  if (cmsView === "list") return "Manage pages, mental health topics, blogs, and resources.";
+  if (cmsView === "add") return "Create new content for the platform.";
+  return "Update the selected content item.";
+}, [cmsView]);
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 sm:px-6 lg:px-8">
@@ -157,6 +157,8 @@ export default function AdminDashboard() {
 
         {/* ── EXPERTS TAB ── */}
         {mainTab === "experts" && <AdminExpertsPanel />}
+
+        {mainTab === "appointments" && <AdminAppointmentsPanel />}
 
       </div>
     </div>

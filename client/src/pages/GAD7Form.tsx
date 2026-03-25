@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import API from "../services/api";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -17,7 +17,6 @@ export default function GAD7Form() {
   const [loading, setLoading] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  // Load from backend (real data, no dummy)
   useEffect(() => {
     const load = async () => {
       setError("");
@@ -28,7 +27,7 @@ export default function GAD7Form() {
         setAssessment(tpl);
         setAnswers(new Array(tpl.questions.length).fill(-1));
         setCurrentQuestion(0);
-      } catch (e) {
+      } catch {
         setError("Failed to load GAD-7 questions. Make sure backend is running.");
       } finally {
         setLoading(false);
@@ -39,69 +38,47 @@ export default function GAD7Form() {
 
   const total = assessment?.questions.length ?? 0;
 
-  const isAnswered = useMemo(() => {
-    if (!total) return false;
-    return answers[currentQuestion] !== -1;
-  }, [answers, currentQuestion, total]);
-
-  const isLastQuestion = useMemo(() => {
-    if (!total) return false;
-    return currentQuestion === total - 1;
-  }, [currentQuestion, total]);
-
   const handleAnswer = (value: number) => {
-    setAnswers((prev) => {
-      const next = [...prev];
-      next[currentQuestion] = value;
-      return next;
-    });
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = value;
+    setAnswers(newAnswers);
 
-    // auto-advance like your UI version
     if (currentQuestion < total - 1) {
-      setTimeout(() => setCurrentQuestion((curr) => curr + 1), 250);
-    }
-  };
+      setTimeout(() => setCurrentQuestion(curr => curr + 1), 250);
+    } else {
+      setTimeout(async () => {
+        if (!assessment) return;
+        setError("");
 
-  const handleNext = () => {
-    if (!total) return;
-    if (currentQuestion < total - 1) setCurrentQuestion((curr) => curr + 1);
-    else finishAssessment();
+        const hasUnanswered = newAnswers.some(v => v === -1);
+        if (hasUnanswered) {
+          setError("Please answer all questions before submitting.");
+          return;
+        }
+
+        const payload = {
+          answers: assessment.questions.map((_, idx) => ({
+            questionIndex: idx,
+            value: Number(newAnswers[idx]),
+          })),
+        };
+
+        try {
+          setSubmitting(true);
+          const res = await API.post("/api/assessments/gad7", payload);
+          localStorage.setItem("lastAssessmentResult", JSON.stringify(res.data.result));
+          navigate("/assessments/result");
+        } catch (e: any) {
+          setError(e?.response?.data?.message || "Failed to submit assessment");
+        } finally {
+          setSubmitting(false);
+        }
+      }, 350);
+    }
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) setCurrentQuestion((curr) => curr - 1);
-  };
-
-  const finishAssessment = async () => {
-    setError("");
-    if (!assessment) return;
-
-    // require all answers
-    if (answers.some((v) => v === -1)) {
-      setError("Please answer all questions before submitting.");
-      return;
-    }
-
-    const payload = {
-      answers: assessment.questions.map((_, idx) => ({
-        questionIndex: idx,
-        value: Number(answers[idx]),
-      })),
-    };
-
-    try {
-      setSubmitting(true);
-      const res = await API.post("/api/assessments/gad7", payload);
-      localStorage.setItem(
-        "lastAssessmentResult",
-        JSON.stringify(res.data.result)
-      );
-      navigate("/assessments/result");
-    } catch (e: any) {
-      setError(e?.response?.data?.message || "Failed to submit assessment");
-    } finally {
-      setSubmitting(false);
-    }
+    if (currentQuestion > 0) setCurrentQuestion(curr => curr - 1);
   };
 
   if (loading && !assessment) {
@@ -118,14 +95,11 @@ export default function GAD7Form() {
     return (
       <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 flex items-center justify-center">
         <Card className="w-full max-w-2xl p-8">
-          <h1 className="font-serif text-2xl font-bold text-[#2D3436] mb-2">
-            GAD-7
-          </h1>
-          {error ? (
-            <p className="text-sm text-red-600">{error}</p>
-          ) : (
-            <p className="text-[#5A6062]">Unable to load assessment.</p>
-          )}
+          <h1 className="font-serif text-2xl font-bold text-[#2D3436] mb-2">GAD-7</h1>
+          {error
+            ? <p className="text-sm text-red-600">{error}</p>
+            : <p className="text-[#5A6062]">Unable to load assessment.</p>
+          }
           <div className="mt-6">
             <Button variant="secondary" onClick={() => navigate("/assessments")}>
               Back to Assessments
@@ -152,8 +126,8 @@ export default function GAD7Form() {
 
         <ProgressBar
           current={currentQuestion + 1}
-          total={assessment.questions.length}
-          label={`Question ${currentQuestion + 1} of ${assessment.questions.length}`}
+          total={total}
+          label={`Question ${currentQuestion + 1} of ${total}`}
         />
       </div>
 
@@ -163,8 +137,7 @@ export default function GAD7Form() {
         </h2>
 
         <p className="text-sm text-[#5A6062]">
-          {assessment.description ||
-            "Over the last 2 weeks, how often have you been bothered by the following problems?"}
+          {assessment.description || "Over the last 2 weeks, how often have you been bothered by the following problems?"}
         </p>
 
         {error && (
@@ -178,7 +151,7 @@ export default function GAD7Form() {
         </p>
 
         <div className="grid grid-cols-1 gap-3 mt-auto">
-          {q.options.map((opt) => (
+          {q.options.map(opt => (
             <button
               key={opt.value}
               type="button"
@@ -186,10 +159,9 @@ export default function GAD7Form() {
               onClick={() => handleAnswer(Number(opt.value))}
               className={`
                 text-left px-6 py-4 rounded-xl border transition-all duration-200
-                ${
-                  answers[currentQuestion] === Number(opt.value)
-                    ? "bg-[#7C9A82] text-white border-[#7C9A82] shadow-md"
-                    : "bg-white border-[#C4B5A0] text-[#2D3436] hover:bg-[#E8F0E9] hover:border-[#7C9A82]"
+                ${answers[currentQuestion] === Number(opt.value)
+                  ? "bg-[#7C9A82] text-white border-[#7C9A82] shadow-md"
+                  : "bg-white border-[#C4B5A0] text-[#2D3436] hover:bg-[#E8F0E9] hover:border-[#7C9A82]"
                 }
               `}
             >
@@ -207,11 +179,17 @@ export default function GAD7Form() {
             Previous
           </Button>
 
-          <Button onClick={handleNext} disabled={!isAnswered || submitting}>
-            {isLastQuestion ? (submitting ? "Submitting..." : "See Results") : "Next"}
-            {!isLastQuestion && <ArrowRight className="ml-2 h-4 w-4" />}
-          </Button>
+          {submitting && (
+            <span className="text-sm text-[#7C9A82] flex items-center gap-2">
+              <div className="h-4 w-4 rounded-full border-2 border-[#7C9A82] border-t-transparent animate-spin" />
+              Submitting…
+            </span>
+          )}
         </div>
+
+        <p className="mt-6 text-xs text-[#5A6062]">
+          Note: This is a screening tool. If you're worried about your safety, please seek help immediately.
+        </p>
       </Card>
     </div>
   );

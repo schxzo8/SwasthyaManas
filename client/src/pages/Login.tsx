@@ -7,6 +7,7 @@ import { Card } from "../components/Card";
 import { Eye, EyeOff } from "lucide-react";
 import { BlobDecoration } from "../components/BlobDecoration";
 import { connectSocket } from "../services/socket";
+import { toast } from "react-hot-toast";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -55,6 +56,7 @@ export function Login() {
         });
       }   
       navigate("/dashboard");
+      toast.success("Welcome back!");
     } catch (err: any) {
       // cleanup if partial login happened
       localStorage.removeItem("token");

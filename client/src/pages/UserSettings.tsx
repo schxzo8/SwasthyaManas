@@ -3,6 +3,7 @@ import { User, Lock, Bell, Trash2, Save, Eye, EyeOff } from "lucide-react";
 import { Button } from "../components/Button";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 type Tab = "profile" | "security" | "notifications" | "danger";
 
@@ -35,35 +36,37 @@ export default function UserSettings() {
   const [deleteInput, setDeleteInput] = useState("");
   const [activeTab, setActiveTab]     = useState<Tab>("profile");
   const [saving, setSaving]           = useState(false);
-  const [msg, setMsg]                 = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const flash = (type: "success" | "error", text: string) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 4000);
-  };
-
-  const handleProfileSave = async () => {
-    if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim())
-      return flash("error", "All fields are required.");
+  const handleProfileSave = async (): Promise<void> => {
+    if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
+      toast.error("All fields are required.");
+      return;
+    }
     setSaving(true);
     try {
       const res = await API.put("/api/users/profile", form);
       const updated = { ...user, ...res.data };
       localStorage.setItem("user", JSON.stringify(updated));
       window.dispatchEvent(new Event("auth:changed"));
-      flash("success", "Profile updated successfully.");
+      toast.success("Profile updated successfully.");
     } catch (err: any) {
-      flash("error", err?.response?.data?.message || "Failed to update profile.");
+      toast.error(err?.response?.data?.message || "Failed to update profile.");
     } finally { setSaving(false); }
   };
 
-  const handlePasswordChange = async () => {
-    if (!passwords.current || !passwords.newPass || !passwords.confirm)
-      return flash("error", "All password fields are required.");
-    if (passwords.newPass.length < 8)
-      return flash("error", "New password must be at least 8 characters.");
-    if (passwords.newPass !== passwords.confirm)
-      return flash("error", "New passwords do not match.");
+  const handlePasswordChange = async (): Promise<void> => {
+    if (!passwords.current || !passwords.newPass || !passwords.confirm) {
+      toast.error("All password fields are required.");
+      return;
+    }
+    if (passwords.newPass.length < 8) {
+      toast.error("New password must be at least 8 characters.");
+      return;
+    }
+    if (passwords.newPass !== passwords.confirm) {
+      toast.error("New passwords do not match.");
+      return;
+    }
     setSaving(true);
     try {
       await API.put("/api/users/password", {
@@ -71,22 +74,24 @@ export default function UserSettings() {
         newPassword:     passwords.newPass,
       });
       setPasswords({ current: "", newPass: "", confirm: "" });
-      flash("success", "Password changed successfully.");
+      toast.success("Password changed successfully.");
     } catch (err: any) {
-      flash("error", err?.response?.data?.message || "Failed to change password.");
+      toast.error(err?.response?.data?.message || "Failed to change password.");
     } finally { setSaving(false); }
   };
 
-  const handleNotificationsSave = async () => {
+  const handleNotificationsSave = async (): Promise<void> => {
     setSaving(true);
     await new Promise(r => setTimeout(r, 400));
-    flash("success", "Notification preferences saved.");
+    toast.success("Notification preferences saved.");
     setSaving(false);
   };
 
-  const handleDeleteAccount = async () => {
-    if (deleteInput !== user?.email)
-      return flash("error", "Email doesn't match. Account not deleted.");
+  const handleDeleteAccount = async (): Promise<void> => {
+    if (deleteInput !== user?.email) {
+      toast.error("Email doesn't match. Account not deleted.");
+      return;
+    }
     setSaving(true);
     try {
       await API.delete("/api/users");
@@ -95,7 +100,7 @@ export default function UserSettings() {
       window.dispatchEvent(new Event("auth:changed"));
       navigate("/");
     } catch (err: any) {
-      flash("error", err?.response?.data?.message || "Failed to delete account.");
+      toast.error(err?.response?.data?.message || "Failed to delete account.");
     } finally { setSaving(false); }
   };
 
@@ -115,40 +120,30 @@ export default function UserSettings() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] via-[#FCFAF7] to-[#F9F6F0] py-12 px-4">
       <div className="max-w-5xl mx-auto">
+
         {/* Header */}
         <div className="mb-10">
           <h1 className="font-serif text-5xl font-bold text-[#1a1a1a] mb-2">Account Settings</h1>
           <p className="text-[#6B7280] text-lg">Manage your profile, security, and preferences</p>
         </div>
 
-        {/* Alert Messages */}
-        {msg && (
-          <div className={`mb-8 rounded-2xl border-2 px-6 py-4 shadow-md transition-all ${
-            msg.type === "success"
-              ? "border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-900"
-              : "border-red-300 bg-gradient-to-r from-red-50 to-red-100 text-red-900"
-          }`}>
-            <p className="font-semibold">{msg.type === "success" ? "✓ Success" : "⚠ Error"}</p>
-            <p className="text-sm mt-1">{msg.text}</p>
-          </div>
-        )}
-
         <div className="flex gap-8">
-          {/* Sidebar Navigation */}
+
+          {/* Sidebar */}
           <aside className="w-56 shrink-0">
             <nav className="bg-white rounded-2xl border border-[#E8E6E1] shadow-lg overflow-hidden">
               {tabs.map(({ id, label, icon: Icon }, idx) => (
                 <button
                   key={id}
-                  onClick={() => { setActiveTab(id); setMsg(null); }}
+                  onClick={() => setActiveTab(id)}
                   className={`w-full flex items-center gap-3 px-5 py-4 text-sm font-semibold transition-all relative ${
                     activeTab === id
                       ? "bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] text-white shadow-md"
-                      : "text-[#2D3436] hover:bg-[#F9F6F0] text-[#6B7280]"
+                      : "text-[#6B7280] hover:bg-[#F9F6F0]"
                   } ${idx < tabs.length - 1 ? "border-b border-[#E8E6E1]" : ""}`}
                 >
                   {activeTab === id && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-white"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-white" />
                   )}
                   <Icon size={18} className="flex-shrink-0" />
                   <span>{label}</span>
@@ -157,7 +152,7 @@ export default function UserSettings() {
             </nav>
           </aside>
 
-          {/* Content Panel */}
+          {/* Content */}
           <div className="flex-1 bg-white rounded-2xl border border-[#E8E6E1] p-8 shadow-2xl">
 
             {/* ── PROFILE ── */}
@@ -167,27 +162,23 @@ export default function UserSettings() {
                   <h2 className="text-2xl font-bold text-[#1a1a1a] mb-1">Profile Information</h2>
                   <p className="text-[#6B7280] text-sm">Update your personal details</p>
                 </div>
-
                 <div className="bg-gradient-to-br from-[#FAF7F2] to-[#F5F2EC] rounded-2xl p-6 space-y-6">
                   <div className="grid grid-cols-2 gap-6">
                     <div>
                       <label className={lbl}>First Name</label>
-                      <input className={inp} value={form.firstName}
-                        onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} 
-                        placeholder="Enter your first name" />
+                      <input className={inp} value={form.firstName} placeholder="Enter your first name"
+                        onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} />
                     </div>
                     <div>
                       <label className={lbl}>Last Name</label>
-                      <input className={inp} value={form.lastName}
-                        onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} 
-                        placeholder="Enter your last name" />
+                      <input className={inp} value={form.lastName} placeholder="Enter your last name"
+                        onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} />
                     </div>
                   </div>
                   <div>
                     <label className={lbl}>Email Address</label>
-                    <input type="email" className={inp} value={form.email}
-                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))} 
-                      placeholder="Enter your email" />
+                    <input type="email" className={inp} value={form.email} placeholder="Enter your email"
+                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
                   </div>
                   <div>
                     <label className={lbl}>Account Role</label>
@@ -198,7 +189,6 @@ export default function UserSettings() {
                     </div>
                   </div>
                 </div>
-
                 <Button onClick={handleProfileSave} disabled={saving}
                   className="bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] text-white font-semibold shadow-lg hover:shadow-xl transition-all">
                   <Save size={16} className="mr-2" />
@@ -214,7 +204,6 @@ export default function UserSettings() {
                   <h2 className="text-2xl font-bold text-[#1a1a1a] mb-1">Change Password</h2>
                   <p className="text-[#6B7280] text-sm">Keep your account secure with a strong password</p>
                 </div>
-
                 <div className="bg-gradient-to-br from-[#FAF7F2] to-[#F5F2EC] rounded-2xl p-6 space-y-5">
                   {(["current", "newPass", "confirm"] as const).map((field, i) => (
                     <div key={field}>
@@ -226,25 +215,23 @@ export default function UserSettings() {
                           type={showPw[field] ? "text" : "password"}
                           className={inp + " pr-12"}
                           value={passwords[field]}
-                          onChange={e => setPasswords(p => ({ ...p, [field]: e.target.value }))}
                           placeholder={["Enter current password", "Enter new password", "Confirm new password"][i]}
+                          onChange={e => setPasswords(p => ({ ...p, [field]: e.target.value }))}
                         />
-                        <button
-                          type="button"
+                        <button type="button"
                           onClick={() => setShowPw(s => ({ ...s, [field]: !s[field] }))}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#7C9A82] transition-colors"
-                        >
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#7C9A82] transition-colors">
                           {showPw[field] ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
-
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                  <p className="text-xs text-blue-800">💡 <span className="font-semibold">Password Tips:</span> Use at least 8 characters, mix uppercase, lowercase, numbers, and symbols.</p>
+                  <p className="text-xs text-blue-800">
+                    💡 <span className="font-semibold">Password Tips:</span> Use at least 8 characters, mix uppercase, lowercase, numbers, and symbols.
+                  </p>
                 </div>
-
                 <Button onClick={handlePasswordChange} disabled={saving}
                   className="bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] text-white font-semibold shadow-lg hover:shadow-xl transition-all">
                   <Lock size={16} className="mr-2" />
@@ -260,13 +247,14 @@ export default function UserSettings() {
                   <h2 className="text-2xl font-bold text-[#1a1a1a] mb-1">Notification Preferences</h2>
                   <p className="text-[#6B7280] text-sm">Choose how you'd like to be notified</p>
                 </div>
-
                 <div className="space-y-3">
-                  {(Object.keys(notifications) as Array<keyof typeof notifications>).map((key) => (
+                  {(Object.keys(notifications) as Array<keyof typeof notifications>).map(key => (
                     <div key={key}
                       className="flex items-center justify-between bg-gradient-to-r from-[#FAF7F2] to-[#F5F2EC] rounded-2xl p-5 border border-[#E8E6E1] hover:shadow-md transition-all">
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-[#1a1a1a] capitalize">{key === "email" ? "Email Updates" : key === "appointments" ? "Appointment Reminders" : "Assessment Nudges"}</p>
+                        <p className="text-sm font-semibold text-[#1a1a1a] capitalize">
+                          {key === "email" ? "Email Updates" : key === "appointments" ? "Appointment Reminders" : "Assessment Nudges"}
+                        </p>
                         <p className="text-xs text-[#6B7280] mt-1">
                           {{ email: "Receive important updates and newsletters via email", appointments: "Get reminders before your upcoming appointments", assessments: "Nudges to help you complete pending assessments" }[key]}
                         </p>
@@ -284,7 +272,6 @@ export default function UserSettings() {
                     </div>
                   ))}
                 </div>
-
                 <Button onClick={handleNotificationsSave} disabled={saving}
                   className="bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] text-white font-semibold shadow-lg hover:shadow-xl transition-all">
                   <Save size={16} className="mr-2" />
@@ -300,13 +287,10 @@ export default function UserSettings() {
                   <h2 className="text-2xl font-bold text-red-600 mb-1">Danger Zone</h2>
                   <p className="text-[#6B7280] text-sm">Account deletion is permanent and cannot be undone</p>
                 </div>
-
                 <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-8 space-y-5">
                   <div className="space-y-3">
                     <p className="text-sm font-semibold text-red-900">⚠️ Before you go…</p>
-                    <p className="text-sm text-red-800 leading-relaxed">
-                      Deleting your account will:
-                    </p>
+                    <p className="text-sm text-red-800 leading-relaxed">Deleting your account will:</p>
                     <ul className="text-xs text-red-800 space-y-1 ml-4 list-disc">
                       <li>Permanently remove all your personal data</li>
                       <li>Cancel any active consultations</li>
@@ -314,13 +298,10 @@ export default function UserSettings() {
                       <li>Remove access to all services</li>
                     </ul>
                   </div>
-
                   <div className="border-t-2 border-red-200 pt-5 space-y-3">
-                    <p className="text-sm font-semibold text-red-900">
-                      Type your email to confirm deletion:
-                    </p>
+                    <p className="text-sm font-semibold text-red-900">Type your email to confirm deletion:</p>
                     <div className="bg-white rounded-xl p-3">
-                      <p className="text-xs text-[#9CA3AF] mb-2">Your email:</p>
+                      <p className="text-xs text-[#9CA3AF] mb-1">Your email:</p>
                       <p className="font-mono font-bold text-red-600 text-sm">{user?.email}</p>
                     </div>
                     <input

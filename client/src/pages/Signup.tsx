@@ -7,6 +7,7 @@ import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { Eye, EyeOff } from "lucide-react";
 import { BlobDecoration } from "../components/BlobDecoration";
+import { toast } from "react-hot-toast";
 
 function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -34,9 +35,11 @@ function Signup() {
       });
 
       alert("Account created successfully!");
+      toast.success("Account created! Please verify your email.");
       navigate("/login");
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed");
+      toast.error("Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }

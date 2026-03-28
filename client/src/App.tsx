@@ -30,15 +30,20 @@ import UserSettings from "./pages/UserSettings";
 import MySlots from "./pages/MySlots";
 import PaymentVerify from "./pages/PaymentVerify";
 import PaymentFailure from "./pages/PaymentFailure";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import NotFound from "./pages/NotFound";
 import { ThemeProvider } from "./context/ThemeContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 import { NotificationsProvider } from "./context/NotificationsContext";
 
 function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-      <NotificationsProvider>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ThemeProvider>
+          <NotificationsProvider>
         <ScrollToTop />
         <Toaster
           position="top-right"
@@ -87,6 +92,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-email/:token" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
             {/* PROTECTED */}
             <Route
@@ -111,7 +118,7 @@ function App() {
               <Route path="/appointments" element={<AppointmentPage />} />
               <Route path="/settings" element={<UserSettings />} />
               <Route path="/my-slots" element={<MySlots />} />
-              <Route path="/appointments/payment-verify" element={<PaymentVerify />} /> 
+              <Route path="/appointments/payment-verify" element={<PaymentVerify />} />
 
               
             </Route>
@@ -125,11 +132,15 @@ function App() {
                 </AdminRoute>
               }
             />
+
+            {/* 404 CATCH-ALL */}
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </NotificationsProvider>
       </ThemeProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

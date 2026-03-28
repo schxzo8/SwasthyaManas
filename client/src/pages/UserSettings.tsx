@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Lock, Bell, Trash2, Save, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Bell, Trash2, Save, Eye, EyeOff, Upload, X } from "lucide-react";
 import { Button } from "../components/Button";
 import API from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
@@ -36,6 +36,11 @@ export default function UserSettings() {
   const [deleteInput, setDeleteInput] = useState("");
   const [activeTab, setActiveTab]     = useState<Tab>("profile");
   const [saving, setSaving]           = useState(false);
+
+  // Profile picture upload states
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | null>(user?.profilePicture || null);
+  const [uploadingProfile, setUploadingProfile] = useState(false);
 
   const handleProfileSave = async (): Promise<void> => {
     if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
@@ -104,6 +109,63 @@ export default function UserSettings() {
     } finally { setSaving(false); }
   };
 
+  const handleProfilePictureSelect = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)) {
+      toast.error("Only JPEG, PNG, GIF, and WebP images are allowed.");
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB.");
+      return;
+    }
+
+    setProfileFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setProfilePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleProfilePictureUpload = async (): Promise<void> => {
+    if (!profileFile) {
+      toast.error("Please select an image first.");
+      return;
+    }
+
+    setUploadingProfile(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", profileFile);
+
+      const res = await API.put("/api/users/profile-picture", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const updated = { ...user, profilePicture: res.data.user.profilePicture };
+      localStorage.setItem("user", JSON.stringify(updated));
+      window.dispatchEvent(new Event("auth:changed"));
+
+      setProfileFile(null);
+      toast.success("Profile picture updated successfully.");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to upload image.");
+    } finally { setUploadingProfile(false); }
+  };
+
+  const handleClearProfilePicturePreview = (): void => {
+    setProfileFile(null);
+    setProfilePreview(user?.profilePicture || null);
+  };
+
   const tabs = [
     { id: "profile"       as Tab, label: "Profile",       icon: User   },
     { id: "security"      as Tab, label: "Security",      icon: Lock   },
@@ -162,6 +224,77 @@ export default function UserSettings() {
                   <h2 className="text-2xl font-bold text-[#1a1a1a] dark:text-white mb-1">Profile Information</h2>
                   <p className="text-[#6B7280] dark:text-slate-400 text-sm">Update your personal details</p>
                 </div>
+
+                {/* Profile Picture Upload - AT TOP */}
+                <div className="bg-gradient-to-br from-[#FAF7F2] dark:from-slate-800 to-[#F5F2EC] dark:to-slate-700 rounded-2xl p-6 space-y-4 border border-[#E8E6E1] dark:border-slate-700">
+                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-white">Profile Picture</h3>
+                  
+                  {/* Current/Preview Profile Picture */}
+                  <div className="flex items-center gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#7C9A82] to-[#5A7A60] flex items-center justify-center shadow-md overflow-hidden border-4 border-white dark:border-slate-700">
+                        {profilePreview ? (
+                          <img src={profilePreview} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-3xl font-bold text-white">
+                            {user?.firstName?.charAt(0).toUpperCase()}{user?.lastName?.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-[#6B7280] dark:text-slate-400 mb-1">Current Profile Picture</p>
+                      <p className="text-sm font-semibold text-[#2D3436] dark:text-white">
+                        {profileFile ? "Preview (not saved yet)" : (profilePreview ? "Uploaded" : "No picture set")}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* File Input */}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="profile-picture"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      onChange={handleProfilePictureSelect}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="profile-picture"
+                      className="flex items-center justify-center gap-2 w-full border-2 border-dashed border-[#D4CCBF] dark:border-slate-600 rounded-xl px-4 py-6 cursor-pointer hover:bg-[#F9F6F0] dark:hover:bg-slate-700 transition-all text-[#6B7280] dark:text-slate-400 hover:text-[#7C9A82] dark:hover:text-emerald-400 font-medium"
+                    >
+                      <Upload size={20} />
+                      <span>Click to select image (JPEG, PNG, GIF, WebP - Max 5MB)</span>
+                    </label>
+                  </div>
+
+                  {/* Upload Actions */}
+                  {profileFile && (
+                    <div className="flex gap-3 pt-2">
+                      <Button
+                        onClick={handleProfilePictureUpload}
+                        disabled={uploadingProfile}
+                        className="flex-1 bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+                      >
+                        {uploadingProfile ? "Uploading…" : (
+                          <>
+                            <Upload size={16} className="mr-2" />
+                            Upload Picture
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        onClick={handleClearProfilePicturePreview}
+                        disabled={uploadingProfile}
+                        className="px-4 bg-[#F0F0F0] dark:bg-slate-700 text-[#6B7280] dark:text-slate-400 hover:bg-[#E0E0E0] dark:hover:bg-slate-600 transition-all"
+                      >
+                        <X size={16} />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Personal Details */}
                 <div className="bg-gradient-to-br from-[#FAF7F2] dark:from-slate-700 to-[#F5F2EC] dark:to-slate-600 rounded-2xl p-6 space-y-6">
                   <div className="grid grid-cols-2 gap-6">
                     <div>

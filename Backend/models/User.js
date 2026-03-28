@@ -61,6 +61,11 @@ const userSchema = new mongoose.Schema(
       default: true
     },
     
+    profilePicture: {
+      type: String,
+      default: null,
+    },
+
     failedLoginAttempts: {
       type: Number,
       default: 0

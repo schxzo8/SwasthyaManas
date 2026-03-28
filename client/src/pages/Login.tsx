@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
 
@@ -20,6 +20,14 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+
+  // Redirect authenticated users away from login page
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && token !== "undefined" && token !== "null") {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

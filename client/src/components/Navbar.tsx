@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Leaf, User, Settings, LogOut } from "lucide-react";
+import { Menu, X, Leaf, Settings, LogOut } from "lucide-react";
 import { Button } from "./Button";
 import API from "../services/api";
 import CommunicationHub from "./CommunicationHub";
@@ -155,8 +155,14 @@ export function Navbar() {
                       onClick={() => setIsProfileOpen(!isProfileOpen)}
                       className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#E8F0E9] dark:hover:bg-slate-800 transition-colors group"
                     >
-                      <div className="h-8 w-8 rounded-full bg-[#7C9A82] dark:bg-emerald-600 flex items-center justify-center text-white group-hover:shadow-md transition-shadow">
-                        <User size={16} />
+                      <div className="h-8 w-8 rounded-full bg-[#7C9A82] dark:bg-emerald-600 flex items-center justify-center text-white group-hover:shadow-md transition-shadow overflow-hidden">
+                        {user?.profilePicture ? (
+                          <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-sm font-bold">
+                            {user?.firstName?.charAt(0).toUpperCase()}{user?.lastName?.charAt(0).toUpperCase()}
+                          </span>
+                        )}
                       </div>
                       <div className="hidden sm:block text-left">
                         <p className="text-xs font-medium text-[#2D3436] dark:text-white">

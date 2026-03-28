@@ -499,6 +499,38 @@ exports.adminDeleteUser = async (req, res) => {
   }
 };
 
+// PUT /api/user/profile-picture
+exports.uploadProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file provided" });
+    }
+
+    const { uploadToCloudinary } = require("../utils/cloudinaryUpload");
+
+    // Upload to Cloudinary
+    const imageUrl = await uploadToCloudinary(
+      req.file.buffer,
+      req.file.originalname,
+      "swasthya-manas/profiles"
+    );
+
+    // Update user with new profile picture URL
+    const updated = await User.findByIdAndUpdate(
+      req.user.id,
+      { profilePicture: imageUrl },
+      { new: true }
+    ).select("-password -refreshTokenHash -emailVerificationToken");
+
+    res.json({
+      message: "Profile picture updated successfully",
+      user: updated,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to upload image", error: error.message });
+  }
+};
+
 // ADMIN: Update expert details 
 exports.adminUpdateExpert = async (req, res) => {
   try {

@@ -1,5 +1,6 @@
 const express = require("express");
 const { protect, authorizeRoles } = require("../middlewares/authMiddleware");
+const upload = require("../middlewares/uploadMiddleware");
 const {
   updateProfile,
   changePassword,
@@ -10,7 +11,8 @@ const {
   adminUpdateUser,
   adminDeleteUser,
   adminUpdateExpert,
-  adminGetAppointments
+  adminGetAppointments,
+  uploadProfilePicture,
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -19,6 +21,7 @@ const router = express.Router();
 router.get("/me", protect, (req, res) => res.json(req.user));
 router.get("/profile", protect, (req, res) => res.json({ user: req.user }));
 router.put("/profile",  protect, updateProfile);
+router.put("/profile-picture", protect, upload.single('file'), uploadProfilePicture);
 router.put("/password", protect, changePassword);
 router.delete("/",      protect, deleteAccount);
 

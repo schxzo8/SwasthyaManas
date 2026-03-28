@@ -66,7 +66,7 @@ exports.initiateEsewaPayment = async (req, res) => {
       data:    { ...paymentData, signature },
     });
   } catch (err) {
-    console.error("ESEWA INITIATE ERROR:", err.message);
+    // eSewa initiate error handled
     return res.status(500).json({ message: "Failed to initiate eSewa payment" });
   }
 };
@@ -128,7 +128,7 @@ exports.paymentStatus = async (req, res) => {
 
     return res.json({ message: "Payment verified & booking confirmed", status: "COMPLETED", appointment });
   } catch (err) {
-    console.error("PAYMENT STATUS ERROR:", err.message);
+    // Payment status check error handled
     return res.status(500).json({ message: err.message || "Server error" });
   }
 };
@@ -177,7 +177,7 @@ exports.initiateKhaltiPayment = async (req, res) => {
 
     return res.json({ free: false, payment_url: mockPaymentUrl, pidx: mockPidx });
   } catch (err) {
-    console.error("KHALTI INITIATE ERROR:", err.message);
+    // Khalti initiate error handled
     return res.status(500).json({ message: "Failed to initiate payment" });
   }
 };
@@ -218,7 +218,7 @@ exports.verifyKhaltiPayment = async (req, res) => {
 
     return res.status(201).json({ message: "Payment verified & booking confirmed", appointment });
   } catch (err) {
-    console.error("KHALTI VERIFY ERROR:", err?.response?.data || err.message);
+    // Khalti verify error handled
     return res.status(500).json({ message: err.message || "Verification failed" });
   }
 };

@@ -23,13 +23,9 @@ function ensureSocket() {
     timeout: 20000,
   });
 
-  socket.on("connect", () => console.log("✅ socket connected:", socket?.id));
-  socket.on("disconnect", (reason) =>
-    console.log("⚠️ socket disconnected:", reason)
-  );
-  socket.on("connect_error", (err) =>
-    console.log("❌ socket connect_error:", err.message)
-  );
+  socket.on("connect", () => void 0); // silently handle
+  socket.on("disconnect", () => void 0); // silently handle
+  socket.on("connect_error", () => void 0); // silently handle
 
   return socket;
 }

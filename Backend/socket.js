@@ -28,11 +28,8 @@ function initSocket(server) {
   });
 
   io.on("connection", (socket) => {
-    console.log("✅ socket connected:", socket.id, "user:", socket.userId);
-
-    // personal room
+    // Socket connected for user
     socket.join(`user_${socket.userId}`);
-    console.log("✅ joined room:", `user_${socket.userId}`);
 
     // role room
     socket.join(`role_${socket.role}`);
@@ -56,8 +53,7 @@ function initSocket(server) {
       io.to(`consultation_${consultationId}`).emit("chat:new", payload);
     });
 
-    socket.on("disconnect", (reason) => {
-      console.log("socket disconnected:", socket.id, reason);
+    socket.on("disconnect", () => {
     });
   });
 

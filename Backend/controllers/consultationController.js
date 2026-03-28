@@ -49,7 +49,7 @@ exports.createRequest = async (req, res) => {
       request,
     });
   } catch (err) {
-    console.error(err);
+    // Error handled, return 500
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -63,7 +63,7 @@ exports.getMyRequests = async (req, res) => {
 
     return res.json(requests);
   } catch (err) {
-    console.error(err);
+    // Error handled
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -77,7 +77,7 @@ exports.getRequestsForExpert = async (req, res) => {
 
     return res.json(requests);
   } catch (err) {
-    console.error(err);
+    // Error handled
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -213,7 +213,7 @@ exports.updateRequestStatus = async (req, res) => {
 
     return res.json({ message: "Request updated", request });
   } catch (err) {
-    console.error(err);
+    // Error handled, return 500
     return res.status(500).json({ message: "Server error" });
   }
 };

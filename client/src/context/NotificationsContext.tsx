@@ -103,7 +103,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     };
 
     const onReconnectSync = () => {
-      console.log("🔄 socket connected/reconnected — syncing notifications");
+      // Silently resync notifications on reconnect
       refresh().catch(() => {});
     };
 

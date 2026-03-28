@@ -1,5 +1,5 @@
 // src/layouts/RootLayout.tsx
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Navbar } from "../components/Navbar";
@@ -15,7 +15,6 @@ export default function RootLayout() {
   const [booting, setBooting] = useState(true);
   const didBoot = useRef(false);
 
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -26,26 +25,37 @@ export default function RootLayout() {
       try {
         let token = localStorage.getItem("token");
 
-        if (!token) {
-          const res = await API.get("/api/auth/refresh");
-          const newToken: string = res.data.token;
+        // Auth pages where we should NOT auto-login
+        const isAuthPage =
+          location.pathname === "/login" ||
+          location.pathname === "/signup" ||
+          location.pathname.startsWith("/verify-email") ||
+          location.pathname === "/forgot-password" ||
+          location.pathname.startsWith("/reset-password");
 
-          localStorage.setItem("token", newToken);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
-          notifyAuthChanged();
+        // NEVER try to refresh on auth pages, even if refresh cookie exists
+        if (!token && !isAuthPage) {
+          try {
+            const res = await API.get("/api/auth/refresh");
+            const newToken: string = res.data.token;
 
-          token = newToken;
+            localStorage.setItem("token", newToken);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+            notifyAuthChanged();
 
-          const onAuthPage =
-            location.pathname === "/login" ||
-            location.pathname === "/signup" ||
-            location.pathname === "/verify-email";
-
-          if (onAuthPage) navigate("/dashboard", { replace: true });
+            token = newToken;
+          } catch (err) {
+            // Refresh failed - user is logged out, that's OK
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            notifyAuthChanged();
+          }
         }
 
+        // Only connect socket if we have a token
         if (token) connectSocket(token);
-      } catch {
+      } catch (err) {
+        console.error("Boot error:", err);
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         notifyAuthChanged();
@@ -53,7 +63,7 @@ export default function RootLayout() {
         setBooting(false);
       }
     })();
-  }, [navigate, location.pathname]);
+  }, []);
 
   if (booting) {
     return (

@@ -49,7 +49,7 @@ export default function NotificationsBell() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative p-2 rounded-full hover:bg-[#E8F0E9] text-[#2D3436] transition-colors"
+        className="relative p-2 rounded-full hover:bg-[#E8F0E9] dark:hover:bg-slate-700 text-[#2D3436] dark:text-white transition-colors"
         aria-label="Notifications"
       >
         <Bell size={18} />
@@ -61,13 +61,13 @@ export default function NotificationsBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-white border border-[#E8E3DA] rounded-xl shadow-lg overflow-hidden z-50">
-          <div className="px-4 py-3 flex items-center justify-between border-b border-[#E8E3DA]">
-            <div className="font-semibold text-[#2D3436]">Notifications</div>
+        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-[#E8E3DA] dark:border-slate-700 rounded-xl shadow-lg overflow-hidden z-50">
+          <div className="px-4 py-3 flex items-center justify-between border-b border-[#E8E3DA] dark:border-slate-700">
+            <div className="font-semibold text-[#2D3436] dark:text-white">Notifications</div>
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="text-xs text-[#7C9A82] hover:underline"
+              className="text-xs text-[#7C9A82] dark:text-emerald-400 hover:underline"
             >
               Mark all read
             </button>
@@ -75,24 +75,24 @@ export default function NotificationsBell() {
 
           <div className="max-h-80 overflow-y-auto">
             {recent.length === 0 ? (
-              <div className="px-4 py-6 text-sm text-[#5A6062]">
+              <div className="px-4 py-6 text-sm text-[#5A6062] dark:text-slate-400">
                 No notifications yet.
               </div>
             ) : (
               recent.map((n) => (
                 <div
                   key={n._id}
-                  className={`px-4 py-3 border-b border-[#FAF7F2] ${
-                    n.isRead ? "bg-white" : "bg-[#F0F7F4]"
+                  className={`px-4 py-3 border-b border-[#FAF7F2] dark:border-slate-700 ${
+                    n.isRead ? "bg-white dark:bg-slate-800" : "bg-[#F0F7F4] dark:bg-slate-700"
                   }`}
                 >
-                  <div className="text-sm font-medium text-[#2D3436]">{n.title}</div>
+                  <div className="text-sm font-medium text-[#2D3436] dark:text-white">{n.title}</div>
 
                   {n.message && (
-                    <div className="text-xs text-[#5A6062] mt-1">{n.message}</div>
+                    <div className="text-xs text-[#5A6062] dark:text-slate-400 mt-1">{n.message}</div>
                   )}
 
-                  <div className="text-[11px] text-[#9CA3AF] mt-1">
+                  <div className="text-[11px] text-[#9CA3AF] dark:text-slate-500 mt-1">
                     {formatNepalDateTime(n.createdAt)}
                   </div>
 
@@ -100,7 +100,7 @@ export default function NotificationsBell() {
                     <button
                       type="button"
                       onClick={() => handleView(n)}
-                      className="text-xs text-[#7C9A82] hover:underline mt-2 inline-block"
+                      className="text-xs text-[#7C9A82] dark:text-emerald-400 hover:underline mt-2 inline-block"
                     >
                       View
                     </button>
@@ -110,11 +110,11 @@ export default function NotificationsBell() {
             )}
           </div>
 
-          <div className="px-4 py-3 bg-[#FAF7F2]">
+          <div className="px-4 py-3 bg-[#FAF7F2] dark:bg-slate-700">
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="w-full text-sm py-2 rounded-lg border border-[#E8E3DA] hover:bg-white transition"
+              className="w-full text-sm py-2 rounded-lg border border-[#E8E3DA] dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 text-[#2D3436] dark:text-white transition"
             >
               Close
             </button>

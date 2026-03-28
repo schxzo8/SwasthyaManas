@@ -79,7 +79,7 @@ exports.register = async (req, res) => {
       message: "Registration successful. Please verify your email.",
     });
   } catch (error) {
-    console.error("REGISTER ERROR:", error);
+    // Registration error handled
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -111,7 +111,7 @@ exports.verifyEmail = async (req, res) => {
       message: "Email verified successfully. You can now log in.",
     });
   } catch (error) {
-    console.error("VERIFY EMAIL ERROR:", error);
+    // Email verification error handled
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -150,7 +150,7 @@ exports.resendVerification = async (req, res) => {
 
     return res.json({ message: "Verification email resent" });
   } catch (error) {
-    console.error("RESEND VERIFICATION ERROR:", error);
+    // Resend verification error handled
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -224,7 +224,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
+    // Login error handled
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -348,6 +348,91 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+// POST /api/auth/forgot-password
+// Only for REGISTERED users (email must exist in system)
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    // Security: Don't reveal if email exists or not (prevents user enumeration)
+    if (!user) {
+      return res.status(200).json({
+        message: "If this email exists in our system, a password reset link will be sent shortly",
+      });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    user.passwordResetToken = resetToken;
+    user.passwordResetExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    await user.save();
+
+    // Generate reset URL for email
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    await sendEmail({
+      to: email.toLowerCase(),
+      subject: "SwasthyaManas - Password Reset Request",
+      html: `
+        <h2>Password Reset Request</h2>
+        <p>You requested a password reset. Click the link below to proceed:</p>
+        <a href="${resetUrl}" style="background-color: #7C9A82; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
+          Reset Password
+        </a>
+        <p style="margin-top: 20px; color: #666; font-size: 12px;">
+          This link expires in 1 hour. If you didn't request this, please ignore this email.
+        </p>
+      `,
+    });
+
+    return res.status(200).json({
+      message: "If this email exists in our system, a password reset link will be sent shortly",
+    });
+  } catch (error) {
+    // Forgot password error handled
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// POST /api/auth/reset-password/:token
+// Verify reset token and set new password
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    }
+
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: Date.now() }, // Token not expired
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Password reset link is invalid or expired" });
+    }
+
+    // Update password
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    return res.json({ message: "Password reset successfully. You can now log in." });
+  } catch (error) {
+    // Reset password error handled
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 // DELETE /api/user
 exports.deleteAccount = async (req, res) => {
   try {
@@ -364,10 +449,10 @@ exports.adminGetUsers = async (req, res) => {
     const users = await User.find({ role: { $in: ["user", "admin"] } })
       .select("-password -refreshTokenHash -emailVerificationToken")
       .sort({ createdAt: -1 });
-    console.log("adminGetUsers hit, found:", users.length); 
+    // Fetch users 
     res.json(users);
   } catch (err) {
-    console.error("ADMIN GET USERS ERROR:", err.message); 
+    // Admin get users error handled 
     res.status(500).json({ message: err.message }); // return actual error
   }
 };
@@ -378,10 +463,10 @@ exports.adminGetExperts = async (req, res) => {
     const experts = await User.find({ role: "expert" })
       .select("-password -refreshTokenHash -emailVerificationToken")
       .sort({ createdAt: -1 });
-    console.log("adminGetExperts hit, found:", experts.length);
+    // Fetch experts
     res.json(experts);
   } catch (err) {
-    console.error("ADMIN GET EXPERTS ERROR:", err.message);
+    // Admin get experts error handled
     res.status(500).json({ message: err.message });
   }
 };

@@ -92,7 +92,7 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#FAF7F2] relative overflow-hidden px-4">
+    <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#FAF7F2] dark:bg-slate-950 relative overflow-hidden px-4">
       <BlobDecoration
         variant={1}
         className="top-[-10%] right-[-10%] w-[500px] h-[500px] text-[#E8F0E9]"
@@ -104,36 +104,36 @@ export function Login() {
 
       <Card className="w-full max-w-md relative z-10 p-8 md:p-10">
         <div className="text-center mb-8">
-          <div className="font-serif text-xl font-bold text-[#2D3436] mb-3">
+          <div className="font-serif text-xl font-bold text-[#2D3436] dark:text-white mb-3">
             SwasthyaManas
           </div>
-          <h1 className="font-serif text-3xl font-bold text-[#2D3436] mb-2">
+          <h1 className="font-serif text-3xl font-bold text-[#2D3436] dark:text-white mb-2">
             Welcome Back
           </h1>
-          <p className="text-[#5A6062]">Continue your wellness journey</p>
+          <p className="text-[#5A6062] dark:text-slate-400">Continue your wellness journey</p>
         </div>
 
         {(error || info) && (
           <div className="mb-6 space-y-2">
             {error && (
-              <div className="text-sm rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3">
+              <div className="text-sm rounded-xl border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 px-4 py-3">
                 {error}
               </div>
             )}
             {info && (
-              <div className="text-sm rounded-xl border border-green-200 bg-green-50 text-green-700 px-4 py-3">
+              <div className="text-sm rounded-xl border border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-4 py-3">
                 {info}
               </div>
             )}
 
             {showResend && (
-              <div className="text-sm text-[#5A6062]">
-                Didn’t receive the email?{" "}
+              <div className="text-sm text-[#5A6062] dark:text-slate-400">
+                Didn't receive the email?{" "}
                 <button
                   type="button"
                   onClick={handleResend}
                   disabled={!email || isLoading}
-                  className="text-[#7C9A82] font-medium hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="text-[#7C9A82] dark:text-emerald-400 font-medium hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Resend verification email
                 </button>
@@ -146,7 +146,7 @@ export function Login() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-[#2D3436] mb-1"
+              className="block text-sm font-medium text-[#2D3436] dark:text-white mb-1"
             >
               Email Address
             </label>
@@ -156,7 +156,7 @@ export function Login() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all bg-[#FAF7F2]"
+              className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] dark:border-slate-600 bg-[#FAF7F2] dark:bg-slate-700 text-[#2D3436] dark:text-white placeholder-[#999] dark:placeholder-slate-500 focus:ring-2 focus:ring-[#7C9A82] dark:focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -165,7 +165,7 @@ export function Login() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-[#2D3436] mb-1"
+              className="block text-sm font-medium text-[#2D3436] dark:text-white mb-1"
             >
               Password
             </label>
@@ -176,14 +176,14 @@ export function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all bg-[#FAF7F2] pr-12"
+                className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] dark:border-slate-600 bg-[#FAF7F2] dark:bg-slate-700 text-[#2D3436] dark:text-white placeholder-[#999] dark:placeholder-slate-500 focus:ring-2 focus:ring-[#7C9A82] dark:focus:ring-emerald-500 focus:border-transparent outline-none transition-all pr-12"
                 placeholder="••••••••"
                 autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(v => !v)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#C4B5A0] hover:text-[#7C9A82] transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#C4B5A0] dark:text-slate-500 hover:text-[#7C9A82] dark:hover:text-emerald-400 transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -191,10 +191,10 @@ export function Login() {
           </div>
 
           <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center text-[#5A6062]">
+            <label className="flex items-center text-[#5A6062] dark:text-slate-400">
               <input
                 type="checkbox"
-                className="mr-2 rounded text-[#7C9A82] focus:ring-[#7C9A82]"
+                className="mr-2 rounded text-[#7C9A82] focus:ring-[#7C9A82] dark:bg-slate-700 dark:border-slate-600"
               />
               Remember me
             </label>
@@ -202,7 +202,7 @@ export function Login() {
             {/* UI only (no logic added) */}
             <Link
               to="/forgot-password"
-              className="no-underline text-[#7C9A82] hover:underline"
+              className="no-underline text-[#7C9A82] dark:text-emerald-400 hover:underline"
             >
               Forgot password?
             </Link>
@@ -213,11 +213,11 @@ export function Login() {
           </Button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-[#5A6062]">
+        <div className="mt-8 text-center text-sm text-[#5A6062] dark:text-slate-400">
           Don&apos;t have an account?{" "}
           <Link
             to="/signup"
-            className="no-underline text-[#7C9A82] font-medium hover:underline"
+            className="no-underline text-[#7C9A82] dark:text-emerald-400 font-medium hover:underline"
           >
             Sign up
           </Link>

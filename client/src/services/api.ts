@@ -40,6 +40,11 @@ API.interceptors.response.use(
       return Promise.reject(err);
     }
 
+    // Don't retry login/signup endpoints - these 401s are auth failures, not expired tokens
+    if (original.url?.includes("/api/auth/login") || original.url?.includes("/api/auth/register")) {
+      return Promise.reject(err);
+    }
+
     // Avoid infinite loop: if refresh endpoint itself fails with 401
     if (original.url?.includes("/api/auth/refresh")) {
       localStorage.removeItem("token");

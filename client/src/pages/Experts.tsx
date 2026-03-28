@@ -98,14 +98,14 @@ export default function Experts() {
   const selectedId = useMemo(() => selectedExpert?._id, [selectedExpert]);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="font-serif text-4xl font-bold text-[#2D3436] mb-4">
+          <h1 className="font-serif text-4xl font-bold text-[#2D3436] dark:text-white mb-4">
             Find Your Expert
           </h1>
-          <p className="text-[#5A6062] max-w-2xl mx-auto">
+          <p className="text-[#5A6062] dark:text-slate-400 max-w-2xl mx-auto">
             This is a support feature (not a medical diagnosis). Choose an expert and request guidance.
           </p>
 
@@ -123,12 +123,12 @@ export default function Experts() {
         {(err || msg) && (
           <div className="max-w-3xl mx-auto mb-8 space-y-2">
             {err && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-xl px-4 py-3">
                 {err}
               </p>
             )}
             {msg && (
-              <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+              <p className="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl px-4 py-3">
                 {msg}
               </p>
             )}
@@ -137,9 +137,9 @@ export default function Experts() {
 
         {/* Experts grid */}
         {isLoading ? (
-          <div className="text-center text-[#5A6062]">Loading experts...</div>
+          <div className="text-center text-[#5A6062] dark:text-slate-400">Loading experts...</div>
         ) : experts.length === 0 ? (
-          <div className="text-center text-[#5A6062]">No experts found.</div>
+          <div className="text-center text-[#5A6062] dark:text-slate-400">No experts found.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {experts.map((expert) => {
@@ -150,7 +150,7 @@ export default function Experts() {
                 <Card
                   key={expert._id}
                   className={`overflow-hidden flex flex-col h-full p-0 cursor-pointer transition-all ${
-                    isSelected ? "ring-2 ring-[#7C9A82]" : "hover:shadow-md"
+                    isSelected ? "ring-2 ring-[#7C9A82] dark:ring-emerald-600" : "hover:shadow-md"
                   }`}
                   onClick={() => setSelectedExpert(expert)}
                 >
@@ -171,23 +171,23 @@ export default function Experts() {
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h3 className="font-serif text-lg font-bold text-[#2D3436]">
+                        <h3 className="font-serif text-lg font-bold text-[#2D3436] dark:text-white">
                           {getDisplayName(expert)}
                         </h3>
-                        <p className="text-xs text-[#7C9A82] font-medium uppercase tracking-wide">
+                        <p className="text-xs text-[#7C9A82] dark:text-emerald-400 font-medium uppercase tracking-wide">
                           {getRole(expert)}
                         </p>
                       </div>
 
-                      <div className="flex items-center bg-[#FFFDF9] px-2 py-1 rounded border border-[#E8F0E9]">
+                      <div className="flex items-center bg-[#FFFDF9] dark:bg-slate-700 px-2 py-1 rounded border border-[#E8F0E9] dark:border-slate-600">
                         <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
-                        <span className="text-xs font-bold text-[#2D3436]">
+                        <span className="text-xs font-bold text-[#2D3436] dark:text-white">
                           {getRating(expert).toFixed(1)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center text-xs text-[#5A6062] mb-4 gap-1">
+                    <div className="flex items-center text-xs text-[#5A6062] dark:text-slate-400 mb-4 gap-1">
                       <MapPin size={12} />
                       <span>{getLocation(expert)}</span>
                     </div>
@@ -198,7 +198,7 @@ export default function Experts() {
                         {getSpecialties(expert).map((spec, i) => (
                           <span
                             key={`${expert._id}-spec-${i}`}
-                            className="text-xs bg-[#E8F0E9] text-[#5A7A60] px-2 py-1 rounded-md"
+                            className="text-xs bg-[#E8F0E9] dark:bg-slate-700 text-[#5A7A60] dark:text-slate-300 px-2 py-1 rounded-md"
                           >
                             {spec}
                           </span>
@@ -206,7 +206,7 @@ export default function Experts() {
                       </div>
                     )}
 
-                    <div className="mt-auto pt-4 border-t border-[#E8F0E9] space-y-2">
+                    <div className="mt-auto pt-4 border-t border-[#E8F0E9] dark:border-slate-700 space-y-2">
                       <Button
                         className="w-full"
                         variant={available ? "primary" : "secondary"}
@@ -232,7 +232,7 @@ export default function Experts() {
                       </Button>
                       {/* keep email display like your old logic (optional but useful) */}
                       {expert.email && (
-                        <p className="text-[11px] text-[#5A6062] text-center">
+                        <p className="text-[11px] text-[#5A6062] dark:text-slate-400 text-center">
                           {expert.email}
                         </p>
                       )}
@@ -247,12 +247,12 @@ export default function Experts() {
         {/* Request Consultation */}
         <div className="max-w-3xl mx-auto mt-12">
           <Card className="p-6 md:p-8">
-            <h2 className="font-serif text-2xl font-bold text-[#2D3436] mb-2">
+            <h2 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white mb-2">
               Request Consultation
             </h2>
-            <p className="text-sm text-[#5A6062] mb-4">
+            <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-4">
               Selected expert:{" "}
-              <strong className="text-[#2D3436]">
+              <strong className="text-[#2D3436] dark:text-white">
                 {selectedExpert ? getDisplayName(selectedExpert) : "None"}
               </strong>
             </p>
@@ -264,7 +264,7 @@ export default function Experts() {
               }
               placeholder="Write a short message (what you want help with)..."
               rows={5}
-              className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all bg-[#FAF7F2]"
+              className="w-full px-4 py-3 rounded-xl border border-[#C4B5A0] dark:border-slate-600 focus:ring-2 focus:ring-[#7C9A82] dark:focus:ring-emerald-500 focus:border-transparent outline-none transition-all bg-[#FAF7F2] dark:bg-slate-700 text-[#2D3436] dark:text-white placeholder-[#999] dark:placeholder-slate-400"
             />
 
             <div className="mt-4 flex items-center gap-3">

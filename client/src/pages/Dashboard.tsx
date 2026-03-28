@@ -238,26 +238,26 @@ export default function Dashboard() {
   if (loadingData) return <p>Loading dashboard...</p>;
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
           <div>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#2D3436]">
+            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#2D3436] dark:text-white">
               Hello, {user.firstName} {user.lastName}
             </h1>
-            <p className="text-[#5A6062] mt-1">Here's your wellness overview for today.</p>
+            <p className="text-[#5A6062] dark:text-slate-400 mt-1">Here's your wellness overview for today.</p>
 
-            <div className="mt-3 text-sm text-[#5A6062] space-y-1">
+            <div className="mt-3 text-sm text-[#5A6062] dark:text-slate-400 space-y-1">
               <p>
-                <span className="font-medium text-[#2D3436]">Email:</span> {user.email}
+                <span className="font-medium text-[#2D3436] dark:text-white">Email:</span> {user.email}
               </p>
               <p>
-                <span className="font-medium text-[#2D3436]">Role:</span> {user.role}
+                <span className="font-medium text-[#2D3436] dark:text-white">Role:</span> {user.role}
               </p>
               {user.role === "expert" && (user as any).expertise && (
                 <p>
-                  <span className="font-medium text-[#2D3436]">Expertise:</span>{" "}
+                  <span className="font-medium text-[#2D3436] dark:text-white">Expertise:</span>{" "}
                   {(user as any).expertise}
                 </p>
               )}
@@ -288,8 +288,8 @@ export default function Dashboard() {
               <div className={`p-3 rounded-full ${stat.bg} mb-3`}>
                 <stat.icon className={`h-6 w-6 ${stat.color}`} />
               </div>
-              <span className="text-2xl font-bold text-[#2D3436]">{stat.value}</span>
-              <span className="text-sm text-[#5A6062]">{stat.label}</span>
+              <span className="text-2xl font-bold text-[#2D3436] dark:text-white">{stat.value}</span>
+              <span className="text-sm text-[#5A6062] dark:text-slate-400">{stat.label}</span>
             </Card>
           ))}
         </div>
@@ -298,11 +298,11 @@ export default function Dashboard() {
           {/* Recent Activity */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="font-serif text-2xl font-bold text-[#2D3436]">Recent Activity</h2>
+              <h2 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white">Recent Activity</h2>
 
               <Link
                 to="/assessments/history"
-                className="no-underline text-[#7C9A82] text-sm font-medium hover:underline"
+                className="no-underline text-[#7C9A82] dark:text-emerald-400 text-sm font-medium hover:underline"
               >
                 View All
               </Link>
@@ -317,21 +317,21 @@ export default function Dashboard() {
                 recentActivity.map((item, index) => (
                   <Card
                     key={index}
-                    className="p-5 flex items-center justify-between hover:bg-white/80"
+                    className="p-5 flex items-center justify-between hover:bg-white/80 dark:hover:bg-slate-700/50"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-[#E8F0E9] flex items-center justify-center text-[#7C9A82]">
+                      <div className="h-10 w-10 rounded-full bg-[#E8F0E9] dark:bg-slate-700 flex items-center justify-center text-[#7C9A82] dark:text-emerald-400">
                         {item.type === "Assessment" ? <FileText size={20} /> : <UsersIcon size={20} />}
                       </div>
 
                       <div>
-                        <h3 className="font-medium text-[#2D3436]">{item.title}</h3>
-                        <p className="text-xs text-[#5A6062]">{item.date}</p>
+                        <h3 className="font-medium text-[#2D3436] dark:text-white">{item.title}</h3>
+                        <p className="text-xs text-[#5A6062] dark:text-slate-400">{item.date}</p>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <span className="inline-block px-3 py-1 rounded-full bg-[#FAF7F2] text-xs font-medium text-[#5A7A60] border border-[#E8F0E9]">
+                      <span className="inline-block px-3 py-1 rounded-full bg-[#FAF7F2] dark:bg-slate-700 text-xs font-medium text-[#5A7A60] dark:text-emerald-300 border border-[#E8F0E9] dark:border-slate-600">
                         {item.result}
                       </span>
                     </div>
@@ -343,21 +343,21 @@ export default function Dashboard() {
 
           {/* Right column: Recommended / Quick Actions */}
           <div className="space-y-6">
-            <h2 className="font-serif text-2xl font-bold text-[#2D3436]">
+            <h2 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white">
               {user.role === "expert" ? "Quick Actions" : "Recommended"}
             </h2>
 
             {/* Users: Appointment Booking (payment placeholder) */}
             {user.role !== "expert" && (
               <Card className="p-6">
-                <h3 className="font-serif text-lg font-bold text-[#2D3436] mb-2">
+                <h3 className="font-serif text-lg font-bold text-[#2D3436] dark:text-white mb-2">
                   Appointment Booking
                 </h3>
 
                 {booking.state === "none" && (
                   <>
-                    <p className="text-sm text-[#5A6062] mb-4">
-                      Book a session with an expert. Payment will be added later (for now it’s empty).
+                    <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-4">
+                      Connect with a mental health expert for personalized counseling and support.
                     </p>
                     <Link to="/experts" className="no-underline">
                       <Button className="w-full">Book Appointment</Button>
@@ -367,10 +367,10 @@ export default function Dashboard() {
 
                 {booking.state === "pending" && (
                   <>
-                    <p className="text-sm text-[#5A6062] mb-2">
+                    <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-2">
                       Your request is sent. Waiting for expert to accept.
                     </p>
-                    <p className="text-xs text-[#9CA3AF] mb-4">
+                    <p className="text-xs text-[#9CA3AF] dark:text-slate-500 mb-4">
                       Payment: <span className="font-medium">Pending (Coming soon)</span>
                     </p>
                     <Link to="/inbox" className="no-underline">
@@ -381,8 +381,8 @@ export default function Dashboard() {
 
                 {booking.state === "confirmed" && (
                   <>
-                    <p className="text-sm text-[#5A6062] mb-2">Appointment confirmed by expert.</p>
-                    <p className="text-xs text-[#9CA3AF] mb-4">
+                    <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-2">Appointment confirmed by expert.</p>
+                    <p className="text-xs text-[#9CA3AF] dark:text-slate-500 mb-4">
                       Payment: <span className="font-medium">Not collected yet (Coming soon)</span>
                     </p>
                     <Link to="/inbox" className="no-underline">
@@ -393,7 +393,7 @@ export default function Dashboard() {
 
                 {booking.state === "rejected" && (
                   <>
-                    <p className="text-sm text-[#5A6062] mb-4">
+                    <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-4">
                       Your last request was rejected. You can book another expert.
                     </p>
                     <Link to="/experts" className="no-underline">
@@ -404,7 +404,7 @@ export default function Dashboard() {
 
                 {booking.state === "closed" && (
                   <>
-                    <p className="text-sm text-[#5A6062] mb-4">
+                    <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-4">
                       Your last appointment was closed. You can book a new one anytime.
                     </p>
                     <Link to="/experts" className="no-underline">
@@ -417,9 +417,9 @@ export default function Dashboard() {
 
             {/* Users: Daily Check-in */}
             {user.role !== "expert" && (
-              <Card className="p-6 bg-[#7C9A82] text-[#FAF7F2] border-none">
+              <Card className="p-6 bg-[#7C9A82] dark:bg-emerald-600 text-[#FAF7F2] dark:text-white border-none">
                 <h3 className="font-serif text-xl font-bold mb-2">Daily Check-in</h3>
-                <p className="text-[#E8F0E9] text-sm mb-4">
+                <p className="text-[#E8F0E9] dark:text-emerald-100 text-sm mb-4">
                   Take 2 minutes to record your mood and feelings.
                 </p>
                 <Button variant="secondary" size="sm" className="w-full">
@@ -431,10 +431,10 @@ export default function Dashboard() {
             {/* Experts: Manage Requests */}
             {user.role === "expert" && (
               <Card className="p-6">
-                <h3 className="font-serif text-lg font-bold text-[#2D3436] mb-3">
+                <h3 className="font-serif text-lg font-bold text-[#2D3436] dark:text-white mb-3">
                   Manage Requests
                 </h3>
-                <p className="text-sm text-[#5A6062] mb-4">
+                <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-4">
                   Review pending consultation requests and respond to users.
                 </p>
                 <Link to="/inbox" className="no-underline">
@@ -448,24 +448,24 @@ export default function Dashboard() {
 
             {/* Latest card (avoid repetitive inbox CTA in empty state) */}
             <Card className="p-6">
-              <h3 className="font-serif text-lg font-bold text-[#2D3436] mb-3">
+              <h3 className="font-serif text-lg font-bold text-[#2D3436] dark:text-white mb-3">
                 {user.role === "expert" ? "Latest Request" : "Latest Consultation"}
               </h3>
 
               {upcomingCard ? (
                 <>
                   <div className="flex items-start gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-gray-200" />
+                    <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-slate-600" />
                     <div>
-                      <p className="font-medium text-[#2D3436]">{upcomingCard.name}</p>
-                      <p className="text-xs text-[#5A6062]">{upcomingCard.sub}</p>
-                      <p className="text-xs text-[#5A6062]">
+                      <p className="font-medium text-[#2D3436] dark:text-white">{upcomingCard.name}</p>
+                      <p className="text-xs text-[#5A6062] dark:text-slate-400">{upcomingCard.sub}</p>
+                      <p className="text-xs text-[#5A6062] dark:text-slate-400">
                         Status: <span className="font-medium">{upcomingCard.status}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-[#5A6062] mb-4">
+                  <div className="flex items-center gap-2 text-sm text-[#5A6062] dark:text-slate-400 mb-4">
                     <Calendar size={16} />
                     <span>{upcomingCard.when}</span>
                   </div>

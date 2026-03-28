@@ -122,32 +122,38 @@ export default function AdminContentForm({ editData }: Props) {
   };
 
   return (
-    <div style={{ maxWidth: 900 }}>
-      <h2>{isEdit ? "Edit Content" : "Add Content"}</h2>
+    <div className="max-w-2xl">
+      <h2 className="text-2xl font-bold text-[#1a1a1a] mb-6">
+        {isEdit ? "Edit Content" : "Add Content"}
+      </h2>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
-        <div style={{ display: "grid", gap: 12 }}>
-          <label>
-            <div style={{ fontWeight: 600, marginBottom: 6 }}>Content Type *</div>
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#E8F0E9] p-6">
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-semibold text-[#1a1a1a] mb-2">
+              Content Type *
+            </label>
             <select
               value={contentType}
               onChange={(e) => setContentType(e.target.value as ContentType)}
-              style={{ width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+              className="w-full px-4 py-2 border border-[#D5E3DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C9A82] transition-all bg-white"
             >
               <option value="page">Page</option>
               <option value="mental_health">Mental Health Topic</option>
               <option value="resource">Resource</option>
               <option value="blog">Blog</option>
             </select>
-          </label>
+          </div>
 
           {contentType === "page" && (
-            <label>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Page Type *</div>
+            <div>
+              <label className="block text-sm font-semibold text-[#1a1a1a] mb-2">
+                Page Type *
+              </label>
               <select
                 value={pageType}
                 onChange={(e) => setPageType(e.target.value as PageType)}
-                style={{ width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+                className="w-full px-4 py-2 border border-[#D5E3DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C9A82] transition-all bg-white"
               >
                 {PAGE_TYPES.map((pt) => (
                   <option key={pt} value={pt}>
@@ -155,67 +161,77 @@ export default function AdminContentForm({ editData }: Props) {
                   </option>
                 ))}
               </select>
-            </label>
+            </div>
           )}
 
           {contentType === "mental_health" && (
-            <label>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Topic *</div>
+            <div>
+              <label className="block text-sm font-semibold text-[#1a1a1a] mb-2">
+                Topic *
+              </label>
               <input
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="e.g., Anxiety, ADHD, Depression..."
-                style={{ width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+                className="w-full px-4 py-2 border border-[#D5E3DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C9A82] transition-all"
               />
-              <small style={{ color: "#666" }}>
-                Tip: Keep topics consistent (Anxiety vs anxiety). You can standardize later.
-              </small>
-            </label>
+              <p className="text-xs text-[#999] mt-1">
+                💡 Tip: Keep topics consistent (Anxiety vs anxiety). You can standardize later.
+              </p>
+            </div>
           )}
 
-          <label>
-            <div style={{ fontWeight: 600, marginBottom: 6 }}>Title *</div>
+          <div>
+            <label className="block text-sm font-semibold text-[#1a1a1a] mb-2">
+              Title *
+            </label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              style={{ width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+              className="w-full px-4 py-2 border border-[#D5E3DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C9A82] transition-all"
+              placeholder="Enter content title"
             />
-          </label>
+          </div>
 
-          <label>
-            <div style={{ fontWeight: 600, marginBottom: 6 }}>Body *</div>
+          <div>
+            <label className="block text-sm font-semibold text-[#1a1a1a] mb-2">
+              Body *
+            </label>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={8}
-              style={{ width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+              className="w-full px-4 py-2 border border-[#D5E3DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C9A82] transition-all resize-vertical font-mono text-sm"
+              placeholder="Enter content body (Markdown supported)"
             />
-          </label>
+          </div>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div className="flex items-center gap-3 py-2">
             <input
               type="checkbox"
+              id="published"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
+              className="w-4 h-4 accent-[#7C9A82] cursor-pointer rounded"
             />
-            <span>Published</span>
-          </label>
+            <label htmlFor="published" className="text-sm font-medium text-[#1a1a1a] cursor-pointer">
+              Published
+            </label>
+          </div>
 
-          <button
-            type="submit"
-            disabled={!canSave || saving}
-            style={{
-              padding: "12px 18px",
-              borderRadius: 12,
-              border: "none",
-              background: !canSave || saving ? "#999" : "#003f35",
-              color: "#fff",
-              cursor: !canSave || saving ? "not-allowed" : "pointer",
-              width: 180,
-            }}
-          >
-            {saving ? "Saving..." : isEdit ? "Update" : "Create"}
-          </button>
+          <div className="flex gap-3 pt-4 border-t border-[#E8F0E9]">
+            <button
+              type="submit"
+              disabled={!canSave || saving}
+              className={`px-6 py-2 font-semibold rounded-lg transition-all ${
+                !canSave || saving
+                  ? "bg-[#D5E3DB] text-[#999] cursor-not-allowed"
+                  : "bg-[#7C9A82] hover:bg-[#6a8370] text-white cursor-pointer"
+              }`}
+            >
+              {saving ? "Saving..." : isEdit ? "Update Content" : "Create Content"}
+            </button>
+          </div>
         </div>
       </form>
     </div>

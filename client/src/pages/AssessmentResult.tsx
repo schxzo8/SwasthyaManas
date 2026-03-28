@@ -31,12 +31,12 @@ export default function AssessmentResult() {
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 flex items-center justify-center">
         <Card className="w-full max-w-lg p-8 text-center">
-          <h1 className="font-serif text-3xl font-bold text-[#2D3436] mb-2">
+          <h1 className="font-serif text-3xl font-bold text-[#2D3436] dark:text-white mb-2">
             No Result Found
           </h1>
-          <p className="text-[#5A6062] mb-6">
+          <p className="text-[#5A6062] dark:text-slate-400 mb-6">
             Please complete an assessment first.
           </p>
           <Button className="w-full" onClick={() => navigate("/assessments")}>
@@ -96,19 +96,19 @@ export default function AssessmentResult() {
   const showOutOf = maxScore > 0;
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 relative overflow-hidden flex items-center justify-center">
       <BlobDecoration
         variant={3}
-        className="top-0 left-0 w-full h-full text-[#E8F0E9]"
+        className="top-0 left-0 w-full h-full text-[#E8F0E9] dark:text-slate-800"
       />
 
       <div className="max-w-3xl w-full relative z-10">
         <Card className="p-8 md:p-12 text-center">
           <div className="mb-8">
-            <h1 className="font-serif text-3xl font-bold text-[#2D3436] mb-2">
+            <h1 className="font-serif text-3xl font-bold text-[#2D3436] dark:text-white mb-2">
               {type} Results
             </h1>
-            <p className="text-[#5A6062]">
+            <p className="text-[#5A6062] dark:text-slate-400">
               {dateText ? `Completed on ${dateText}` : "Your latest assessment result"}
             </p>
           </div>
@@ -123,6 +123,7 @@ export default function AssessmentResult() {
                 stroke="#E8F0E9"
                 strokeWidth="12"
                 fill="none"
+                className="dark:stroke-slate-700"
               />
 
               {/* only draw progress ring if maxScore is available */}
@@ -146,7 +147,7 @@ export default function AssessmentResult() {
                 {score}
               </span>
               {showOutOf && (
-                <span className="text-sm text-[#5A6062] font-medium">
+                <span className="text-sm text-[#5A6062] dark:text-slate-400 font-medium">
                   out of {maxScore}
                 </span>
               )}
@@ -155,13 +156,13 @@ export default function AssessmentResult() {
 
           <div className="mb-8 max-w-lg mx-auto">
             <h2 className={`text-2xl font-bold mb-3 ${color}`}>{severity}</h2>
-            <p className="text-[#5A6062] text-lg leading-relaxed">{description}</p>
+            <p className="text-[#5A6062] dark:text-slate-300 text-lg leading-relaxed">{description}</p>
           </div>
 
           {/* extra guidance from old page */}
           <div className="mb-10 max-w-xl mx-auto">
-            <div className="text-left bg-[#FFFDF9] p-4 rounded-xl border border-[#E8F0E9]">
-              <p className="text-sm text-[#5A6062]">
+            <div className="text-left bg-[#FFFDF9] dark:bg-slate-700 p-4 rounded-xl border border-[#E8F0E9] dark:border-slate-600">
+              <p className="text-sm text-[#5A6062] dark:text-slate-300">
                 <strong>Guidance:</strong>{" "}
                 {tips[severity] || "Take care of yourself."}
               </p>
@@ -190,10 +191,10 @@ export default function AssessmentResult() {
             </Button>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-[#E8F0E9]">
-            <div className="flex items-start gap-3 text-left bg-[#FFFDF9] p-4 rounded-xl border border-[#E8F0E9]">
-              <AlertCircle className="h-5 w-5 text-[#7C9A82] flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-[#5A6062]">
+          <div className="mt-8 pt-8 border-t border-[#E8F0E9] dark:border-slate-700">
+            <div className="flex items-start gap-3 text-left bg-[#FFFDF9] dark:bg-slate-700 p-4 rounded-xl border border-[#E8F0E9] dark:border-slate-600">
+              <AlertCircle className="h-5 w-5 text-[#7C9A82] dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-[#5A6062] dark:text-slate-300">
                 <strong>Disclaimer:</strong> This screening tool is not a medical diagnosis.
                 If you are in crisis or feeling suicidal, please call emergency services
                 or a crisis hotline immediately.

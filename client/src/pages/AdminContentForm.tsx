@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import API from "../services/api";
 import type { ContentItem, ContentType, PageType } from "../types";
+import { toast } from "react-hot-toast";
 
 type Props = {
   editData: ContentItem | null;
@@ -20,15 +21,9 @@ export default function AdminContentForm({ editData }: Props) {
 
   const [published, setPublished] = useState(true);
 
-  const [msg, setMsg] = useState("");
-  const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // preload edit data
   useEffect(() => {
-    setMsg("");
-    setErr("");
-
     if (!editData) {
       setTitle("");
       setBody("");
@@ -49,9 +44,6 @@ export default function AdminContentForm({ editData }: Props) {
 
   // When switching contentType: clean incompatible fields
   useEffect(() => {
-    setMsg("");
-    setErr("");
-
     if (contentType === "page") {
       setTopic("");
       if (!pageType) setPageType("about");
@@ -98,11 +90,9 @@ export default function AdminContentForm({ editData }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErr("");
-    setMsg("");
 
     if (!canSave) {
-      setErr("Please fill required fields.");
+      toast.error("Please fill required fields.");
       return;
     }
 
@@ -111,11 +101,11 @@ export default function AdminContentForm({ editData }: Props) {
       const payload = buildPayload();
 
       if (isEdit && editData?._id) {
-        const res = await API.put(`/api/content/${editData._id}`, payload);
-        setMsg(res.data?.message || "Content updated.");
+        await API.put(`/api/content/${editData._id}`, payload);
+        toast.success("Content updated successfully.");
       } else {
-        const res = await API.post(`/api/content`, payload);
-        setMsg(res.data?.message || "Content created.");
+        await API.post(`/api/content`, payload);
+        toast.success("Content created successfully.");
         // clear after add
         setTitle("");
         setBody("");
@@ -125,7 +115,7 @@ export default function AdminContentForm({ editData }: Props) {
         setPublished(true);
       }
     } catch (e: any) {
-      setErr(e.response?.data?.message || "Failed to save content");
+      toast.error(e.response?.data?.message || "Failed to save content");
     } finally {
       setSaving(false);
     }
@@ -134,17 +124,6 @@ export default function AdminContentForm({ editData }: Props) {
   return (
     <div style={{ maxWidth: 900 }}>
       <h2>{isEdit ? "Edit Content" : "Add Content"}</h2>
-
-      {err && (
-        <p style={{ color: "red", marginTop: 12 }}>
-          {err}
-        </p>
-      )}
-      {msg && (
-        <p style={{ color: "green", marginTop: 12 }}>
-          {msg}
-        </p>
-      )}
 
       <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
         <div style={{ display: "grid", gap: 12 }}>

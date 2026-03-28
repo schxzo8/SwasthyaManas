@@ -15,6 +15,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 type AppointmentStatus = "confirmed" | "cancelled" | "completed";
 
@@ -218,7 +219,7 @@ export default function AppointmentsPage() {
                       active
                         ? "bg-[#7C9A82] text-white border-[#7C9A82]"
                         : "bg-white text-[#2D3436] border-[#E8E3DA] hover:bg-[#FAF7F2]"
-                    }`}
+                      }`}
                   >
                     {t === "upcoming" ? "Upcoming" : t === "past" ? "Past" : "All"}
                   </button>
@@ -334,58 +335,61 @@ export default function AppointmentsPage() {
                     </div>
                   </div>
 
-                {/* Footer actions */}
-                <div className="mt-5 pt-4 border-t border-[#E8F0E9] flex flex-wrap gap-2 justify-between items-center">
-                  <div className="text-xs text-[#9CA3AF]">
-                    Booked on {formatNepalDate(a.createdAt)}
+                  {/* Footer actions */}
+                  <div className="mt-5 pt-4 border-t border-[#E8F0E9] flex flex-wrap gap-2 justify-between items-center">
+                    <div className="text-xs text-[#9CA3AF]">
+                      Booked on {formatNepalDate(a.createdAt)}
+                    </div>
+
+                    <div className="flex gap-2">
+                      {a.status === "confirmed" && new Date(a.endAt).getTime() > Date.now() && (
+                        <span className="inline-flex items-center gap-1 text-xs text-[#2E6B3C]">
+                          <CheckCircle2 size={14} /> Upcoming
+                        </span>
+                      )}
+
+                      {a.status === "confirmed" && new Date(a.endAt).getTime() < Date.now() && (
+                        <>
+                          {isExpert ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-blue-300 text-blue-600 hover:bg-blue-50 text-xs"
+                              onClick={async () => {
+                                try {
+                                  await API.put(`/api/appointments/${a._id}/complete`);
+                                  toast.success("Appointment marked as completed.");
+                                  load();
+                                } catch (err: any) {
+                                  const errMsg = err?.response?.data?.message || "Failed to mark as completed.";
+                                  setErr(errMsg);
+                                  toast.error(errMsg);
+                                }
+                              }}
+                            >
+                              <CheckCircle2 size={13} className="mr-1" /> Mark as Completed
+                            </Button>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-xs text-[#2B4CA0]">
+                              <Clock size={14} /> Session ended
+                            </span>
+                          )}
+                        </>
+                      )}
+
+                      {a.status === "completed" && (
+                        <span className="inline-flex items-center gap-1 text-xs text-[#2B4CA0]">
+                          <CheckCircle2 size={14} /> Completed
+                        </span>
+                      )}
+
+                      {a.status === "cancelled" && (
+                        <span className="inline-flex items-center gap-1 text-xs text-[#A43B3B]">
+                          <XCircle size={14} /> Cancelled
+                        </span>
+                      )}
+                    </div>
                   </div>
-
-                  <div className="flex gap-2">
-                    {a.status === "confirmed" && new Date(a.endAt).getTime() > Date.now() && (
-                      <span className="inline-flex items-center gap-1 text-xs text-[#2E6B3C]">
-                        <CheckCircle2 size={14} /> Upcoming
-                      </span>
-                    )}
-
-                    {a.status === "confirmed" && new Date(a.endAt).getTime() < Date.now() && (
-                      <>
-                        {isExpert ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-blue-300 text-blue-600 hover:bg-blue-50 text-xs"
-                            onClick={async () => {
-                              try {
-                                await API.put(`/api/appointments/${a._id}/complete`);
-                                load();
-                              } catch (err: any) {
-                                setErr(err?.response?.data?.message || "Failed to mark as completed.");
-                              }
-                            }}
-                          >
-                            <CheckCircle2 size={13} className="mr-1" /> Mark as Completed
-                          </Button>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-xs text-[#2B4CA0]">
-                            <Clock size={14} /> Session ended
-                          </span>
-                        )}
-                      </>
-                    )}
-
-                    {a.status === "completed" && (
-                      <span className="inline-flex items-center gap-1 text-xs text-[#2B4CA0]">
-                        <CheckCircle2 size={14} /> Completed
-                      </span>
-                    )}
-
-                    {a.status === "cancelled" && (
-                      <span className="inline-flex items-center gap-1 text-xs text-[#A43B3B]">
-                        <XCircle size={14} /> Cancelled
-                      </span>
-                    )}
-                  </div>
-                </div>
                 </Card>
               );
             })}

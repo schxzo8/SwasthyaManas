@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import RootLayout from "./layouts/RootLayout";
 import ScrollToTop from "./components/ScrollToTop";
@@ -39,6 +40,40 @@ function App() {
       <ThemeProvider>
       <NotificationsProvider>
         <ScrollToTop />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: "#ffffff",
+              color: "#2D3436",
+              border: "1px solid #E8F0E9",
+              borderRadius: "12px",
+              fontSize: "14px",
+              fontFamily: "Inter, sans-serif",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+              padding: "14px 18px",
+              fontWeight: "500",
+              minWidth: "260px",
+            },
+            success: {
+              style: {
+                background: "#f0faf4",
+                color: "#1a5c35",
+                border: "1px solid #7C9A82",
+              },
+              iconTheme: { primary: "#7C9A82", secondary: "#ffffff" },
+            },
+            error: {
+              style: {
+                background: "#fff5f5",
+                color: "#991b1b",
+                border: "1px solid #f87171",
+              },
+              iconTheme: { primary: "#ef4444", secondary: "#ffffff" },
+            },
+          }}
+        />
         <Routes>
           <Route element={<RootLayout />}>
             {/* PUBLIC */}

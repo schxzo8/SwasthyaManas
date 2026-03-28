@@ -34,8 +34,7 @@ function Signup() {
         password,
       });
 
-      alert("Account created successfully!");
-      toast.success("Account created! Please verify your email.");
+      toast.success("Account created! Please check your email to verify your account.");
       navigate("/login");
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed");

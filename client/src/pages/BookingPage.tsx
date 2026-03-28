@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { connectSocket, getSocket } from "../services/socket";
 import { Calendar, Clock, RefreshCcw, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 type SlotStatus = "open" | "held" | "booked" | "cancelled";
 
@@ -295,10 +296,13 @@ export default function BookingPage() {
 
       setSelectedSlotId(slotId);
       setHoldExpiresAt(slot?.holdExpiresAt || null);
+      toast.success("Slot reserved! You have a few minutes to confirm.");
 
       await loadSlotsForDay(selectedDayKey);
     } catch (e: any) {
-      setErr(e?.response?.data?.message || "Failed to hold slot");
+      const errMsg = e?.response?.data?.message || "Failed to hold slot";
+      setErr(errMsg);
+      toast.error(errMsg);
       await loadSlotsForDay(selectedDayKey);
     }
   };
@@ -323,11 +327,13 @@ export default function BookingPage() {
           });
           setHoldExpiresAt(null);
           setSelectedSlotId(null);
+          toast.success("Appointment booked successfully!");
           await loadExpertAndDays();
           await loadSlotsForDay(selectedDayKey);
           return;
         }
 
+        toast("Redirecting to eSewa payment…", { icon: "💳" });
         // eSewa form POST redirect
         const form = document.createElement("form");
         form.method = "POST";
@@ -348,14 +354,18 @@ export default function BookingPage() {
 
         if (res.data.free) {
           await API.post("/api/appointments/confirm", { slotId: selectedSlotId });
+          toast.success("Appointment booked successfully!");
           navigate("/appointments");
           return;
         }
 
+        toast("Redirecting to Khalti payment…", { icon: "💳" });
         window.location.href = res.data.payment_url;
       }
     } catch (e: any) {
-      setErr(e?.response?.data?.message || "Failed to initiate booking");
+      const errMsg = e?.response?.data?.message || "Failed to initiate booking";
+      setErr(errMsg);
+      toast.error(errMsg);
       await loadSlotsForDay(selectedDayKey);
     }
   };

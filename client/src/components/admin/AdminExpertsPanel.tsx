@@ -3,6 +3,7 @@ import { Trash2, Pencil, X, Check, RefreshCw, Ban, Plus } from "lucide-react";
 import { Card } from "../Card";
 import { Button } from "../Button";
 import API from "../../services/api";
+import { toast } from "react-hot-toast";
 
 type Expert = {
   _id: string;
@@ -27,12 +28,6 @@ export default function AdminExpertsPanel() {
   const [form, setForm]               = useState(defaultForm);
   const [saving, setSaving]           = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const [msg, setMsg]                 = useState<{ type: "success" | "error"; text: string } | null>(null);
-
-  const flash = (type: "success" | "error", text: string) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 4000);
-  };
 
   const fetchExperts = async () => {
     setLoading(true);
@@ -40,7 +35,7 @@ export default function AdminExpertsPanel() {
       const res = await API.get("/api/users/admin/experts");
       setExperts(res.data);
     } catch {
-      flash("error", "Failed to load experts.");
+      toast.error("Failed to load experts.");
     } finally {
       setLoading(false);
     }
@@ -49,17 +44,19 @@ export default function AdminExpertsPanel() {
   useEffect(() => { fetchExperts(); }, []);
 
   const handleAddExpert = async () => {
-    if (!form.firstName || !form.lastName || !form.email || !form.password || !form.expertise)
-      return flash("error", "All fields are required.");
+    if (!form.firstName || !form.lastName || !form.email || !form.password || !form.expertise) {
+      toast.error("All fields are required.");
+      return;
+    }
     setSaving(true);
     try {
       const res = await API.post("/api/users/admin/create", { ...form, role: "expert" });
       setExperts(e => [res.data, ...e]);
       setForm(defaultForm);
       setShowForm(false);
-      flash("success", "Expert created successfully.");
+      toast.success("Expert created successfully.");
     } catch (err: any) {
-      flash("error", err?.response?.data?.message || "Failed to create expert.");
+      toast.error(err?.response?.data?.message || "Failed to create expert.");
     } finally { setSaving(false); }
   };
 
@@ -73,9 +70,9 @@ export default function AdminExpertsPanel() {
       const res = await API.put(`/api/users/admin/experts/${id}`, editForm);
       setExperts(e => e.map(x => x._id === id ? { ...x, ...res.data } : x));
       setEditing(null);
-      flash("success", "Expert updated successfully.");
+      toast.success("Expert updated successfully.");
     } catch {
-      flash("error", "Failed to update expert.");
+      toast.error("Failed to update expert.");
     }
   };
 
@@ -83,9 +80,9 @@ export default function AdminExpertsPanel() {
     try {
       await API.put(`/api/users/admin/experts/${expert._id}`, { isActive: !expert.isActive });
       setExperts(e => e.map(x => x._id === expert._id ? { ...x, isActive: !x.isActive } : x));
-      flash("success", `Expert ${expert.isActive ? "banned" : "unbanned"}.`);
+      toast.success(`Expert ${expert.isActive ? "banned" : "unbanned"}.`);
     } catch {
-      flash("error", "Failed to update expert.");
+      toast.error("Failed to update expert.");
     }
   };
 
@@ -94,9 +91,9 @@ export default function AdminExpertsPanel() {
       await API.delete(`/api/users/admin/experts/${id}`);
       setExperts(e => e.filter(x => x._id !== id));
       setConfirmDelete(null);
-      flash("success", "Expert deleted.");
+      toast.success("Expert deleted.");
     } catch {
-      flash("error", "Failed to delete expert.");
+      toast.error("Failed to delete expert.");
     }
   };
 
@@ -123,12 +120,6 @@ export default function AdminExpertsPanel() {
           </Button>
         </div>
       </div>
-
-      {msg && (
-        <div className={`px-4 py-3 rounded-lg text-sm font-medium ${
-          msg.type === "success" ? "bg-[#E8F0E9] text-[#4A7C59]" : "bg-red-50 text-red-600"
-        }`}>{msg.text}</div>
-      )}
 
       {/* Add Expert Form */}
       {showForm && (

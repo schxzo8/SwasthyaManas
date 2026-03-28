@@ -3,6 +3,7 @@ import { Trash2, ShieldCheck, Ban, RefreshCw, Plus, X, Check } from "lucide-reac
 import { Card } from "../Card";
 import { Button } from "../Button";
 import API from "../../services/api";
+import { toast } from "react-hot-toast";
 
 type User = {
   _id: string;
@@ -24,13 +25,7 @@ export default function AdminUsersPanel() {
   const [showForm, setShowForm]       = useState(false);
   const [form, setForm]               = useState(defaultForm);
   const [saving, setSaving]           = useState(false);
-  const [msg, setMsg]                 = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-
-  const flash = (type: "success" | "error", text: string) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 4000);
-  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -38,7 +33,7 @@ export default function AdminUsersPanel() {
       const res = await API.get("/api/users/admin/users");
       setUsers(res.data);
     } catch {
-      flash("error", "Failed to load users.");
+      toast.error("Failed to load users.");
     } finally {
       setLoading(false);
     }
@@ -47,17 +42,19 @@ export default function AdminUsersPanel() {
   useEffect(() => { fetchUsers(); }, []);
 
   const handleAddUser = async () => {
-    if (!form.firstName || !form.lastName || !form.email || !form.password)
-      return flash("error", "All fields are required.");
+    if (!form.firstName || !form.lastName || !form.email || !form.password) {
+      toast.error("All fields are required.");
+      return;
+    }
     setSaving(true);
     try {
       const res = await API.post("/api/users/admin/create", form);
       setUsers(u => [res.data, ...u]);
       setForm(defaultForm);
       setShowForm(false);
-      flash("success", "User created successfully.");
+      toast.success("User created successfully.");
     } catch (err: any) {
-      flash("error", err?.response?.data?.message || "Failed to create user.");
+      toast.error(err?.response?.data?.message || "Failed to create user.");
     } finally { setSaving(false); }
   };
 
@@ -65,9 +62,9 @@ export default function AdminUsersPanel() {
     try {
       await API.put(`/api/users/admin/users/${user._id}`, { isActive: !user.isActive });
       setUsers(u => u.map(x => x._id === user._id ? { ...x, isActive: !x.isActive } : x));
-      flash("success", `User ${user.isActive ? "banned" : "unbanned"} successfully.`);
+      toast.success(`User ${user.isActive ? "banned" : "unbanned"} successfully.`);
     } catch {
-      flash("error", "Failed to update user.");
+      toast.error("Failed to update user.");
     }
   };
 
@@ -76,9 +73,9 @@ export default function AdminUsersPanel() {
     try {
       await API.put(`/api/users/admin/users/${user._id}`, { role: newRole });
       setUsers(u => u.map(x => x._id === user._id ? { ...x, role: newRole } : x));
-      flash("success", `Role changed to ${newRole}.`);
+      toast.success(`Role changed to ${newRole}.`);
     } catch {
-      flash("error", "Failed to change role.");
+      toast.error("Failed to change role.");
     }
   };
 
@@ -87,9 +84,9 @@ export default function AdminUsersPanel() {
       await API.delete(`/api/users/admin/users/${id}`);
       setUsers(u => u.filter(x => x._id !== id));
       setConfirmDelete(null);
-      flash("success", "User deleted.");
+      toast.success("User deleted.");
     } catch {
-      flash("error", "Failed to delete user.");
+      toast.error("Failed to delete user.");
     }
   };
 
@@ -115,12 +112,6 @@ export default function AdminUsersPanel() {
           </Button>
         </div>
       </div>
-
-      {msg && (
-        <div className={`px-4 py-3 rounded-lg text-sm font-medium ${
-          msg.type === "success" ? "bg-[#E8F0E9] text-[#4A7C59]" : "bg-red-50 text-red-600"
-        }`}>{msg.text}</div>
-      )}
 
       {/* Add User Form */}
       {showForm && (

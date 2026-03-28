@@ -5,6 +5,7 @@ import type { ContentItem } from "../types";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { Search, RefreshCcw, FileText, Trash2, Pencil } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 interface AdminContentListProps {
   onEdit: (item: ContentItem) => void;
@@ -79,9 +80,10 @@ export default function AdminContentList({ onEdit }: AdminContentListProps) {
       });
       // optimistic remove
       setContents((prev) => prev.filter((x) => x._id !== id));
+      toast.success("Content deleted.");
     } catch (e) {
       console.error("Delete failed", e);
-      alert("Delete failed. Please try again.");
+      toast.error("Delete failed. Please try again.");
     }
   };
 

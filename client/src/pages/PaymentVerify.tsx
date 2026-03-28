@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { toast } from "react-hot-toast";
 
 function base64Decode(token: string) {
   try { return JSON.parse(atob(token)); }
@@ -43,15 +44,19 @@ export default function PaymentVerify() {
 
         if (res.data.status === "COMPLETED") {
           setStatus("success");
+          toast.success("Payment verified! Your appointment is confirmed.");
           setTimeout(() => navigate("/appointments"), 2500);
         } else {
           setStatus("error");
           setMessage("Payment was not completed.");
+          toast.error("Payment was not completed.");
           setTimeout(() => navigate("/experts"), 3000);
         }
       } catch (err: any) {
+        const errMsg = err?.response?.data?.message || "Payment verification failed.";
         setStatus("error");
-        setMessage(err?.response?.data?.message || "Payment verification failed.");
+        setMessage(errMsg);
+        toast.error(errMsg);
       }
     };
 

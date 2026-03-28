@@ -83,9 +83,9 @@ export default function GAD7Form() {
 
   if (loading && !assessment) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 flex items-center justify-center">
         <Card className="w-full max-w-2xl p-8">
-          <p className="text-[#5A6062]">Loading GAD-7...</p>
+          <p className="text-[#5A6062] dark:text-slate-400">Loading GAD-7...</p>
         </Card>
       </div>
     );
@@ -93,12 +93,12 @@ export default function GAD7Form() {
 
   if (!assessment) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 flex items-center justify-center">
         <Card className="w-full max-w-2xl p-8">
-          <h1 className="font-serif text-2xl font-bold text-[#2D3436] mb-2">GAD-7</h1>
+          <h1 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white mb-2">GAD-7</h1>
           {error
-            ? <p className="text-sm text-red-600">{error}</p>
-            : <p className="text-[#5A6062]">Unable to load assessment.</p>
+            ? <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            : <p className="text-[#5A6062] dark:text-slate-400">Unable to load assessment.</p>
           }
           <div className="mt-6">
             <Button variant="secondary" onClick={() => navigate("/assessments")}>
@@ -113,7 +113,7 @@ export default function GAD7Form() {
   const q = assessment.questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 flex flex-col items-center justify-center">
       <div className="w-full max-w-2xl mb-8">
         <Button
           variant="ghost"
@@ -132,21 +132,21 @@ export default function GAD7Form() {
       </div>
 
       <Card className="w-full max-w-2xl p-8 md:p-12 min-h-[400px] flex flex-col">
-        <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#2D3436] mb-2 leading-tight">
+        <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#2D3436] dark:text-white mb-2 leading-tight">
           {assessment.name || "GAD-7"}
         </h2>
 
-        <p className="text-sm text-[#5A6062]">
+        <p className="text-sm text-[#5A6062] dark:text-slate-400">
           {assessment.description || "Over the last 2 weeks, how often have you been bothered by the following problems?"}
         </p>
 
         {error && (
-          <div className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+          <div className="mt-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-xl px-4 py-3">
             {error}
           </div>
         )}
 
-        <p className="text-xl text-[#5A6062] mt-8 mb-8 font-medium">
+        <p className="text-xl text-[#5A6062] dark:text-slate-400 mt-8 mb-8 font-medium">
           {currentQuestion + 1}. {q.text}
         </p>
 
@@ -160,8 +160,8 @@ export default function GAD7Form() {
               className={`
                 text-left px-6 py-4 rounded-xl border transition-all duration-200
                 ${answers[currentQuestion] === Number(opt.value)
-                  ? "bg-[#7C9A82] text-white border-[#7C9A82] shadow-md"
-                  : "bg-white border-[#C4B5A0] text-[#2D3436] hover:bg-[#E8F0E9] hover:border-[#7C9A82]"
+                  ? "bg-[#7C9A82] dark:bg-emerald-600 text-white border-[#7C9A82] dark:border-emerald-600 shadow-md"
+                  : "bg-white dark:bg-slate-700 border-[#C4B5A0] dark:border-slate-600 text-[#2D3436] dark:text-white hover:bg-[#E8F0E9] dark:hover:bg-slate-600 hover:border-[#7C9A82] dark:hover:border-emerald-500"
                 }
               `}
             >
@@ -170,7 +170,7 @@ export default function GAD7Form() {
           ))}
         </div>
 
-        <div className="flex justify-between mt-8 pt-6 border-t border-[#E8F0E9]">
+        <div className="flex justify-between mt-8 pt-6 border-t border-[#E8F0E9] dark:border-slate-700">
           <Button
             variant="ghost"
             onClick={handlePrevious}
@@ -180,14 +180,14 @@ export default function GAD7Form() {
           </Button>
 
           {submitting && (
-            <span className="text-sm text-[#7C9A82] flex items-center gap-2">
-              <div className="h-4 w-4 rounded-full border-2 border-[#7C9A82] border-t-transparent animate-spin" />
+            <span className="text-sm text-[#7C9A82] dark:text-emerald-400 flex items-center gap-2">
+              <div className="h-4 w-4 rounded-full border-2 border-[#7C9A82] dark:border-emerald-400 border-t-transparent animate-spin" />
               Submitting…
             </span>
           )}
         </div>
 
-        <p className="mt-6 text-xs text-[#5A6062]">
+        <p className="mt-6 text-xs text-[#5A6062] dark:text-slate-400">
           Note: This is a screening tool. If you're worried about your safety, please seek help immediately.
         </p>
       </Card>

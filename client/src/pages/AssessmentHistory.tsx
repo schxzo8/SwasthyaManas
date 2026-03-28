@@ -168,7 +168,7 @@ export default function AssessmentHistory() {
   }, [selected, items]);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4">
       <div className="max-w-4xl mx-auto">
 
         {/* Header */}
@@ -178,8 +178,8 @@ export default function AssessmentHistory() {
               <ArrowLeft className="mr-1 h-4 w-4" /> Back
             </Button>
             <div>
-              <h1 className="font-serif text-3xl font-bold text-[#2D3436]">Assessment History</h1>
-              <p className="text-sm text-[#5A6062] mt-0.5">
+              <h1 className="font-serif text-3xl font-bold text-[#2D3436] dark:text-white">Assessment History</h1>
+              <p className="text-sm text-[#5A6062] dark:text-slate-400 mt-0.5">
                 {items.length} screening{items.length !== 1 ? "s" : ""} completed
               </p>
             </div>
@@ -192,7 +192,7 @@ export default function AssessmentHistory() {
                 className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                   filter === f
                     ? "bg-[#7C9A82] text-white border-[#7C9A82]"
-                    : "bg-white text-[#5A6062] border-[#E8F0E9] hover:border-[#7C9A82]"
+                    : "bg-white dark:bg-slate-800 text-[#5A6062] dark:text-slate-400 border-[#E8F0E9] dark:border-slate-700 hover:border-[#7C9A82] dark:hover:border-slate-600"
                 }`}>
                 {f === "all" ? "All" : f}
               </button>
@@ -201,15 +201,15 @@ export default function AssessmentHistory() {
         </div>
 
         {error && (
-          <div className="mb-6 text-sm rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3">
+          <div className="mb-6 text-sm rounded-xl border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200 px-4 py-3">
             {error}
           </div>
         )}
 
         {filtered.length === 0 && !error && (
           <Card className="p-10 text-center">
-            <FileText size={40} className="mx-auto text-[#C4B5A0] mb-3" />
-            <p className="text-[#5A6062] font-medium">No assessments yet.</p>
+            <FileText size={40} className="mx-auto text-[#C4B5A0] dark:text-slate-600 mb-3" />
+            <p className="text-[#5A6062] dark:text-slate-400 font-medium">No assessments yet.</p>
             <Button className="mt-4" onClick={() => navigate("/assessments")}>
               Take your first screening
             </Button>
@@ -233,13 +233,13 @@ export default function AssessmentHistory() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-semibold text-[#2D3436]">{r.assessmentType} Screening</h3>
-                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${SEVERITY_STYLES[r.severity] || "bg-gray-100 text-gray-700"}`}>
+                        <h3 className="font-semibold text-[#2D3436] dark:text-white">{r.assessmentType} Screening</h3>
+                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${SEVERITY_STYLES[r.severity] || "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300"}`}>
                           {r.severity}
                         </span>
                         <TrendBadge current={r} previous={prev} />
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-[#5A6062] mt-1">
+                      <div className="flex items-center gap-1.5 text-xs text-[#5A6062] dark:text-slate-400 mt-1">
                         <Calendar size={12} />
                         {new Date(r.createdAt).toLocaleString(undefined, {
                           year: "numeric", month: "short", day: "numeric",
@@ -251,14 +251,14 @@ export default function AssessmentHistory() {
 
                   <div className="flex items-center gap-6 shrink-0">
                     <div className="text-right min-w-[60px]">
-                      <p className="text-xs text-[#5A6062] uppercase tracking-wide">Score</p>
-                      <p className="font-serif text-2xl font-bold text-[#2D3436] leading-none">
+                      <p className="text-xs text-[#5A6062] dark:text-slate-400 uppercase tracking-wide">Score</p>
+                      <p className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white leading-none">
                         {r.totalScore}
-                        {max && <span className="text-sm text-[#9CA3AF] font-sans">/{max}</span>}
+                        {max && <span className="text-sm text-[#9CA3AF] dark:text-slate-500 font-sans">/{max}</span>}
                       </p>
                       {max && <div className="mt-1.5 w-16"><ScoreBar score={r.totalScore} max={max} /></div>}
                     </div>
-                    <ChevronRight size={18} className="text-[#C4B5A0] group-hover:text-[#7C9A82] transition-colors" />
+                    <ChevronRight size={18} className="text-[#C4B5A0] dark:text-slate-600 group-hover:text-[#7C9A82] dark:group-hover:text-emerald-400 transition-colors" />
                   </div>
                 </div>
               </Card>
@@ -277,11 +277,11 @@ export default function AssessmentHistory() {
       {selected && (
         <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center p-4"
           onClick={() => setSelected(null)}>
-          <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-xl border border-[#E8F0E9]"
+          <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-[#E8F0E9] dark:border-slate-700"
             onClick={e => e.stopPropagation()}>
 
             {/* Modal header */}
-            <div className="p-6 border-b border-[#E8F0E9] flex items-start justify-between gap-4">
+            <div className="p-6 border-b border-[#E8F0E9] dark:border-slate-700 flex items-start justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className={`h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold shrink-0 ${
                   selected.assessmentType.includes("PHQ") ? "bg-[#7C9A82]" : "bg-[#C4B5A0]"
@@ -289,10 +289,10 @@ export default function AssessmentHistory() {
                   {selected.assessmentType.includes("PHQ") ? "P9" : "G7"}
                 </div>
                 <div>
-                  <h2 className="font-serif text-2xl font-bold text-[#2D3436]">
+                  <h2 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white">
                     {selected.assessmentType} Screening
                   </h2>
-                  <p className="text-sm text-[#5A6062]">
+                  <p className="text-sm text-[#5A6062] dark:text-slate-400">
                     {new Date(selected.createdAt).toLocaleString(undefined, {
                       year: "numeric", month: "long", day: "numeric",
                       hour: "2-digit", minute: "2-digit",
@@ -301,7 +301,7 @@ export default function AssessmentHistory() {
                 </div>
               </div>
               <button onClick={() => setSelected(null)}
-                className="h-9 w-9 rounded-full hover:bg-[#FAF7F2] flex items-center justify-center shrink-0">
+                className="h-9 w-9 rounded-full hover:bg-[#FAF7F2] dark:hover:bg-slate-700 flex items-center justify-center shrink-0">
                 <X size={18} />
               </button>
             </div>
@@ -328,7 +328,7 @@ export default function AssessmentHistory() {
                       {selected.totalScore}
                     </span>
                     {getMaxScore(selected.assessmentType) && (
-                      <span className="text-xs text-[#9CA3AF]">of {getMaxScore(selected.assessmentType)}</span>
+                      <span className="text-xs text-[#9CA3AF] dark:text-slate-500">of {getMaxScore(selected.assessmentType)}</span>
                     )}
                   </div>
                 </div>
@@ -339,19 +339,19 @@ export default function AssessmentHistory() {
                     <span className={`text-xl font-bold font-serif ${SEVERITY_COLOR[selected.severity] || "text-[#7C9A82]"}`}>
                       {selected.severity}
                     </span>
-                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${SEVERITY_STYLES[selected.severity] || "bg-gray-100 text-gray-700"}`}>
+                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${SEVERITY_STYLES[selected.severity] || "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300"}`}>
                       {selected.assessmentType}
                     </span>
                     {previousRecord && <TrendBadge current={selected} previous={previousRecord} />}
                   </div>
 
-                  <p className="text-sm text-[#5A6062] leading-relaxed">
+                  <p className="text-sm text-[#5A6062] dark:text-slate-400 leading-relaxed">
                     {DESCRIPTIONS[selected.severity] || "This is a self-awareness screening tool."}
                   </p>
 
-                  <div className="bg-[#FFFDF9] border border-[#E8F0E9] rounded-xl p-3">
-                    <p className="text-sm text-[#5A6062]">
-                      <span className="font-semibold text-[#2D3436]">Guidance: </span>
+                  <div className="bg-[#FFFDF9] dark:bg-slate-700 border border-[#E8F0E9] dark:border-slate-600 rounded-xl p-3">
+                    <p className="text-sm text-[#5A6062] dark:text-slate-300">
+                      <span className="font-semibold text-[#2D3436] dark:text-white">Guidance: </span>
                       {TIPS[selected.severity] || "Take care of yourself."}
                     </p>
                   </div>
@@ -359,7 +359,7 @@ export default function AssessmentHistory() {
               </div>
 
               {/* Type description */}
-              <p className="text-xs text-[#9CA3AF]">
+              <p className="text-xs text-[#9CA3AF] dark:text-slate-500">
                 {selected.assessmentType.includes("PHQ")
                   ? "PHQ-9: 9 questions assessing depression severity over the past 2 weeks."
                   : "GAD-7: 7 questions assessing anxiety severity over the past 2 weeks."}
@@ -368,7 +368,7 @@ export default function AssessmentHistory() {
               {/* Question responses */}
               {normalizedAnswers.length > 0 ? (
                 <div>
-                  <h3 className="font-semibold text-[#2D3436] mb-3">Question Responses</h3>
+                  <h3 className="font-semibold text-[#2D3436] dark:text-white mb-3">Question Responses</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {normalizedAnswers.map(a => {
                       const questions = getQuestions(selected.assessmentType);
@@ -376,17 +376,17 @@ export default function AssessmentHistory() {
                       const v         = typeof a.value === "number" ? a.value : -1;
                       const barColor  = v === 0 ? "bg-green-400" : v === 1 ? "bg-yellow-400" : v === 2 ? "bg-orange-400" : "bg-red-400";
                       return (
-                        <div key={a.key} className="rounded-xl border border-[#E8E3DA] bg-[#FBF8F3] p-4">
+                        <div key={a.key} className="rounded-xl border border-[#E8E3DA] dark:border-slate-600 bg-[#FBF8F3] dark:bg-slate-700 p-4">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-semibold text-[#7C9A82] uppercase tracking-wide">Q{a.questionIndex + 1}</span>
-                            {v >= 0 && <span className="text-xs font-medium text-[#2D3436]">{v}/3</span>}
+                            <span className="text-xs font-semibold text-[#7C9A82] dark:text-emerald-400 uppercase tracking-wide">Q{a.questionIndex + 1}</span>
+                            {v >= 0 && <span className="text-xs font-medium text-[#2D3436] dark:text-white">{v}/3</span>}
                           </div>
-                          <p className="text-xs text-[#5A6062] leading-snug mb-2">{qText}</p>
-                          <div className="h-1.5 bg-[#E8F0E9] rounded-full overflow-hidden mb-1.5">
+                          <p className="text-xs text-[#5A6062] dark:text-slate-400 leading-snug mb-2">{qText}</p>
+                          <div className="h-1.5 bg-[#E8F0E9] dark:bg-slate-600 rounded-full overflow-hidden mb-1.5">
                             <div className={`h-full rounded-full ${barColor}`}
                               style={{ width: v >= 0 ? `${Math.round((v / 3) * 100)}%` : "0%" }} />
                           </div>
-                          <p className="text-xs font-medium text-[#2D3436]">
+                          <p className="text-xs font-medium text-[#2D3436] dark:text-white">
                             {v >= 0 ? (ANSWER_LABEL[v] ?? "—") : "—"}
                           </p>
                         </div>
@@ -395,7 +395,7 @@ export default function AssessmentHistory() {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-[#5A6062]">No answer details available for this record.</p>
+                <p className="text-sm text-[#5A6062] dark:text-slate-400">No answer details available for this record.</p>
               )}
 
               {/* Actions */}
@@ -411,9 +411,9 @@ export default function AssessmentHistory() {
               </div>
 
               {/* Disclaimer */}
-              <div className="flex items-start gap-3 bg-[#FFFDF9] border border-[#E8F0E9] rounded-xl p-4">
-                <AlertCircle className="h-4 w-4 text-[#7C9A82] shrink-0 mt-0.5" />
-                <p className="text-xs text-[#5A6062]">
+              <div className="flex items-start gap-3 bg-[#FFFDF9] dark:bg-slate-700 border border-[#E8F0E9] dark:border-slate-600 rounded-xl p-4">
+                <AlertCircle className="h-4 w-4 text-[#7C9A82] dark:text-emerald-400 shrink-0 mt-0.5" />
+                <p className="text-xs text-[#5A6062] dark:text-slate-300">
                   <span className="font-semibold">Disclaimer: </span>
                   This screening tool is not a medical diagnosis. If you are in crisis or feeling suicidal,
                   please call emergency services or a crisis hotline immediately.
@@ -422,7 +422,7 @@ export default function AssessmentHistory() {
 
             </div>
 
-            <div className="p-6 border-t border-[#E8F0E9] flex justify-end">
+            <div className="p-6 border-t border-[#E8F0E9] dark:border-slate-700 flex justify-end">
               <Button variant="outline" onClick={() => setSelected(null)}>Close</Button>
             </div>
           </div>

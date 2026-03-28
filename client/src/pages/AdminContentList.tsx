@@ -113,8 +113,8 @@ export default function AdminContentList({ onEdit }: AdminContentListProps) {
       {/* Header row */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h2 className="font-serif text-2xl font-bold text-[#2D3436]">All Content</h2>
-          <p className="text-sm text-[#5A6062] mt-1">
+          <h2 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white">All Content</h2>
+          <p className="text-sm text-[#5A6062] dark:text-slate-400 mt-1">
             {loading ? "Loading…" : `${filtered.length} item(s)`}
             {q.trim() ? ` • Filtered` : ""}
           </p>
@@ -137,7 +137,7 @@ export default function AdminContentList({ onEdit }: AdminContentListProps) {
       {/* Search */}
       <Card className="p-3">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-[#E8F0E9] flex items-center justify-center text-[#7C9A82]">
+          <div className="h-10 w-10 rounded-full bg-[#E8F0E9] dark:bg-slate-700 flex items-center justify-center text-[#7C9A82] dark:text-emerald-400">
             <Search size={18} />
           </div>
 
@@ -145,13 +145,13 @@ export default function AdminContentList({ onEdit }: AdminContentListProps) {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search title, body, type, topic…"
-            className="w-full bg-transparent outline-none text-sm text-[#2D3436] placeholder:text-[#9CA3AF]"
+            className="w-full bg-transparent outline-none text-sm text-[#2D3436] dark:text-white placeholder:text-[#9CA3AF] dark:placeholder:text-slate-500"
           />
         </div>
       </Card>
 
       {err && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900 px-4 py-3 text-sm text-red-700 dark:text-red-200">
           {err}
         </div>
       )}
@@ -159,7 +159,7 @@ export default function AdminContentList({ onEdit }: AdminContentListProps) {
       {/* List */}
       {filtered.length === 0 ? (
         <Card className="p-6">
-          <p className="text-sm text-[#5A6062]">
+          <p className="text-sm text-[#5A6062] dark:text-slate-400">
             No content found. Try clearing search or add new content.
           </p>
         </Card>
@@ -174,37 +174,37 @@ export default function AdminContentList({ onEdit }: AdminContentListProps) {
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 {/* Left */}
                 <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-full bg-[#E8F0E9] flex items-center justify-center text-[#7C9A82]">
+                  <div className="h-10 w-10 rounded-full bg-[#E8F0E9] dark:bg-slate-700 flex items-center justify-center text-[#7C9A82] dark:text-emerald-400">
                     <FileText size={18} />
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="font-medium text-[#2D3436] truncate">
+                    <h3 className="font-medium text-[#2D3436] dark:text-white truncate">
                       {item.title || "Untitled"}
                     </h3>
 
                     <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <span className="inline-block px-3 py-1 rounded-full bg-[#FAF7F2] text-xs font-medium text-[#5A7A60] border border-[#E8F0E9]">
+                      <span className="inline-block px-3 py-1 rounded-full bg-[#FAF7F2] dark:bg-slate-700 text-xs font-medium text-[#5A7A60] dark:text-emerald-300 border border-[#E8F0E9] dark:border-slate-600">
                         {badgeText(item)}
                       </span>
 
                       <span
                         className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${
                           item.published === false
-                            ? "bg-white text-[#8B6B2E] border-[#E8E3DA]"
-                            : "bg-[#E8F0E9] text-[#2D3436] border-[#E8F0E9]"
+                            ? "bg-white dark:bg-slate-700 text-[#8B6B2E] dark:text-amber-300 border-[#E8E3DA] dark:border-slate-600"
+                            : "bg-[#E8F0E9] dark:bg-emerald-900 text-[#2D3436] dark:text-emerald-100 border-[#E8F0E9] dark:border-emerald-700"
                         }`}
                       >
                         {item.published === false ? "Draft" : "Published"}
                       </span>
 
-                      <span className="text-xs text-[#9CA3AF]">
+                      <span className="text-xs text-[#9CA3AF] dark:text-slate-500">
                         Created: {fmtDateTime(item.createdAt)}
                       </span>
                     </div>
 
                     {item.body && (
-                      <p className="mt-3 text-sm text-[#5A6062]">
+                      <p className="mt-3 text-sm text-[#5A6062] dark:text-slate-400">
                         {preview(item.body, 260)}
                       </p>
                     )}

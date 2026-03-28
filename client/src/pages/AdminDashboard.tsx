@@ -36,21 +36,21 @@ const cmsSubtitle = useMemo(() => {
 }, [cmsView]);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#2D3436]">
+          <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#2D3436] dark:text-white">
             Admin Panel
           </h1>
-          <p className="text-[#5A6062] mt-1">
+          <p className="text-[#5A6062] dark:text-slate-400 mt-1">
             Manage content, users, and experts across SwasthyaManas.
           </p>
         </div>
 
         {/* Main Tabs */}
-        <div className="flex gap-1 mb-8 bg-white border border-[#E8F0E9] rounded-xl p-1 w-fit shadow-sm">
+        <div className="flex gap-1 mb-8 bg-white dark:bg-slate-800 border border-[#E8F0E9] dark:border-slate-700 rounded-xl p-1 w-fit shadow-sm">
           {mainTabs.map(({ id, label }) => (
             <button
               key={id}
@@ -58,7 +58,7 @@ const cmsSubtitle = useMemo(() => {
               className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
                 mainTab === id
                   ? "bg-[#7C9A82] text-white shadow-sm"
-                  : "text-[#5A6062] hover:text-[#2D3436] hover:bg-[#F0F4F0]"
+                  : "text-[#5A6062] dark:text-slate-400 hover:text-[#2D3436] dark:hover:text-white hover:bg-[#F0F4F0] dark:hover:bg-slate-700"
               }`}
             >
               {label}
@@ -71,8 +71,8 @@ const cmsSubtitle = useMemo(() => {
           <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
               <div>
-                <h2 className="font-serif text-2xl font-bold text-[#2D3436]">{cmsTitle}</h2>
-                <p className="text-[#5A6062] mt-1 text-sm">{cmsSubtitle}</p>
+                <h2 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white">{cmsTitle}</h2>
+                <p className="text-[#5A6062] dark:text-slate-400 mt-1 text-sm">{cmsSubtitle}</p>
               </div>
               <Card className="p-2 flex items-center gap-2 w-fit">
                 <Button
@@ -114,20 +114,20 @@ const cmsSubtitle = useMemo(() => {
               </div>
 
               <div className="space-y-6">
-                <h2 className="font-serif text-2xl font-bold text-[#2D3436]">Quick Guide</h2>
+                <h2 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white">Quick Guide</h2>
                 <Card className="p-6">
-                  <h3 className="font-serif text-lg font-bold text-[#2D3436] mb-2">How this works</h3>
-                  <ul className="text-sm text-[#5A6062] space-y-2 list-disc pl-5">
-                    <li>Use <span className="font-medium text-[#2D3436]">View Content</span> to edit existing items.</li>
-                    <li>Use <span className="font-medium text-[#2D3436]">Add Content</span> to create new posts/pages.</li>
-                    <li>Clicking edit switches you into <span className="font-medium text-[#2D3436]">Edit Mode</span>.</li>
+                  <h3 className="font-serif text-lg font-bold text-[#2D3436] dark:text-white mb-2">How this works</h3>
+                  <ul className="text-sm text-[#5A6062] dark:text-slate-400 space-y-2 list-disc pl-5">
+                    <li>Use <span className="font-medium text-[#2D3436] dark:text-white">View Content</span> to edit existing items.</li>
+                    <li>Use <span className="font-medium text-[#2D3436] dark:text-white">Add Content</span> to create new posts/pages.</li>
+                    <li>Clicking edit switches you into <span className="font-medium text-[#2D3436] dark:text-white">Edit Mode</span>.</li>
                   </ul>
                 </Card>
                 {cmsView === "edit" && editData && (
                   <Card className="p-6">
-                    <h3 className="font-serif text-lg font-bold text-[#2D3436] mb-2">Currently Editing</h3>
-                    <p className="text-sm text-[#5A6062]">
-                      Title: <span className="font-medium text-[#2D3436]">{editData.title}</span>
+                    <h3 className="font-serif text-lg font-bold text-[#2D3436] dark:text-white mb-2">Currently Editing</h3>
+                    <p className="text-sm text-[#5A6062] dark:text-slate-400">
+                      Title: <span className="font-medium text-[#2D3436] dark:text-white">{editData.title}</span>
                     </p>
                     <div className="mt-4 flex gap-2">
                       <Button variant="outline" size="sm" className="w-full"
@@ -141,9 +141,9 @@ const cmsSubtitle = useMemo(() => {
                     </div>
                   </Card>
                 )}
-                <Card className="p-6 shadow-none bg-[#FAF7F2] border-[#E8E3DA]">
-                  <h3 className="font-serif text-xl font-bold mb-2 text-[#2D3436]">Tip</h3>
-                  <p className="text-[#5A6062] text-sm">
+                <Card className="p-6 shadow-none bg-[#FAF7F2] dark:bg-slate-800 border-[#E8E3DA] dark:border-slate-700">
+                  <h3 className="font-serif text-xl font-bold mb-2 text-[#2D3436] dark:text-white">Tip</h3>
+                  <p className="text-[#5A6062] dark:text-slate-400 text-sm">
                     Keep titles consistent and avoid duplicate topics (e.g., Anxiety vs anxiety).
                   </p>
                 </Card>

@@ -440,21 +440,21 @@ export default function BookingPage() {
         </div>
 
         {err && (
-          <div className="mb-6 text-sm rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3">
+          <div className="mb-6 text-sm rounded-xl border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200 px-4 py-3">
             {err}
           </div>
         )}
 
         {/* Confirmation */}
         {confirmed && confirmedInfo && (
-          <Card className="p-6 mb-6 border border-[#E8E3DA] bg-white">
+          <Card className="p-6 mb-6 border border-[#E8E3DA] dark:border-slate-700 bg-white dark:bg-slate-800">
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="text-[#7C9A82]" />
+              <CheckCircle2 className="text-[#7C9A82] dark:text-emerald-400" />
               <div>
-                <h2 className="font-serif text-xl font-bold text-[#2D3436]">
+                <h2 className="font-serif text-xl font-bold text-[#2D3436] dark:text-white">
                   Booking Confirmed
                 </h2>
-                <p className="text-sm text-[#5A6062] mt-1">
+                <p className="text-sm text-[#5A6062] dark:text-slate-400 mt-1">
                   {confirmedInfo.dayLabel} • {confirmedInfo.timeLabel} •{" "}
                   {confirmedInfo.feeLabel}
                 </p>
@@ -469,14 +469,14 @@ export default function BookingPage() {
             {/* Day selector */}
             <Card className="p-5">
               <div className="flex items-center gap-2 mb-3">
-                <Calendar size={18} className="text-[#7C9A82]" />
-                <h2 className="font-serif text-xl font-bold text-[#2D3436]">
+                <Calendar size={18} className="text-[#7C9A82] dark:text-emerald-400" />
+                <h2 className="font-serif text-xl font-bold text-[#2D3436] dark:text-white">
                   Select Day
                 </h2>
               </div>
 
               {dayOptions.length === 0 ? (
-                <p className="text-sm text-[#5A6062]">No available slots.</p>
+                <p className="text-sm text-[#5A6062] dark:text-slate-400">No available slots.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {dayOptions.map((key) => {
@@ -490,7 +490,7 @@ export default function BookingPage() {
                         className={`px-3 py-2 rounded-xl text-sm border transition-all ${
                           active
                             ? "bg-[#7C9A82] text-white border-[#7C9A82]"
-                            : "bg-white text-[#2D3436] border-[#E8E3DA] hover:bg-[#FAF7F2]"
+                            : "bg-white dark:bg-slate-800 text-[#2D3436] dark:text-white border-[#E8E3DA] dark:border-slate-700 hover:bg-[#FAF7F2] dark:hover:bg-slate-700"
                         }`}
                       >
                         {formatNepalDate(labelDate)}
@@ -504,16 +504,16 @@ export default function BookingPage() {
             {/* Time slots */}
             <Card className="p-5">
               <div className="flex items-center gap-2 mb-3">
-                <Clock size={18} className="text-[#7C9A82]" />
-                <h2 className="font-serif text-xl font-bold text-[#2D3436]">
+                <Clock size={18} className="text-[#7C9A82] dark:text-emerald-400" />
+                <h2 className="font-serif text-xl font-bold text-[#2D3436] dark:text-white">
                   Select Time
                 </h2>
               </div>
 
               {!selectedDayKey ? (
-                <p className="text-sm text-[#5A6062]">Pick a day to see times.</p>
+                <p className="text-sm text-[#5A6062] dark:text-slate-400">Pick a day to see times.</p>
               ) : daySlots.length === 0 ? (
-                <p className="text-sm text-[#5A6062]">No slots for this day.</p>
+                <p className="text-sm text-[#5A6062] dark:text-slate-400">No slots for this day.</p>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {daySlots.map((s) => {
@@ -531,8 +531,8 @@ export default function BookingPage() {
                           active
                             ? "bg-[#7C9A82] border-[#7C9A82] text-white shadow-md"
                             : disabled
-                            ? "bg-[#F5F2EC] border-transparent text-[#B7B7B7] cursor-not-allowed"
-                            : "bg-white border-[#E8E3DA] text-[#2D3436] hover:border-[#7C9A82] hover:text-[#7C9A82]"
+                            ? "bg-[#F5F2EC] dark:bg-slate-700 border-transparent text-[#B7B7B7] dark:text-slate-500 cursor-not-allowed"
+                            : "bg-white dark:bg-slate-800 border-[#E8E3DA] dark:border-slate-700 text-[#2D3436] dark:text-white hover:border-[#7C9A82] dark:hover:border-emerald-400 hover:text-[#7C9A82] dark:hover:text-emerald-400"
                         }`}
                         title={disabled ? `Not available (${s.status})` : "Hold this slot"}
                       >

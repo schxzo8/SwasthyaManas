@@ -2,7 +2,7 @@ import { useState } from "react";
 import { User, Lock, Bell, Trash2, Save, Eye, EyeOff } from "lucide-react";
 import { Button } from "../components/Button";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 type Tab = "profile" | "security" | "notifications" | "danger";
@@ -112,26 +112,26 @@ export default function UserSettings() {
   ];
 
   const inp =
-    "w-full border border-[#D4CCBF] rounded-xl px-4 py-3 text-sm bg-white " +
-    "focus:outline-none focus:ring-2 focus:ring-[#7C9A82] focus:border-[#7C9A82] " +
-    "transition-all shadow-sm hover:shadow-md text-[#2D3436] placeholder-[#9CA3AF]";
-  const lbl = "block text-sm font-semibold text-[#2D3436] mb-2 tracking-wide";
+    "w-full border border-[#D4CCBF] dark:border-slate-700 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700 " +
+    "focus:outline-none focus:ring-2 focus:ring-[#7C9A82] dark:focus:ring-emerald-500 focus:border-[#7C9A82] dark:focus:border-emerald-500 " +
+    "transition-all shadow-sm hover:shadow-md text-[#2D3436] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-500";
+  const lbl = "block text-sm font-semibold text-[#2D3436] dark:text-white mb-2 tracking-wide";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] via-[#FCFAF7] to-[#F9F6F0] py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] via-[#FCFAF7] to-[#F9F6F0] dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 py-12 px-4">
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
         <div className="mb-10">
-          <h1 className="font-serif text-5xl font-bold text-[#1a1a1a] mb-2">Account Settings</h1>
-          <p className="text-[#6B7280] text-lg">Manage your profile, security, and preferences</p>
+          <h1 className="font-serif text-5xl font-bold text-[#1a1a1a] dark:text-white mb-2">Account Settings</h1>
+          <p className="text-[#6B7280] dark:text-slate-400 text-lg">Manage your profile, security, and preferences</p>
         </div>
 
         <div className="flex gap-8">
 
           {/* Sidebar */}
           <aside className="w-56 shrink-0">
-            <nav className="bg-white rounded-2xl border border-[#E8E6E1] shadow-lg overflow-hidden">
+            <nav className="bg-white dark:bg-slate-800 rounded-2xl border border-[#E8E6E1] dark:border-slate-700 shadow-lg overflow-hidden">
               {tabs.map(({ id, label, icon: Icon }, idx) => (
                 <button
                   key={id}
@@ -139,8 +139,8 @@ export default function UserSettings() {
                   className={`w-full flex items-center gap-3 px-5 py-4 text-sm font-semibold transition-all relative ${
                     activeTab === id
                       ? "bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] text-white shadow-md"
-                      : "text-[#6B7280] hover:bg-[#F9F6F0]"
-                  } ${idx < tabs.length - 1 ? "border-b border-[#E8E6E1]" : ""}`}
+                      : "text-[#6B7280] dark:text-slate-400 hover:bg-[#F9F6F0] dark:hover:bg-slate-700"
+                  } ${idx < tabs.length - 1 ? "border-b border-[#E8E6E1] dark:border-slate-700" : ""}`}
                 >
                   {activeTab === id && (
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-white" />
@@ -153,16 +153,16 @@ export default function UserSettings() {
           </aside>
 
           {/* Content */}
-          <div className="flex-1 bg-white rounded-2xl border border-[#E8E6E1] p-8 shadow-2xl">
+          <div className="flex-1 bg-white dark:bg-slate-800 rounded-2xl border border-[#E8E6E1] dark:border-slate-700 p-8 shadow-2xl">
 
             {/* ── PROFILE ── */}
             {activeTab === "profile" && (
               <div className="space-y-7">
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1a1a1a] mb-1">Profile Information</h2>
-                  <p className="text-[#6B7280] text-sm">Update your personal details</p>
+                  <h2 className="text-2xl font-bold text-[#1a1a1a] dark:text-white mb-1">Profile Information</h2>
+                  <p className="text-[#6B7280] dark:text-slate-400 text-sm">Update your personal details</p>
                 </div>
-                <div className="bg-gradient-to-br from-[#FAF7F2] to-[#F5F2EC] rounded-2xl p-6 space-y-6">
+                <div className="bg-gradient-to-br from-[#FAF7F2] dark:from-slate-700 to-[#F5F2EC] dark:to-slate-600 rounded-2xl p-6 space-y-6">
                   <div className="grid grid-cols-2 gap-6">
                     <div>
                       <label className={lbl}>First Name</label>
@@ -183,9 +183,9 @@ export default function UserSettings() {
                   <div>
                     <label className={lbl}>Account Role</label>
                     <div className="relative">
-                      <input className={inp + " bg-[#F0F7F4] text-[#7C9A82] cursor-not-allowed border-[#E8F0E9]"}
+                      <input className={inp + " bg-[#F0F7F4] dark:bg-slate-700 text-[#7C9A82] dark:text-emerald-400 cursor-not-allowed border-[#E8F0E9] dark:border-slate-600"}
                         value={user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""} disabled />
-                      <span className="absolute right-4 top-3.5 text-xs font-semibold text-[#7C9A82]">Read-only</span>
+                      <span className="absolute right-4 top-3.5 text-xs font-semibold text-[#7C9A82] dark:text-emerald-400">Read-only</span>
                     </div>
                   </div>
                 </div>
@@ -201,37 +201,51 @@ export default function UserSettings() {
             {activeTab === "security" && (
               <div className="space-y-7">
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1a1a1a] mb-1">Change Password</h2>
-                  <p className="text-[#6B7280] text-sm">Keep your account secure with a strong password</p>
+                  <h2 className="text-2xl font-bold text-[#1a1a1a] dark:text-white mb-1">Security & Password</h2>
+                  <p className="text-[#6B7280] dark:text-slate-400 text-sm">Manage your account security and password</p>
                 </div>
-                <div className="bg-gradient-to-br from-[#FAF7F2] to-[#F5F2EC] rounded-2xl p-6 space-y-5">
-                  {(["current", "newPass", "confirm"] as const).map((field, i) => (
-                    <div key={field}>
-                      <label className={lbl}>
-                        {["Current Password", "New Password", "Confirm New Password"][i]}
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showPw[field] ? "text" : "password"}
-                          className={inp + " pr-12"}
-                          value={passwords[field]}
-                          placeholder={["Enter current password", "Enter new password", "Confirm new password"][i]}
-                          onChange={e => setPasswords(p => ({ ...p, [field]: e.target.value }))}
-                        />
-                        <button type="button"
-                          onClick={() => setShowPw(s => ({ ...s, [field]: !s[field] }))}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#7C9A82] transition-colors">
-                          {showPw[field] ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                  <p className="text-xs text-blue-800">
-                    💡 <span className="font-semibold">Password Tips:</span> Use at least 8 characters, mix uppercase, lowercase, numbers, and symbols.
+
+                {/* Info box explaining options */}
+                <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-xl p-4">
+                  <p className="text-xs text-blue-800 dark:text-blue-200">
+                    <span className="font-semibold">💡 Two ways to reset your password:</span>
+                    <br />• If you remember your current password, use the form below to change it
+                    <br />• If you forget your password, <Link to="/forgot-password" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">use the email reset option</Link>
                   </p>
                 </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-white mb-4">Change Password</h3>
+                  <div className="bg-gradient-to-br from-[#FAF7F2] dark:from-slate-700 to-[#F5F2EC] dark:to-slate-600 rounded-2xl p-6 space-y-5">
+                    {(["current", "newPass", "confirm"] as const).map((field, i) => (
+                      <div key={field}>
+                        <label className={lbl}>
+                          {["Current Password", "New Password", "Confirm New Password"][i]}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showPw[field] ? "text" : "password"}
+                            className={inp + " pr-12"}
+                            value={passwords[field]}
+                            placeholder={["Enter current password", "Enter new password", "Confirm new password"][i]}
+                            onChange={e => setPasswords(p => ({ ...p, [field]: e.target.value }))}
+                          />
+                          <button type="button"
+                            onClick={() => setShowPw(s => ({ ...s, [field]: !s[field] }))}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] dark:text-slate-500 hover:text-[#7C9A82] dark:hover:text-emerald-400 transition-colors">
+                            {showPw[field] ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-xl p-4 mt-4">
+                    <p className="text-xs text-blue-800 dark:text-blue-200">
+                      💡 <span className="font-semibold">Password Tips:</span> Use at least 8 characters, mix uppercase, lowercase, numbers, and symbols.
+                    </p>
+                  </div>
+                </div>
+
                 <Button onClick={handlePasswordChange} disabled={saving}
                   className="bg-gradient-to-r from-[#7C9A82] to-[#5A7A60] text-white font-semibold shadow-lg hover:shadow-xl transition-all">
                   <Lock size={16} className="mr-2" />
@@ -244,25 +258,25 @@ export default function UserSettings() {
             {activeTab === "notifications" && (
               <div className="space-y-7">
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1a1a1a] mb-1">Notification Preferences</h2>
-                  <p className="text-[#6B7280] text-sm">Choose how you'd like to be notified</p>
+                  <h2 className="text-2xl font-bold text-[#1a1a1a] dark:text-white mb-1">Notification Preferences</h2>
+                  <p className="text-[#6B7280] dark:text-slate-400 text-sm">Choose how you'd like to be notified</p>
                 </div>
                 <div className="space-y-3">
                   {(Object.keys(notifications) as Array<keyof typeof notifications>).map(key => (
                     <div key={key}
-                      className="flex items-center justify-between bg-gradient-to-r from-[#FAF7F2] to-[#F5F2EC] rounded-2xl p-5 border border-[#E8E6E1] hover:shadow-md transition-all">
+                      className="flex items-center justify-between bg-gradient-to-r from-[#FAF7F2] dark:from-slate-700 to-[#F5F2EC] dark:to-slate-600 rounded-2xl p-5 border border-[#E8E6E1] dark:border-slate-700 hover:shadow-md transition-all">
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-[#1a1a1a] capitalize">
+                        <p className="text-sm font-semibold text-[#1a1a1a] dark:text-white capitalize">
                           {key === "email" ? "Email Updates" : key === "appointments" ? "Appointment Reminders" : "Assessment Nudges"}
                         </p>
-                        <p className="text-xs text-[#6B7280] mt-1">
+                        <p className="text-xs text-[#6B7280] dark:text-slate-400 mt-1">
                           {{ email: "Receive important updates and newsletters via email", appointments: "Get reminders before your upcoming appointments", assessments: "Nudges to help you complete pending assessments" }[key]}
                         </p>
                       </div>
                       <button
                         onClick={() => setNotifications(n => ({ ...n, [key]: !n[key] }))}
                         className={`w-12 h-7 rounded-full transition-all relative flex-shrink-0 ml-4 shadow-sm ${
-                          notifications[key] ? "bg-gradient-to-r from-[#7C9A82] to-[#5A7A60]" : "bg-[#D4D4D8]"
+                          notifications[key] ? "bg-gradient-to-r from-[#7C9A82] to-[#5A7A60]" : "bg-[#D4D4D8] dark:bg-slate-600"
                         }`}
                       >
                         <span className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-all ${
@@ -284,28 +298,28 @@ export default function UserSettings() {
             {activeTab === "danger" && (
               <div className="space-y-7">
                 <div>
-                  <h2 className="text-2xl font-bold text-red-600 mb-1">Danger Zone</h2>
-                  <p className="text-[#6B7280] text-sm">Account deletion is permanent and cannot be undone</p>
+                  <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-1">Danger Zone</h2>
+                  <p className="text-[#6B7280] dark:text-slate-400 text-sm">Account deletion is permanent and cannot be undone</p>
                 </div>
-                <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 rounded-2xl p-8 space-y-5">
+                <div className="bg-gradient-to-r from-red-50 dark:from-red-900 to-red-100 dark:to-red-800 border-2 border-red-300 dark:border-red-700 rounded-2xl p-8 space-y-5">
                   <div className="space-y-3">
-                    <p className="text-sm font-semibold text-red-900">⚠️ Before you go…</p>
-                    <p className="text-sm text-red-800 leading-relaxed">Deleting your account will:</p>
-                    <ul className="text-xs text-red-800 space-y-1 ml-4 list-disc">
+                    <p className="text-sm font-semibold text-red-900 dark:text-red-100">⚠️ Before you go…</p>
+                    <p className="text-sm text-red-800 dark:text-red-200 leading-relaxed">Deleting your account will:</p>
+                    <ul className="text-xs text-red-800 dark:text-red-200 space-y-1 ml-4 list-disc">
                       <li>Permanently remove all your personal data</li>
                       <li>Cancel any active consultations</li>
                       <li>Delete all assessment history</li>
                       <li>Remove access to all services</li>
                     </ul>
                   </div>
-                  <div className="border-t-2 border-red-200 pt-5 space-y-3">
-                    <p className="text-sm font-semibold text-red-900">Type your email to confirm deletion:</p>
-                    <div className="bg-white rounded-xl p-3">
-                      <p className="text-xs text-[#9CA3AF] mb-1">Your email:</p>
-                      <p className="font-mono font-bold text-red-600 text-sm">{user?.email}</p>
+                  <div className="border-t-2 border-red-200 dark:border-red-700 pt-5 space-y-3">
+                    <p className="text-sm font-semibold text-red-900 dark:text-red-100">Type your email to confirm deletion:</p>
+                    <div className="bg-white dark:bg-slate-700 rounded-xl p-3">
+                      <p className="text-xs text-[#9CA3AF] dark:text-slate-400 mb-1">Your email:</p>
+                      <p className="font-mono font-bold text-red-600 dark:text-red-400 text-sm">{user?.email}</p>
                     </div>
                     <input
-                      className={inp + " border-2 border-red-300 focus:ring-red-400 focus:border-red-400 bg-white"}
+                      className={inp + " border-2 border-red-300 dark:border-red-700 focus:ring-red-400 dark:focus:ring-red-600 focus:border-red-400 dark:focus:border-red-600 bg-white dark:bg-slate-700 text-[#1a1a1a] dark:text-white"}
                       placeholder="Paste your email here to confirm"
                       value={deleteInput}
                       onChange={e => setDeleteInput(e.target.value)}
@@ -316,7 +330,7 @@ export default function UserSettings() {
                       className={`w-full py-3 font-semibold transition-all ${
                         deleteInput === user?.email && !saving
                           ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg hover:shadow-xl"
-                          : "bg-red-200 text-red-400 cursor-not-allowed opacity-50"
+                          : "bg-red-200 dark:bg-red-900 text-red-400 dark:text-red-300 cursor-not-allowed opacity-50"
                       }`}
                     >
                       <Trash2 size={16} className="mr-2" />

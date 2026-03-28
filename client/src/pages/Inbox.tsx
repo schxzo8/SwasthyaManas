@@ -245,44 +245,44 @@ export default function Inbox() {
 
   const statusConfig = {
     pending: {
-      bg: "bg-amber-50",
-      border: "border-amber-200",
-      badge: "bg-amber-100 text-amber-900",
-      badgeBorder: "border-amber-200",
+      bg: "bg-amber-50 dark:bg-amber-900",
+      border: "border-amber-200 dark:border-amber-700",
+      badge: "bg-amber-100 dark:bg-amber-800 text-amber-900 dark:text-amber-100",
+      badgeBorder: "border-amber-200 dark:border-amber-700",
     },
     accepted: {
-      bg: "bg-emerald-50",
-      border: "border-emerald-200",
-      badge: "bg-emerald-100 text-emerald-900",
-      badgeBorder: "border-emerald-200",
+      bg: "bg-emerald-50 dark:bg-emerald-900",
+      border: "border-emerald-200 dark:border-emerald-700",
+      badge: "bg-emerald-100 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100",
+      badgeBorder: "border-emerald-200 dark:border-emerald-700",
     },
     rejected: {
-      bg: "bg-red-50",
-      border: "border-red-200",
-      badge: "bg-red-100 text-red-900",
-      badgeBorder: "border-red-200",
+      bg: "bg-red-50 dark:bg-red-900",
+      border: "border-red-200 dark:border-red-700",
+      badge: "bg-red-100 dark:bg-red-800 text-red-900 dark:text-red-100",
+      badgeBorder: "border-red-200 dark:border-red-700",
     },
     closed: {
-      bg: "bg-slate-50",
-      border: "border-slate-200",
-      badge: "bg-slate-100 text-slate-900",
-      badgeBorder: "border-slate-200",
+      bg: "bg-slate-50 dark:bg-slate-800",
+      border: "border-slate-200 dark:border-slate-700",
+      badge: "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100",
+      badgeBorder: "border-slate-200 dark:border-slate-700",
     },
   };
 
   const currentStatusConfig = selected ? statusConfig[selected.status as keyof typeof statusConfig] : statusConfig.pending;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] via-[#FCFAF7] to-[#F9F6F0] py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] via-[#FCFAF7] to-[#F9F6F0] dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <h1 className="font-serif text-5xl font-bold text-[#1a1a1a] mb-2">
+              <h1 className="font-serif text-5xl font-bold text-[#1a1a1a] dark:text-white mb-2">
                 {pageTitle}
               </h1>
-              <p className="text-[#6B7280] text-lg">{pageSubtitle}</p>
+              <p className="text-[#6B7280] dark:text-slate-400 text-lg">{pageSubtitle}</p>
             </div>
 
             <div className="flex gap-3">
@@ -312,7 +312,7 @@ export default function Inbox() {
 
         {/* Error Alert */}
         {err && (
-          <div className="mb-6 rounded-2xl border border-red-300 bg-gradient-to-r from-red-50 to-red-100 text-red-900 px-6 py-4 shadow-md">
+          <div className="mb-6 rounded-2xl border border-red-300 dark:border-red-700 bg-gradient-to-r from-red-50 dark:from-red-900 to-red-100 dark:to-red-800 text-red-900 dark:text-red-100 px-6 py-4 shadow-md">
             <p className="font-medium">Error</p>
             <p className="text-sm mt-1">{err}</p>
           </div>
@@ -320,25 +320,25 @@ export default function Inbox() {
 
         {/* Status Hint */}
         {!isExpert && selected && userStatusHint && (
-          <div className="mb-6 rounded-2xl border border-emerald-300 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-900 px-6 py-4 shadow-md">
+          <div className="mb-6 rounded-2xl border border-emerald-300 dark:border-emerald-700 bg-gradient-to-r from-emerald-50 dark:from-emerald-900 to-emerald-100 dark:to-emerald-800 text-emerald-900 dark:text-emerald-100 px-6 py-4 shadow-md">
             <p className="text-base font-medium">{userStatusHint}</p>
           </div>
         )}
 
         {/* Main Card */}
-        <Card className="h-[calc(100vh-300px)] min-h-[500px] flex overflow-hidden p-0 shadow-2xl rounded-3xl border-0">
+        <Card className="h-[calc(100vh-300px)] min-h-[500px] flex overflow-hidden p-0 shadow-2xl rounded-3xl border-0 bg-white dark:bg-slate-900">
           {/* Left Sidebar - List */}
-          <div className="w-full md:w-[35%] border-r border-[#E8E6E1] flex flex-col bg-white overflow-hidden">
+          <div className="w-full md:w-[35%] border-r border-[#E8E6E1] dark:border-slate-700 flex flex-col bg-white dark:bg-slate-900 overflow-hidden">
             {/* Search Bar */}
-            <div className="p-5 border-b border-[#E8E6E1] bg-gradient-to-b from-[#FCFAF7] to-white flex-shrink-0 sticky top-0">
+            <div className="p-5 border-b border-[#E8E6E1] dark:border-slate-700 bg-gradient-to-b from-[#FCFAF7] dark:from-slate-800 to-white dark:to-slate-900 flex-shrink-0 sticky top-0">
               <div className="relative">
-                <Search className="absolute left-4 top-3.5 h-5 w-5 text-[#B0ABA0]" />
+                <Search className="absolute left-4 top-3.5 h-5 w-5 text-[#B0ABA0] dark:text-slate-500" />
                 <input
                   type="text"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder={searchPlaceholder}
-                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-[#D4CCBF] bg-white text-[#1a1a1a] shadow-sm focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all placeholder-[#9CA3AF] font-medium"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-[#D4CCBF] dark:border-slate-700 bg-white dark:bg-slate-800 text-[#1a1a1a] dark:text-white shadow-sm focus:ring-2 focus:ring-[#7C9A82] focus:border-transparent outline-none transition-all placeholder-[#9CA3AF] dark:placeholder-slate-500 font-medium"
                 />
               </div>
             </div>
@@ -347,18 +347,18 @@ export default function Inbox() {
             <div className="flex-1 overflow-y-auto">
               {filtered.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center p-8 text-center">
-                  <div className="h-24 w-24 bg-gradient-to-br from-[#E8F0E9] to-[#D4DFD8] rounded-full flex items-center justify-center mb-6 shadow-lg">
-                    <Mail size={48} className="text-[#7C9A82]" />
+                  <div className="h-24 w-24 bg-gradient-to-br from-[#E8F0E9] dark:from-slate-700 to-[#D4DFD8] dark:to-slate-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                    <Mail size={48} className="text-[#7C9A82] dark:text-emerald-400" />
                   </div>
-                  <p className="text-[#1a1a1a] font-semibold text-lg mb-2">
+                  <p className="text-[#1a1a1a] dark:text-white font-semibold text-lg mb-2">
                     {isExpert ? "No Incoming Requests" : "No Consultations Yet"}
                   </p>
-                  <p className="text-[#6B7280] text-sm">
+                  <p className="text-[#6B7280] dark:text-slate-400 text-sm">
                     {isExpert ? "Requests will appear here when users need your expertise" : "Start by requesting a consultation with an expert"}
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-[#E8E6E1]">
+                <div className="divide-y divide-[#E8E6E1] dark:divide-slate-700">
                   {filtered.map((r) => {
                     const other = isExpert ? r.user : r.expert;
                     const name = `${other?.firstName ?? "Unknown"} ${other?.lastName ?? ""}`.trim();
@@ -376,8 +376,8 @@ export default function Inbox() {
                         key={r._id}
                         type="button"
                         onClick={() => setSelectedId(r._id)}
-                        className={`w-full text-left px-5 py-4 transition-all duration-200 hover:bg-[#F9F6F0] active:bg-[#F0F7F4] ${
-                          active ? "bg-gradient-to-r from-[#F0F7F4] to-[#E8F0E9] shadow-md relative" : "bg-white"
+                        className={`w-full text-left px-5 py-4 transition-all duration-200 hover:bg-[#F9F6F0] dark:hover:bg-slate-800 active:bg-[#F0F7F4] dark:active:bg-slate-700 ${
+                          active ? "bg-gradient-to-r from-[#F0F7F4] dark:from-slate-800 to-[#E8F0E9] dark:to-slate-700 shadow-md relative" : "bg-white dark:bg-slate-900"
                         }`}
                       >
                         {/* Active indicator */}
@@ -391,7 +391,7 @@ export default function Inbox() {
                             className={`h-12 w-12 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all shadow-md ${
                               active
                                 ? "bg-gradient-to-br from-[#7C9A82] to-[#5A7A60] text-white scale-110"
-                                : "bg-gradient-to-br from-[#F0F7F4] to-[#E8F0E9] text-[#7C9A82]"
+                                : "bg-gradient-to-br from-[#F0F7F4] dark:from-slate-700 to-[#E8F0E9] dark:to-slate-600 text-[#7C9A82] dark:text-emerald-400"
                             }`}
                           >
                             {(other?.firstName?.[0] || "U").toUpperCase()}
@@ -400,14 +400,14 @@ export default function Inbox() {
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-2 mb-1.5">
-                              <h3 className="font-semibold text-[#1a1a1a] truncate text-sm">{name}</h3>
-                              <span className="text-xs text-[#9CA3AF] whitespace-nowrap flex-shrink-0">
+                              <h3 className="font-semibold text-[#1a1a1a] dark:text-white truncate text-sm">{name}</h3>
+                              <span className="text-xs text-[#9CA3AF] dark:text-slate-500 whitespace-nowrap flex-shrink-0">
                                 {new Date(r.createdAt).toLocaleDateString()}
                               </span>
                             </div>
-                            <p className="text-xs text-[#6B7280] truncate mb-2">{other?.email}</p>
+                            <p className="text-xs text-[#6B7280] dark:text-slate-400 truncate mb-2">{other?.email}</p>
                             <div className="flex items-center justify-between gap-2">
-                              <p className="text-xs text-[#6B7280] line-clamp-1">{r.reason}</p>
+                              <p className="text-xs text-[#6B7280] dark:text-slate-400 line-clamp-1">{r.reason}</p>
                               <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 bg-gradient-to-r ${statusIndicator?.color || "from-slate-400 to-slate-500"} text-white shadow-sm`}>
                                 {statusIndicator?.text}
                               </span>
@@ -423,28 +423,28 @@ export default function Inbox() {
           </div>
 
           {/* Right Panel - Detail View */}
-          <div className="hidden md:flex flex-1 bg-white flex-col overflow-hidden">
+          <div className="hidden md:flex flex-1 bg-white dark:bg-slate-900 flex-col overflow-hidden">
             {!selected ? (
               <div className="flex-1 flex items-center justify-center flex-col">
-                <div className="h-32 w-32 bg-gradient-to-br from-[#E8F0E9] to-[#D4DFD8] rounded-full flex items-center justify-center mb-8 shadow-xl">
-                  <Mail size={64} className="text-[#7C9A82]" />
+                <div className="h-32 w-32 bg-gradient-to-br from-[#E8F0E9] dark:from-slate-700 to-[#D4DFD8] dark:to-slate-600 rounded-full flex items-center justify-center mb-8 shadow-xl">
+                  <Mail size={64} className="text-[#7C9A82] dark:text-emerald-400" />
                 </div>
-                <p className="text-[#1a1a1a] text-2xl font-semibold mb-2">No Message Selected</p>
-                <p className="text-[#6B7280] text-base">Choose a consultation from the list to view details</p>
+                <p className="text-[#1a1a1a] dark:text-white text-2xl font-semibold mb-2">No Message Selected</p>
+                <p className="text-[#6B7280] dark:text-slate-400 text-base">Choose a consultation from the list to view details</p>
               </div>
             ) : (
               <>
                 {/* Detail Header */}
-                <div className={`px-8 py-6 border-b-2 bg-gradient-to-b to-white flex-shrink-0 ${currentStatusConfig.border} ${currentStatusConfig.bg}`}>
+                <div className={`px-8 py-6 border-b-2 bg-gradient-to-b dark:to-slate-900 to-white flex-shrink-0 ${currentStatusConfig.border} ${currentStatusConfig.bg}`}>
                   <div className="flex items-start justify-between gap-6 mb-4">
                     <div className="flex items-start gap-5 flex-1">
                       <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#7C9A82] to-[#5A7A60] flex items-center justify-center text-white font-bold text-xl shadow-lg flex-shrink-0">
                         {(otherPerson?.firstName?.[0] || "U").toUpperCase()}
                       </div>
                       <div className="flex-1">
-                        <h2 className="font-serif text-3xl font-bold text-[#1a1a1a]">{otherName}</h2>
-                        <p className="text-[#6B7280] mt-1">{otherEmail}</p>
-                        <p className="text-xs text-[#6B7280] mt-3">
+                        <h2 className="font-serif text-3xl font-bold text-[#1a1a1a] dark:text-white">{otherName}</h2>
+                        <p className="text-[#6B7280] dark:text-slate-400 mt-1">{otherEmail}</p>
+                        <p className="text-xs text-[#6B7280] dark:text-slate-400 mt-3">
                           📅 {new Date(selected.createdAt).toLocaleString()}
                         </p>
                       </div>
@@ -459,17 +459,17 @@ export default function Inbox() {
                 <div className="flex-1 overflow-y-auto px-8 py-8 space-y-6">
                   {/* User Message Card */}
                   <div>
-                    <label className="block text-xs font-bold text-[#6B7280] uppercase tracking-widest mb-4">
+                    <label className="block text-xs font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-widest mb-4">
                       {messageTitle}
                     </label>
-                    <div className="bg-gradient-to-br from-[#F9F6F0] to-[#F5F2EC] border-2 border-[#E8E6E1] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
-                      <p className="text-[#2D3436] text-base leading-relaxed whitespace-pre-wrap">{selected.reason}</p>
+                    <div className="bg-gradient-to-br from-[#F9F6F0] dark:from-slate-800 to-[#F5F2EC] dark:to-slate-700 border-2 border-[#E8E6E1] dark:border-slate-700 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+                      <p className="text-[#2D3436] dark:text-slate-200 text-base leading-relaxed whitespace-pre-wrap">{selected.reason}</p>
                     </div>
                   </div>
 
                   {/* Reply Card */}
                   <div>
-                    <label className="block text-xs font-bold text-[#6B7280] uppercase tracking-widest mb-4">
+                    <label className="block text-xs font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-widest mb-4">
                       {replyLabel}
                     </label>
                     <div className="relative">
@@ -494,12 +494,12 @@ export default function Inbox() {
                         }}
                         className={`w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all text-base leading-relaxed resize-none font-medium ${
                           replyEnabled
-                            ? "border-[#D4CCBF] focus:border-[#7C9A82] focus:ring-4 focus:ring-[#7C9A82] focus:ring-opacity-5 bg-white shadow-sm"
-                            : "border-[#E8E6E1] bg-[#F5F2EC] text-[#6B7280] cursor-not-allowed"
+                            ? "border-[#D4CCBF] dark:border-slate-700 focus:border-[#7C9A82] focus:ring-4 focus:ring-[#7C9A82] focus:ring-opacity-5 bg-white dark:bg-slate-800 text-[#2D3436] dark:text-slate-200 shadow-sm"
+                            : "border-[#E8E6E1] dark:border-slate-700 bg-[#F5F2EC] dark:bg-slate-800 text-[#6B7280] dark:text-slate-400 cursor-not-allowed"
                         }`}
                       />
                       {replyEnabled && (
-                        <div className="absolute bottom-4 right-4 text-xs text-[#9CA3AF]">
+                        <div className="absolute bottom-4 right-4 text-xs text-[#9CA3AF] dark:text-slate-500">
                           {(currentReplyText || "").length} characters
                         </div>
                       )}
@@ -508,21 +508,21 @@ export default function Inbox() {
 
                   {/* Info Messages */}
                   {isExpert && isPending && (
-                    <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded text-blue-800 text-sm">
+                    <div className="bg-blue-50 dark:bg-blue-900 border-l-4 border-blue-400 p-4 rounded text-blue-800 dark:text-blue-200 text-sm">
                       <p className="font-semibold mb-1">📝 Action Required</p>
                       <p>Accept or reject this request to proceed with communication.</p>
                     </div>
                   )}
 
                   {!isExpert && isRejected && (
-                    <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded text-red-800 text-sm">
+                    <div className="bg-red-50 dark:bg-red-900 border-l-4 border-red-400 p-4 rounded text-red-800 dark:text-red-200 text-sm">
                       <p className="font-semibold mb-1">Request Declined</p>
                       <p>This expert has declined your request. Browse other experts to find help.</p>
                     </div>
                   )}
 
                   {!isExpert && isClosed && (
-                    <div className="bg-slate-50 border-l-4 border-slate-400 p-4 rounded text-slate-800 text-sm">
+                    <div className="bg-slate-50 dark:bg-slate-800 border-l-4 border-slate-400 p-4 rounded text-slate-800 dark:text-slate-200 text-sm">
                       <p className="font-semibold mb-1">Consultation Closed</p>
                       <p>This consultation has been completed and closed.</p>
                     </div>
@@ -530,7 +530,7 @@ export default function Inbox() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="px-8 py-6 border-t-2 border-[#E8E6E1] bg-gradient-to-b from-white to-[#FCFAF7] flex-shrink-0">
+                <div className="px-8 py-6 border-t-2 border-[#E8E6E1] dark:border-slate-700 bg-gradient-to-b from-white dark:from-slate-800 to-[#FCFAF7] dark:to-slate-900 flex-shrink-0">
                   {isExpert ? (
                     <div className="grid grid-cols-4 gap-3">
                       <Button

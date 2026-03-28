@@ -53,18 +53,18 @@ export default function AssessmentHome() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] py-12 px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-slate-950 py-12 px-4 relative overflow-hidden">
       <BlobDecoration
         variant={2}
-        className="top-0 right-0 w-[600px] h-[600px] text-[#E8F0E9]"
+        className="top-0 right-0 w-[600px] h-[600px] text-[#E8F0E9] dark:text-slate-800"
       />
 
       <div className="max-w-5xl mx-auto relative z-10">
         <div className="text-center mb-12">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#2D3436] mb-4">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#2D3436] dark:text-white mb-4">
             Self-Assessments
           </h1>
-          <p className="text-lg text-[#5A6062] max-w-2xl mx-auto">
+          <p className="text-lg text-[#5A6062] dark:text-slate-400 max-w-2xl mx-auto">
             Scientifically validated tools to help you understand your mental
             well-being. Your results are private and secure.
           </p>
@@ -81,8 +81,8 @@ export default function AssessmentHome() {
         </div>
 
         <div className="max-w-3xl mx-auto mb-10">
-          <Card className="p-5 md:p-6 bg-[#FFFDF9]">
-            <p className="text-sm text-[#5A6062]">
+          <Card className="p-5 md:p-6 bg-[#FFFDF9] dark:bg-slate-800">
+            <p className="text-sm text-[#5A6062] dark:text-slate-400">
               Tip: Answer honestly based on the <strong>last 2 weeks</strong>.
               These are screening tools for self-awareness, not a medical
               diagnosis. If you feel unsafe or overwhelmed, reach out to a
@@ -104,26 +104,26 @@ export default function AssessmentHome() {
               >
                 <div className="p-8 flex-1">
                   <div className="flex items-start justify-between mb-6">
-                    <div className="p-3 bg-[#E8F0E9] rounded-xl text-[#7C9A82]">
+                    <div className="p-3 bg-[#E8F0E9] dark:bg-slate-700 rounded-xl text-[#7C9A82] dark:text-emerald-400">
                       <Icon size={32} />
                     </div>
 
                     {assessment.comingSoon && (
-                      <span className="px-3 py-1 bg-[#F0F0F0] text-[#5A6062] text-xs font-medium rounded-full">
+                      <span className="px-3 py-1 bg-[#F0F0F0] dark:bg-slate-700 text-[#5A6062] dark:text-slate-400 text-xs font-medium rounded-full">
                         Coming Soon
                       </span>
                     )}
                   </div>
 
-                  <h3 className="font-serif text-2xl font-bold text-[#2D3436] mb-3">
+                  <h3 className="font-serif text-2xl font-bold text-[#2D3436] dark:text-white mb-3">
                     {assessment.title}
                   </h3>
 
-                  <p className="text-[#5A6062] mb-6 leading-relaxed">
+                  <p className="text-[#5A6062] dark:text-slate-400 mb-6 leading-relaxed">
                     {assessment.description}
                   </p>
 
-                  <div className="flex items-center gap-6 text-sm text-[#5A6062] mb-8">
+                  <div className="flex items-center gap-6 text-sm text-[#5A6062] dark:text-slate-400 mb-8">
                     <div className="flex items-center gap-2">
                       <Clock size={16} />
                       <span>{assessment.time}</span>
@@ -158,7 +158,7 @@ export default function AssessmentHome() {
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-[#5A6062] text-sm">
+          <p className="text-[#5A6062] dark:text-slate-400 text-sm">
             Note: These assessments are for screening purposes only and are not
             a substitute for professional medical advice.
           </p>

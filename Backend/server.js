@@ -19,6 +19,8 @@ const availabilityRoutes = require("./routes/availabilityRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const slotRoutes = require("./routes/slotRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const moodRoutes = require("./routes/moodRoutes");
+const mindfulnessRoutes = require("./routes/mindfulnessRoutes");
 
 const app = express();
 
@@ -53,6 +55,8 @@ app.use("/api/availability", availabilityRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/slots", slotRoutes)
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/mood", moodRoutes);
+app.use("/api/mindfulness", mindfulnessRoutes);
 
 app.get("/", (req, res) => res.send("SwasthyaManas API running..."));
 

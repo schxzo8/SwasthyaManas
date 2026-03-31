@@ -48,13 +48,24 @@ export function Navbar() {
   }, [isProfileOpen]);
 
   useEffect(() => {
-    const sync = () => {
+    const sync = async () => {
       const token = localStorage.getItem("token");
       setAuthed(!!token && token !== "undefined" && token !== "null");
 
       try {
         const raw = localStorage.getItem("user");
         setUser(raw ? JSON.parse(raw) : null);
+
+        // Fetch fresh user data from API to ensure profilePicture is included
+        if (token && token !== "undefined" && token !== "null") {
+          try {
+            const res = await API.get("/api/users/me");
+            setUser(res.data);
+            localStorage.setItem("user", JSON.stringify(res.data));
+          } catch (err) {
+            console.error("Failed to sync user data");
+          }
+        }
       } catch {
         setUser(null);
       }

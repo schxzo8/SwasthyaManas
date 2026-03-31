@@ -415,18 +415,36 @@ export default function Dashboard() {
               </Card>
             )}
 
-            {/* Users: Daily Check-in */}
+            {/* Users: Quick Actions Grid - Daily Check-in + Mindfulness Bell */}
             {user.role !== "expert" && (
-              <Card className="p-6 bg-[#7C9A82] dark:bg-emerald-600 text-[#FAF7F2] dark:text-white border-none">
-                <h3 className="font-serif text-xl font-bold mb-2">Daily Check-in</h3>
-                <p className="text-[#E8F0E9] dark:text-emerald-100 text-sm mb-4">
-                  Take 2 minutes to record your mood and feelings.
-                </p>
-                <Button variant="secondary" size="sm" className="w-full">
-                  Start Now
-                </Button>
-              </Card>
+              <div className="grid grid-cols-1 gap-4">
+                <Link to="/mood-tracker" className="no-underline">
+                  <Card className="p-6 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 border-2 border-[#7C9A82] dark:border-emerald-600 hover:shadow-xl transition-all cursor-pointer">
+                    <h3 className="font-serif text-lg font-bold mb-2 text-[#2D3436] dark:text-white">📊 Daily Check-in</h3>
+                    <p className="text-[#5A6062] dark:text-slate-300 text-sm mb-4">
+                      Track your mood and feelings
+                    </p>
+                    <Button variant="primary" size="sm" className="w-full">
+                      Start Now
+                    </Button>
+                  </Card>
+                </Link>
+
+                <Link to="/mindfulness-bell" className="no-underline">
+                  <Card className="p-6 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/30 dark:to-indigo-900/30 border-2 border-purple-500 dark:border-purple-600 hover:shadow-xl transition-all cursor-pointer">
+                    <h3 className="font-serif text-lg font-bold mb-2 text-[#2D3436] dark:text-white">🔔 Mindfulness Bell</h3>
+                    <p className="text-[#5A6062] dark:text-slate-300 text-sm mb-4">
+                      Affirmations & guided practices
+                    </p>
+                    <Button variant="primary" size="sm" className="w-full bg-purple-600 hover:bg-purple-700">
+                      Ring the Bell
+                    </Button>
+                  </Card>
+                </Link>
+              </div>
             )}
+            
+            {/* Users: Mindfulness Bell - Moved to grid above */}
 
             {/* Experts: Manage Requests */}
             {user.role === "expert" && (

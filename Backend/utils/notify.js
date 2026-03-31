@@ -34,8 +34,22 @@ async function notifyUser(req, userId, data) {
     if (existing) {
       createdOrExisting = existing;
     } else {
-      createdOrExisting = await Notification.create(payload);
-      wasInserted = true;
+      try {
+        createdOrExisting = await Notification.create(payload);
+        wasInserted = true;
+      } catch (err) {
+        // Handle E11000 duplicate key error gracefully
+        if (err.code === 11000) {
+          const existing = await Notification.findOne({
+            user: userId,
+            type: payload.type,
+            "meta.requestId": requestId,
+          });
+          createdOrExisting = existing || new Notification(payload);
+        } else {
+          throw err;
+        }
+      }
     }
 
   } else if (appointmentId) {
@@ -49,14 +63,41 @@ async function notifyUser(req, userId, data) {
     if (existing) {
       createdOrExisting = existing;
     } else {
-      createdOrExisting = await Notification.create(payload);
-      wasInserted = true;
+      try {
+        createdOrExisting = await Notification.create(payload);
+        wasInserted = true;
+      } catch (err) {
+        // Handle E11000 duplicate key error gracefully
+        if (err.code === 11000) {
+          const existing = await Notification.findOne({
+            user: userId,
+            type: payload.type,
+            "meta.appointmentId": appointmentId,
+          });
+          createdOrExisting = existing || new Notification(payload);
+        } else {
+          throw err;
+        }
+      }
     }
 
   } else {
     // no dedup key — always create (system notifications etc.)
-    createdOrExisting = await Notification.create(payload);
-    wasInserted = true;
+    try {
+      createdOrExisting = await Notification.create(payload);
+      wasInserted = true;
+    } catch (err) {
+      // If duplicate key error occurs even without a dedup key, just log and continue
+      if (err.code === 11000) {
+        console.warn("Notification duplicate key error (ignored):", err.message);
+        createdOrExisting = await Notification.findOne({
+          user: userId,
+          type: payload.type,
+        }).sort({ _id: -1 });
+      } else {
+        throw err;
+      }
+    }
   }
 
   // emit only when newly inserted

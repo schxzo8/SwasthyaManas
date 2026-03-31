@@ -87,6 +87,7 @@ export default function AppointmentsPage() {
   const [items, setItems] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const [completingId, setCompletingId] = useState<string | null>(null);
 
   // UI
   const [tab, setTab] = useState<"upcoming" | "past" | "all">("upcoming");
@@ -354,16 +355,30 @@ export default function AppointmentsPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 text-xs"
+                              disabled={completingId === a._id}
+                              isLoading={completingId === a._id}
+                              className="border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                               onClick={async () => {
+                                setCompletingId(a._id);
                                 try {
                                   await API.put(`/api/appointments/${a._id}/complete`);
                                   toast.success("Appointment marked as completed.");
+                                  
+                                  // Optimistically update local state
+                                  setItems(items.map(item => 
+                                    item._id === a._id 
+                                      ? { ...item, status: "completed" }
+                                      : item
+                                  ));
+                                  
+                                  // Then refresh from server
                                   load();
                                 } catch (err: any) {
                                   const errMsg = err?.response?.data?.message || "Failed to mark as completed.";
                                   setErr(errMsg);
                                   toast.error(errMsg);
+                                } finally {
+                                  setCompletingId(null);
                                 }
                               }}
                             >

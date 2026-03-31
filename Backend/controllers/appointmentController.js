@@ -292,6 +292,9 @@ async function _createAppointment(req, userId, slotId, paymentData, userNotes = 
   );
 
   // notify expert
+  const userDoc = await require("../models/User").findById(userId).select("firstName lastName");
+  const userName = userDoc ? `${userDoc.firstName} ${userDoc.lastName}`.trim() : "A user";
+
   await notifyUser(req, appointment.expert, {
     type: "appointment_new",
     title: "New appointment booked",

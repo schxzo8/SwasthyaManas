@@ -1,6 +1,7 @@
 const express = require("express");
 const { protect, authorizeRoles } = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
+const User = require("../models/User");
 const {
   updateProfile,
   changePassword,
@@ -18,7 +19,14 @@ const {
 const router = express.Router();
 
 // ── User self-service ─────────────────────────────────────
-router.get("/me", protect, (req, res) => res.json(req.user));
+router.get("/me", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password -refreshTokenHash -emailVerificationToken");
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch user" });
+  }
+});
 router.get("/profile", protect, (req, res) => res.json({ user: req.user }));
 router.put("/profile",  protect, updateProfile);
 router.put("/profile-picture", protect, upload.single('file'), uploadProfilePicture);

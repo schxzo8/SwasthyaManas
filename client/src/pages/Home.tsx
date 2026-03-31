@@ -110,17 +110,19 @@ export default function Home() {
               <div className="absolute -bottom-8 -left-8 max-w-xs hidden md:block animate-bounce"
                 style={{ animationDuration: "3s" }}
               >
-                <Card>
-                  <div className="flex items-center gap-4">
-                    <div className="bg-[#E8F0E9] dark:bg-emerald-900/30 p-3 rounded-full">
-                      <Heart className="h-6 w-6 text-[#7C9A82] dark:text-emerald-400" />
+                <Link to="/mood-tracker" className="no-underline">
+                  <Card className="hover:shadow-lg transition-all cursor-pointer">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-[#E8F0E9] dark:bg-emerald-900/30 p-3 rounded-full">
+                        <Heart className="h-6 w-6 text-[#7C9A82] dark:text-emerald-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#2D3436] dark:text-white">Daily Check-in</p>
+                        <p className="text-xs text-[#5A6062] dark:text-slate-400">How are you feeling today?</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-[#2D3436] dark:text-white">Daily Check-in</p>
-                      <p className="text-xs text-[#5A6062] dark:text-slate-400">How are you feeling today?</p>
-                    </div>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               </div>
 
             </div>

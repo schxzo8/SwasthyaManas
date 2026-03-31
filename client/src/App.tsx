@@ -33,6 +33,8 @@ import PaymentFailure from "./pages/PaymentFailure";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import MoodTracker from "./pages/MoodTracker";
+import MindfulnessBell from "./pages/MindfulnessBell";
 import { ThemeProvider } from "./context/ThemeContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 
@@ -119,6 +121,8 @@ function App() {
               <Route path="/settings" element={<UserSettings />} />
               <Route path="/my-slots" element={<MySlots />} />
               <Route path="/appointments/payment-verify" element={<PaymentVerify />} />
+              <Route path="/mood-tracker" element={<MoodTracker />} />
+              <Route path="/mindfulness-bell" element={<MindfulnessBell />} />
 
               
             </Route>

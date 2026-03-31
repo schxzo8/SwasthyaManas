@@ -45,15 +45,18 @@ const notificationSchema = new mongoose.Schema(
 Prevent duplicate notifications for the same request
 Example:
 user + consultation_new + requestId
+Sparse index: allows multiple null values
+
+Note: Run 'npm run fix-notification-indexes' once to apply these indexes
 */
 notificationSchema.index(
   { user: 1, type: 1, "meta.requestId": 1 },
-  { unique: true, sparse: true }
+  { unique: true, sparse: true, background: true }
 );
 
 notificationSchema.index(
   { user: 1, type: 1, "meta.appointmentId": 1 },
-  { unique: true, sparse: true }
+  { unique: true, sparse: true, background: true }
 );
 
 module.exports = mongoose.model("Notification", notificationSchema);

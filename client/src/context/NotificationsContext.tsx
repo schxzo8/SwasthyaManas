@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import API from "../services/api";
 import { connectSocket, getSocket } from "../services/socket";
+import toast from "react-hot-toast";
 
 export type AppNotification = {
   _id: string;
@@ -75,6 +76,16 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
       });
 
       setUnreadCount((c) => c + 1);
+
+      // Skip toast for consultation_new - it's handled by onConsultationNew
+      if (payload.type === "consultation_new") return;
+
+      // Show dynamic toast for other notifications
+      toast.success(payload.title || "New notification", {
+        duration: 4000,
+        position: "top-right",
+        icon: "🔔",
+      });
     };
 
     const onConsultationNew = (data: any) => {
@@ -100,6 +111,12 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
       });
 
       setUnreadCount((c) => c + 1);
+
+      // Show dynamic toast for consultation
+      toast.success("New consultation request 📩", {
+        duration: 4000,
+        position: "top-right",
+      });
     };
 
     const onReconnectSync = () => {

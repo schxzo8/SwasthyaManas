@@ -44,6 +44,19 @@ exports.createRequest = async (req, res) => {
       meta: { requestId: String(request._id) },
     });
 
+    // Emit consultation:new socket event for real-time inbox updates
+    const io = req.app.get("io");
+    if (io) {
+      io.to(`user_${String(expertId)}`).emit("consultation:new", {
+        _id: String(request._id),
+        user: String(request.user),
+        expert: String(request.expert),
+        reason: request.reason,
+        status: request.status,
+        createdAt: request.createdAt,
+      });
+    }
+
     return res.status(201).json({
       message: "Request sent successfully",
       request,

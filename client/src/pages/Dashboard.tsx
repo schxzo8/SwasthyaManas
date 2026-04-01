@@ -347,11 +347,11 @@ export default function Dashboard() {
               {user.role === "expert" ? "Quick Actions" : "Recommended"}
             </h2>
 
-            {/* Users: Appointment Booking (payment placeholder) */}
+            {/* Users: Consultation Request */}
             {user.role !== "expert" && (
               <Card className="p-6">
                 <h3 className="font-serif text-lg font-bold text-[#2D3436] dark:text-white mb-2">
-                  Appointment Booking
+                  Consultation Request
                 </h3>
 
                 {booking.state === "none" && (
@@ -360,7 +360,7 @@ export default function Dashboard() {
                       Connect with a mental health expert for personalized counseling and support.
                     </p>
                     <Link to="/experts" className="no-underline">
-                      <Button className="w-full">Book Appointment</Button>
+                      <Button className="w-full">Request Consultation</Button>
                     </Link>
                   </>
                 )}
@@ -370,9 +370,6 @@ export default function Dashboard() {
                     <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-2">
                       Your request is sent. Waiting for expert to accept.
                     </p>
-                    <p className="text-xs text-[#9CA3AF] dark:text-slate-500 mb-4">
-                      Payment: <span className="font-medium">Pending (Coming soon)</span>
-                    </p>
                     <Link to="/inbox" className="no-underline">
                       <Button variant="outline" className="w-full">View Status</Button>
                     </Link>
@@ -381,10 +378,7 @@ export default function Dashboard() {
 
                 {booking.state === "confirmed" && (
                   <>
-                    <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-2">Appointment confirmed by expert.</p>
-                    <p className="text-xs text-[#9CA3AF] dark:text-slate-500 mb-4">
-                      Payment: <span className="font-medium">Not collected yet (Coming soon)</span>
-                    </p>
+                    <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-2">Consultation confirmed by expert.</p>
                     <Link to="/inbox" className="no-underline">
                       <Button className="w-full">Open Inbox</Button>
                     </Link>
@@ -397,7 +391,7 @@ export default function Dashboard() {
                       Your last request was rejected. You can book another expert.
                     </p>
                     <Link to="/experts" className="no-underline">
-                      <Button variant="outline" className="w-full">Book Another</Button>
+                      <Button variant="outline" className="w-full">Request Another</Button>
                     </Link>
                   </>
                 )}
@@ -405,10 +399,10 @@ export default function Dashboard() {
                 {booking.state === "closed" && (
                   <>
                     <p className="text-sm text-[#5A6062] dark:text-slate-400 mb-4">
-                      Your last appointment was closed. You can book a new one anytime.
+                      Your last consultation was closed. You can request a new one anytime.
                     </p>
                     <Link to="/experts" className="no-underline">
-                      <Button variant="outline" className="w-full">Book Again</Button>
+                      <Button variant="outline" className="w-full">Request Again</Button>
                     </Link>
                   </>
                 )}

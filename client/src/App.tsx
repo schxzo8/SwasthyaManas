@@ -35,6 +35,7 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import MoodTracker from "./pages/MoodTracker";
 import MindfulnessBell from "./pages/MindfulnessBell";
+import Sanctuary from "./pages/Sanctuary";
 import { ThemeProvider } from "./context/ThemeContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 
@@ -123,6 +124,7 @@ function App() {
               <Route path="/appointments/payment-verify" element={<PaymentVerify />} />
               <Route path="/mood-tracker" element={<MoodTracker />} />
               <Route path="/mindfulness-bell" element={<MindfulnessBell />} />
+              <Route path="/sanctuary" element={<Sanctuary />} />
 
               
             </Route>

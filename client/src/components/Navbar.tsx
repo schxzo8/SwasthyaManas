@@ -108,6 +108,7 @@ export function Navbar() {
     { name: "Experts", path: "/experts" },
     { name: "Appointments", path: "/appointments" },
     ...(authed ? [{ name: "Dashboard", path: "/dashboard" }] : []),
+    ...(authed ? [{ name: "Sanctuary", path: "/sanctuary" }] : []),
   ];
 
   const linkBase = "no-underline text-sm font-medium transition-colors duration-200";

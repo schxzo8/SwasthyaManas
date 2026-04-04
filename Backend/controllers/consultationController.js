@@ -136,7 +136,7 @@ exports.updateRequestStatus = async (req, res) => {
 
     const hasReply = typeof expertReply === "string" && expertReply.trim().length > 0;
 
-    // build dynamic notifications (what user asked)
+    // build dynamic notifications
     let userNotif = { type: "", title: "", message: "", link: "/inbox" };
     let expertNotif = { type: "", title: "", message: "", link: "/inbox" };
 

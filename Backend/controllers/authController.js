@@ -299,6 +299,121 @@ exports.logout = async (req, res) => {
   }
 };
 
+// =======================
+// GOOGLE LOGIN
+// =======================
+exports.googleLogin = async (req, res) => {
+  try {
+    const { token: accessToken } = req.body;
+    if (!accessToken) {
+      return res.status(400).json({ message: "Access token is required" });
+    }
+
+    const { getGoogleUserProfile } = require("../utils/googleAuth");
+    const googleUser = await getGoogleUserProfile(accessToken);
+
+    const lower = googleUser.email.toLowerCase();
+    let user = await User.findOne({ email: lower });
+
+    if (!user) {
+      return res.status(404).json({ 
+        message: "User not found. Please sign up first.",
+        googleEmail: googleUser.email,
+      });
+    }
+
+    // Check if user is verified
+    if (!user.isVerified && user.role !== "admin") {
+      return res.status(403).json({
+        message: "Please verify your email before logging in.",
+      });
+    }
+
+    // Create tokens
+    const jwtAccessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+
+    // Store hash of refresh token
+    user.refreshTokenHash = await bcrypt.hash(refreshToken, 10);
+    user.refreshTokenIssuedAt = new Date();
+    await user.save();
+
+    // Set refresh cookie
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions());
+
+    return res.status(200).json({
+      message: "Google login successful",
+      token: jwtAccessToken,
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        expertise: user.expertise || "",
+      },
+    });
+  } catch (error) {
+    console.error("Google login error:", error);
+    return res.status(500).json({ message: error.message || "Google login failed" });
+  }
+};
+
+// =======================
+// GOOGLE SIGNUP
+// =======================
+exports.googleSignup = async (req, res) => {
+  try {
+    const { token: accessToken } = req.body;
+    if (!accessToken) {
+      return res.status(400).json({ message: "Access token is required" });
+    }
+
+    const { getGoogleUserProfile } = require("../utils/googleAuth");
+    const googleUser = await getGoogleUserProfile(accessToken);
+
+    const lower = googleUser.email.toLowerCase();
+    const existingUser = await User.findOne({ email: lower });
+
+    // If already verified, block
+    if (existingUser && existingUser.isVerified) {
+      return res.status(409).json({ message: "Email already registered" });
+    }
+
+    // If not verified, allow re-register by deleting old entry
+    if (existingUser && !existingUser.isVerified) {
+      await User.deleteOne({ _id: existingUser._id });
+    }
+
+    // For Google signup, we create a user with a random password
+    // since they won't be using password-based login
+    const randomPassword = crypto.randomBytes(32).toString("hex");
+    const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+    const newUser = await User.create({
+      firstName: googleUser.firstName,
+      lastName: googleUser.lastName,
+      email: lower,
+      password: hashedPassword,
+      googleId: googleUser.googleId,
+      role: "user",
+      isVerified: true, // Auto-verified since Google verified the email
+      emailVerificationToken: undefined,
+      emailVerificationExpires: undefined,
+      failedLoginAttempts: 0,
+      lockUntil: null,
+    });
+
+    return res.status(201).json({
+      message: "Registration successful. You can now log in.",
+      email: lower,
+    });
+  } catch (error) {
+    console.error("Google signup error:", error);
+    return res.status(500).json({ message: error.message || "Google signup failed" });
+  }
+};
+
 // PUT /api/user/profile
 exports.updateProfile = async (req, res) => {
   try {

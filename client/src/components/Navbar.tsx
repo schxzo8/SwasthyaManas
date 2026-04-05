@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Leaf, Settings, LogOut } from "lucide-react";
+import { Menu, X, Leaf, Settings, LogOut, Moon, Sun } from "lucide-react";
 import { Button } from "./Button";
 import API from "../services/api";
 import CommunicationHub from "./CommunicationHub";
-import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { toast } from "react-hot-toast";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -82,17 +84,28 @@ export function Navbar() {
   }, []);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
-      // clear refresh cookie on backend (make this route)
+      // clear refresh cookie on backend
       await API.post("/api/auth/logout");
-      toast.success("Logged out successfully");
-    } catch {
-      toast.success("Logged out successfully");
+    } catch (error) {
+      console.error("Logout error:", error);
     } finally {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.dispatchEvent(new Event("auth:changed"));
-      navigate("/");
+      toast.success("See you soon! 👋", {
+        duration: 2000,
+        position: "top-center",
+        icon: "👋",
+      });
+      
+      // Smooth delay for elegant transition
+      setTimeout(() => {
+        setIsLoggingOut(false);
+        setShowLogoutConfirm(false);
+        navigate("/");
+      }, 800);
     }
   };
 
@@ -102,13 +115,15 @@ export function Navbar() {
     { name: "Home", path: "/" },
     { name: "Contents", path: "/content" },
 
-    ...(authed && role === "admin" ? [{ name: "Admin PV", path: "/admin" }] : []),
+    ...(authed && role === "admin" ? [{ name: "Admin", path: "/admin" }] : []),
 
     { name: "Assessments", path: "/assessments" },
     { name: "Experts", path: "/experts" },
     { name: "Appointments", path: "/appointments" },
     ...(authed ? [{ name: "Dashboard", path: "/dashboard" }] : []),
     ...(authed ? [{ name: "Sanctuary", path: "/sanctuary" }] : []),
+    { name: "About", path: "/about" },
+    { name: "FAQ", path: "/faq" },
   ];
 
   const linkBase = "no-underline text-sm font-medium transition-colors duration-200";
@@ -126,14 +141,14 @@ export function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-12 ml-8">
             {navLinks.map((link) => {
               const active = location.pathname === link.path;
               return (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`${linkBase} ${
+                  className={`${linkBase} whitespace-nowrap ${
                     active ? "text-[#7C9A82] dark:text-emerald-400" : "text-[#2D3436] dark:text-white hover:text-[#7C9A82] dark:hover:text-emerald-400"
                   }`}
                 >
@@ -213,14 +228,12 @@ export function Navbar() {
                         </Link>
 
                         <button
-                          onClick={() => {
-                            setIsProfileOpen(false);
-                            handleLogout();
-                          }}
-                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-[#FAF7F2] dark:hover:bg-slate-700 transition-colors text-left border-t border-[#E8F0E9] dark:border-slate-700"
+                          onClick={() => setShowLogoutConfirm(true)}
+                          disabled={isLoggingOut}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all text-left border-t border-[#E8F0E9] dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-b-xl font-medium"
                         >
-                          <LogOut size={16} />
-                          <span>Log Out</span>
+                          <LogOut size={16} className={`${isLoggingOut ? "animate-spin" : ""}`} />
+                          <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>
                         </button>
                       </div>
                     )}
@@ -228,18 +241,18 @@ export function Navbar() {
                 </div>
 
                 {/* Unauthenticated Section */}
-                <div className={`flex items-center gap-3 transition-all duration-300 ${authed ? 'opacity-0 pointer-events-none absolute' : 'opacity-100 pointer-events-auto'}`}>
-                  <Link to="/login" className="no-underline">
+                <div className={`flex items-center gap-2 flex-nowrap transition-all duration-300 ${authed ? 'opacity-0 pointer-events-none absolute' : 'opacity-100 pointer-events-auto'}`}>
+                  <Link to="/login" className="no-underline shrink-0">
                     <Button variant="ghost" size="sm">
                       Log In
-                      </Button>
-                    </Link>
-                    <Link to="/signup" className="no-underline">
-                      <Button variant="primary" size="sm">
-                        Get Started
-                      </Button>
-                    </Link>
-                  </div>
+                    </Button>
+                  </Link>
+                  <Link to="/signup" className="no-underline shrink-0">
+                    <Button variant="primary" size="sm">
+                      Get Started
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -293,10 +306,13 @@ export function Navbar() {
                     <Settings size={16} />
                     Settings
                   </Link>
-
-                  <button onClick={handleLogout} className="w-full flex items-center gap-2 text-left px-3 py-2 text-red-600 dark:text-red-400 hover:bg-[#FAF7F2] dark:hover:bg-slate-700 rounded-md">
-                    <LogOut size={16} />
-                    Log Out
+                  <button
+                    onClick={() => setShowLogoutConfirm(true)}
+                    disabled={isLoggingOut}
+                    className="w-full flex items-center gap-2 text-left px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  >
+                    <LogOut size={16} className={`${isLoggingOut ? "animate-spin" : ""}`} />
+                    {isLoggingOut ? "Logging out..." : "Log Out"}
                   </button>
                 </>
               ) : (
@@ -330,6 +346,23 @@ export function Navbar() {
           </div>
         </div>
       )}
+      
+      {/* Logout Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Confirm Logout"
+        message={
+          <div className="space-y-2">
+            <p>Are you sure you want to log out? Your session will end and you'll need to sign in again to access your account.</p>
+          </div>
+        }
+        confirmText="Yes, Log Out"
+        cancelText="Stay"
+        isDangerous={true}
+        isLoading={isLoggingOut}
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </nav>
   );
 }

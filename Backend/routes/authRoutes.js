@@ -10,6 +10,8 @@ const {
   resendVerification,
   forgotPassword,
   resetPassword,
+  googleLogin,
+  googleSignup,
 } = require("../controllers/authController");
 
 router.post("/register", register);
@@ -50,5 +52,9 @@ router.post("/resend-verification", resendVerification);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
+
+// Google OAuth routes
+router.post("/google-login", googleLogin);
+router.post("/google-signup", googleSignup);
 
 module.exports = router;

@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
+    googleId: {
+      type: String,
+      sparse: true,
+    },
+
     role: {
       type: String,
       enum: ["user", "expert", "admin"],
@@ -51,7 +56,7 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
-    refreshTokenIssuetAt: {
+    refreshTokenIssuedAt: {
       type: Date,
       default: null,
     },

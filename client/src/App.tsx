@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import RootLayout from "./layouts/RootLayout";
 import ScrollToTop from "./components/ScrollToTop";
@@ -8,6 +9,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
+import FAQPage from "./pages/FAQPage";
+import AboutPage from "./pages/AboutPage";
 
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -42,11 +45,15 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { NotificationsProvider } from "./context/NotificationsContext";
 
 function App() {
+  // Environment variable provided by react-scripts during build
+  const googleClientId = String(process.env.REACT_APP_GOOGLE_CLIENT_ID || "");
+  
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <ThemeProvider>
-          <NotificationsProvider>
+      <GoogleOAuthProvider clientId={googleClientId}>
+        <BrowserRouter>
+          <ThemeProvider>
+            <NotificationsProvider>
         <ScrollToTop />
         <Toaster
           position="top-right"
@@ -87,6 +94,8 @@ function App() {
             {/* PUBLIC */}
             <Route path="/" element={<Home />} />
             <Route path="/content" element={<PublicContent />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/faq" element={<FAQPage />} />
             <Route path="/appointments/payment-verify"  element={<PaymentVerify />} />
             <Route path="/appointments/payment-success" element={<PaymentVerify />} />
             <Route path="/appointments/payment-failure" element={<PaymentFailure />} />
@@ -143,11 +152,12 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-      </NotificationsProvider>
-      </ThemeProvider>
-    </BrowserRouter>
-    </ErrorBoundary>
-  );
-}
+            </NotificationsProvider>
+            </ThemeProvider>
+          </BrowserRouter>
+        </GoogleOAuthProvider>
+      </ErrorBoundary>
+    );
+  }
 
 export default App;
